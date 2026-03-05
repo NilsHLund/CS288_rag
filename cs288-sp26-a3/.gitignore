@@ -1,0 +1,7 @@
+# Data or Cache
+cache/
+
+# Should be ignored
+.env
+*.pyc
+__pycache__/

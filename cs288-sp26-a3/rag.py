@@ -20,6 +20,7 @@ import re
 import string
 from pathlib import Path
 from typing import List
+import numpy as np
 
 import re
 import faiss
@@ -27,7 +28,7 @@ from rank_bm25 import BM25Okapi
 from sentence_transformers import SentenceTransformer
 from tqdm import tqdm
 
-from llm import LLM  # provided by course staff — do NOT modify llm.py
+from llm import call_llm  # provided by course staff — do NOT modify llm.py
 
 # ──────────────────────────────────────────────
 # Configuration — tweak these for ablations
@@ -46,6 +47,8 @@ SYSTEM_PROMPT = (
     "Answer using ONLY the provided context. "
     "Give a SHORT answer (under 10 words). "
     "If the answer is not in the context, reply with UNKNOWN."
+    "If there are multiple answers, answer with any single correct answer."
+    "If the question asks for Yes/No, only reply with exactly Yes or No. Do not give additional explanations."
 )
 
 
@@ -106,7 +109,7 @@ def build_corpus_chunks(pages: List[dict]) -> List[dict]:
 class RAGModel:
     def __init__(self):
         os.makedirs(CACHE_DIR, exist_ok=True)
-        self.llm = LLM()
+        self.llm = call_llm
 
         chunks_cache    = Path(CACHE_DIR) / "chunks.pkl"
         bm25_cache      = Path(CACHE_DIR) / "bm25.pkl"
@@ -202,14 +205,16 @@ class RAGModel:
             "Short answer (under 10 words):"
         )
         try:
-            response = self.llm.generate(
+            response = self.llm(
                 system_prompt=SYSTEM_PROMPT,
-                user_prompt=prompt,
+                query=prompt,
+                model="meta-llama/llama-3.1-8b-instruct",
             )
             # Strip to first line, truncate aggressively
             answer = response.strip().splitlines()[0].strip()
             return answer
-        except Exception:
+        except Exception as e:
+            print(f"Exception: {e}")
             return "UNKNOWN"
 
     # ── Public API ──

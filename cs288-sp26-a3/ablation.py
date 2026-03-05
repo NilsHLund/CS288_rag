@@ -8,6 +8,16 @@ This script runs multiple RAG configurations and prints a comparison table.
 Tweak the ABLATIONS list to match the configs you want to compare.
 """
 
+import os
+# A hack to make environment variables work for me, it is not automatically working for some reason
+import os
+with open(".env") as f:
+    for line in f:
+        if line.strip() and not line.startswith("#"):
+            key, value = line.strip().split("=", 1)
+            os.environ[key] = value
+            
+from pathlib import Path
 import json
 import re
 import string
@@ -96,18 +106,25 @@ def run_ablation(questions, references, bm25_w, dense_w, top_k, chunk_size):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--questions", required=True, help="Path to questions.txt")
-    parser.add_argument("--answers", required=True,
+    parser.add_argument("questions", help="Path to questions.txt")
+    parser.add_argument("answers", 
                         help="Path to reference_answers.json (list of lists or list of strings)")
     args = parser.parse_args()
 
     with open(args.questions) as f:
         questions = [l.strip() for l in f if l.strip()]
 
-    with open(args.answers) as f:
-        raw = json.load(f)
-    # Support both list-of-strings and list-of-lists (multiple valid answers)
-    references = [r if isinstance(r, list) else [r] for r in raw]
+    if Path(args.answers).suffix == ".jsonl":
+        with open(args.answers) as f:
+            raw = json.load(f)
+        # Support both list-of-strings and list-of-lists (multiple valid answers)
+        references = [r if isinstance(r, list) else [r] for r in raw]
+        
+    elif Path(args.answers).suffix == ".txt":
+        with open(args.answers) as f:
+            references = [[t.strip() for t in line.split("|")] for line in f]
+    else:
+        raise ValueError("Answer should be .txt or .jsonl")
 
     assert len(questions) == len(references), "Question/answer count mismatch."
 
