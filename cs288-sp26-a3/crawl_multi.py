@@ -3,8 +3,13 @@ EECS Website Crawler (multi-threaded)
 Crawls all pages under eecs.berkeley.edu using a thread pool.
 
 Usage:
-    python crawl.py --output corpus/pages.json                  # unlimited pages
-    python crawl.py --output corpus/pages.json --max_pages 500  # cap at 500
+    python crawl_multi.py --output corpus/pages.json                  # unlimited pages
+    python crawl_multi.py --output corpus/pages.json --max_pages 500  # cap at 500
+    python crawl_multi.py --output corpus/pages.json --resume         # resume from checkpoint
+
+Checkpoint: a companion file (e.g. corpus/pages.checkpoint.json) is saved
+alongside the output and stores the frontier queue + visited set so the crawl
+can pick up where it left off with --resume.
 
 Output JSON format:
     [{"url": "...", "title": "...", "text": "..."}, ...]
@@ -25,7 +30,7 @@ from concurrent.futures import ThreadPoolExecutor
 from typing import Optional
 
 import requests
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, NavigableString
 from tqdm import tqdm
 
 SEED_URL = "https://eecs.berkeley.edu"
@@ -43,12 +48,47 @@ def is_allowed_url(url: str) -> bool:
     return bool(ALLOWED_DOMAIN_RE.match(url.split("#")[0].split("?")[0]))
 
 
+def _html_table_to_markdown(table_tag) -> str:
+    """Convert a single <table> element into a Markdown table string."""
+    rows = table_tag.find_all("tr")
+    if not rows:
+        return ""
+
+    grid = []
+    for row in rows:
+        cells = row.find_all(["th", "td"])
+        grid.append([c.get_text(separator=" ").strip() for c in cells])
+
+    if not grid:
+        return ""
+
+    n_cols = max(len(r) for r in grid)
+    for r in grid:
+        r.extend([""] * (n_cols - len(r)))
+
+    lines = []
+    for i, row in enumerate(grid):
+        lines.append("| " + " | ".join(row) + " |")
+        if i == 0:
+            lines.append("| " + " | ".join("---" for _ in row) + " |")
+
+    return "\n".join(lines)
+
+
 def extract_text(soup: BeautifulSoup):
-    """Extract title and all visible text from a BeautifulSoup object."""
-    for tag in soup(["script", "style", "noscript"]):
+    """Extract title and visible text, converting HTML tables to Markdown
+    and aggressively stripping boilerplate."""
+    title = soup.title.string.strip() if soup.title and soup.title.string else ""
+
+    for tag in soup(["script", "style", "noscript", "nav", "footer", "header"]):
         tag.decompose()
 
-    title = soup.title.string.strip() if soup.title and soup.title.string else ""
+    for table in soup.find_all("table"):
+        md = _html_table_to_markdown(table)
+        if md:
+            table.replace_with(NavigableString("\n" + md + "\n"))
+        else:
+            table.decompose()
 
     main = (
         soup.find("main")
@@ -57,9 +97,22 @@ def extract_text(soup: BeautifulSoup):
         or soup.body
         or soup
     )
+
     text = main.get_text(separator="\n")
     lines = [line.strip() for line in text.splitlines()]
-    text = "\n".join(line for line in lines if line)
+    cleaned = []
+    prev_blank = False
+    for line in lines:
+        if not line:
+            if not prev_blank:
+                cleaned.append("")
+            prev_blank = True
+        else:
+            cleaned.append(line)
+            prev_blank = False
+
+    text = "\n".join(cleaned).strip()
+    text = re.sub(r" {2,}", " ", text)
     return title, text
 
 
@@ -92,13 +145,55 @@ def fetch_page(url: str, session: requests.Session, delay: float):
         return None
 
 
-def _save(corpus, output_path, lock):
-    """Atomically write corpus to disk."""
+def _checkpoint_path(output_path: str) -> str:
+    base, ext = os.path.splitext(output_path)
+    return base + ".checkpoint" + ext
+
+
+def _save(corpus, output_path, lock, frontier=None, visited=None):
+    """Atomically write corpus and checkpoint to disk."""
     with lock:
         tmp = output_path + ".tmp"
         with open(tmp, "w", encoding="utf-8") as f:
             json.dump(corpus, f, ensure_ascii=False, indent=2)
         os.replace(tmp, output_path)
+
+        if frontier is not None and visited is not None:
+            ckpt = {
+                "frontier": list(frontier),
+                "visited": list(visited),
+            }
+            ckpt_path = _checkpoint_path(output_path)
+            tmp_ckpt = ckpt_path + ".tmp"
+            with open(tmp_ckpt, "w", encoding="utf-8") as f:
+                json.dump(ckpt, f, ensure_ascii=False)
+            os.replace(tmp_ckpt, ckpt_path)
+
+
+def _load_checkpoint(output_path: str):
+    """Load previous corpus and checkpoint state for resume.
+    Returns (corpus, visited, frontier) or ([], set(), deque()) if nothing exists."""
+    corpus = []
+    visited = set()
+    frontier = deque()
+
+    if os.path.exists(output_path):
+        with open(output_path, "r", encoding="utf-8") as f:
+            corpus = json.load(f)
+        print(f"Resumed: loaded {len(corpus)} pages from {output_path}")
+
+    ckpt_path = _checkpoint_path(output_path)
+    if os.path.exists(ckpt_path):
+        with open(ckpt_path, "r", encoding="utf-8") as f:
+            ckpt = json.load(f)
+        visited = set(ckpt.get("visited", []))
+        frontier = deque(ckpt.get("frontier", []))
+        print(f"Resumed: {len(visited)} visited URLs, {len(frontier)} frontier URLs from checkpoint")
+    elif corpus:
+        visited = {page["url"] for page in corpus}
+        print("No checkpoint file found — rebuilt visited set from corpus URLs only")
+
+    return corpus, visited, frontier
 
 
 def crawl(
@@ -108,25 +203,34 @@ def crawl(
     num_threads: int,
     delay: float,
     save_every: int,
+    resume: bool = False,
 ):
-    visited = set()
+    if resume:
+        corpus, visited, frontier = _load_checkpoint(output_path)
+        if not frontier and not corpus:
+            frontier = deque([seed_url])
+        elif not frontier:
+            print("Checkpoint has empty frontier — crawl already finished or frontier was exhausted.")
+            print(f"Corpus has {len(corpus)} pages. Nothing to resume.")
+            return
+    else:
+        corpus = []
+        visited = set()
+        frontier = deque([seed_url])
+
     visited_lock = threading.Lock()
-
-    corpus = []
     corpus_lock = threading.Lock()
-
-    frontier = deque([seed_url])
     frontier_lock = threading.Lock()
 
     session = requests.Session()
     session.headers.update({"User-Agent": "Mozilla/5.0 (CS288 RAG Assignment)"})
 
-    pbar = tqdm(desc="Crawling", unit="pages")
+    already = len(corpus)
+    pbar = tqdm(desc="Crawling", unit="pages", initial=already)
     stop_event = threading.Event()
 
     def worker():
         while not stop_event.is_set():
-            # Pull a URL off the frontier
             with frontier_lock:
                 if not frontier:
                     return
@@ -137,14 +241,12 @@ def crawl(
             if result is None:
                 continue
 
-            # Enqueue newly discovered links
             with visited_lock:
                 new_links = result["links"] - visited
                 visited.update(new_links)
             with frontier_lock:
                 frontier.extend(new_links)
 
-            # Save page — no minimum text length check, keep everything
             page = {"url": result["url"], "title": result["title"], "text": result["text"]}
             with corpus_lock:
                 corpus.append(page)
@@ -153,21 +255,21 @@ def crawl(
             pbar.update(1)
             pbar.set_postfix(frontier=len(frontier), visited=len(visited))
 
-            # Periodic save so progress survives a crash
             if count % save_every == 0:
-                _save(corpus, output_path, corpus_lock)
+                with visited_lock:
+                    vis_snap = set(visited)
+                with frontier_lock:
+                    front_snap = list(frontier)
+                _save(corpus, output_path, corpus_lock,
+                      frontier=front_snap, visited=vis_snap)
 
-            # Honour optional page cap
             if max_pages is not None and count >= max_pages:
                 stop_event.set()
                 return
 
-    # Mark seed as visited before spawning workers
     seed_clean = seed_url.split("#")[0].split("?")[0]
     visited.add(seed_clean)
 
-    # Keep the pool saturated: submit a new worker whenever one finishes,
-    # as long as there is still frontier work and we haven't hit the cap.
     with ThreadPoolExecutor(max_workers=num_threads) as executor:
         futures = {executor.submit(worker) for _ in range(num_threads)}
 
@@ -175,7 +277,6 @@ def crawl(
             still_running = set()
             for f in list(futures):
                 if f.done():
-                    # Re-submit if there's still work to do
                     with frontier_lock:
                         has_work = bool(frontier)
                     if has_work and not stop_event.is_set():
@@ -186,12 +287,22 @@ def crawl(
             time.sleep(0.05)
 
     pbar.close()
-    _save(corpus, output_path, corpus_lock)
-    print(f"\nFinished. Crawled {len(corpus)} pages → {output_path}")
+
+    with visited_lock:
+        vis_snap = set(visited)
+    with frontier_lock:
+        front_snap = list(frontier)
+    _save(corpus, output_path, corpus_lock,
+          frontier=front_snap, visited=vis_snap)
+
+    new_pages = len(corpus) - already
+    print(f"\nFinished. Crawled {new_pages} new pages ({len(corpus)} total) → {output_path}")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Multi-threaded EECS website crawler")
+    parser.add_argument("--seed", default=SEED_URL,
+                        help="Seed URL to start crawling from (default: %(default)s)")
     parser.add_argument("--output", default="corpus/pages.json",
                         help="Output JSON file path")
     parser.add_argument("--max_pages", type=int, default=None,
@@ -202,18 +313,20 @@ if __name__ == "__main__":
                         help="Per-thread delay between requests in seconds (default: 0.1)")
     parser.add_argument("--save_every", type=int, default=100,
                         help="Save corpus to disk every N pages (default: 100)")
+    parser.add_argument("--resume", action="store_true",
+                        help="Resume from previous checkpoint instead of starting fresh")
     args = parser.parse_args()
 
-    # Treat --max_pages 0 as unlimited
     max_pages = args.max_pages if args.max_pages and args.max_pages > 0 else None
 
     os.makedirs(os.path.dirname(args.output) if os.path.dirname(args.output) else ".", exist_ok=True)
 
     crawl(
-        seed_url=SEED_URL,
+        seed_url=args.seed,
         output_path=args.output,
         max_pages=max_pages,
         num_threads=args.threads,
         delay=args.delay,
         save_every=args.save_every,
+        resume=args.resume,
     )
