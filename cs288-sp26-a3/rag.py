@@ -35,18 +35,18 @@ from llm import call_llm  # provided by course staff — do NOT modify llm.py
 # ──────────────────────────────────────────────
 CORPUS_PATH   = "corpus/pages.json"    # output of crawl.py
 CACHE_DIR     = "cache"                # where we store pre-built index files
-CHUNK_SIZE    = 200                    # words per chunk
-CHUNK_OVERLAP = 50                     # word overlap between consecutive chunks
-TOP_K_RETRIEVE = 5                     # number of chunks passed to the LLM
-BM25_WEIGHT   = 0.3                    # weight for BM25 score in hybrid ranking
-DENSE_WEIGHT  = 0.7                    # weight for dense score in hybrid ranking
+CHUNK_SIZE    = 150                    # words per chunk
+CHUNK_OVERLAP = 40                     # word overlap between consecutive chunks
+TOP_K_RETRIEVE = 10                   # number of chunks passed to the LLM
+BM25_WEIGHT   = 0.7                    # weight for BM25 score in hybrid ranking
+DENSE_WEIGHT  = 0.3                    # weight for dense score in hybrid ranking
 EMBED_MODEL   = "sentence-transformers/all-MiniLM-L6-v2"  # ~90 MB, fast on CPU
 
 SYSTEM_PROMPT = (
     "You are a helpful assistant answering questions about UC Berkeley EECS. "
     "Answer using ONLY the provided context. "
     "Give a SHORT answer (under 10 words). "
-    "If the answer is not in the context, reply with UNKNOWN."
+    "If the answer is not clearly in the context reply UNKNOWN."
     "If there are multiple answers, answer with any single correct answer."
     "If the question asks for Yes/No, only reply with exactly Yes or No. Do not give additional explanations."
 )
@@ -209,10 +209,14 @@ class RAGModel:
                 system_prompt=SYSTEM_PROMPT,
                 query=prompt,
                 model="meta-llama/llama-3.1-8b-instruct",
+                max_tokens=16,
+                temperature=0.0,
             )
             # Strip to first line, truncate aggressively
             answer = response.strip().splitlines()[0].strip()
-            return answer
+            answer = answer.split(".")[0]
+            answer = answer.split(",")[0]
+            return answer[:80]
         except Exception as e:
             print(f"Exception: {e}")
             return "UNKNOWN"
