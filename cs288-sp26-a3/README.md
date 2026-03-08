@@ -1,3 +1,6 @@
 ## How to run
 
-python(3) evaluate.py test_qa/ground_truth.txt test_qa/answers.txt > results.txt
+
+
+python evaluate_rag_model.py data_500/questions.txt data_500/answers.txt
+python evaluate.py data_500/answers_gold.txt data_500/answers.txt > results.txt
