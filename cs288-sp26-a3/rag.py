@@ -22,7 +22,7 @@ from llm import call_llm
 # Configuration
 # ──────────────────────────────────────────────
 
-CORPUS_PATH = "corpus/pages_new.json"
+CORPUS_PATH = "corpus/pages_all.json"
 CACHE_DIR = "cache"
 
 CHUNK_SIZE = 150
