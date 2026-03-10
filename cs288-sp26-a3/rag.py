@@ -13,6 +13,7 @@ import numpy as np
 import faiss
 from rank_bm25 import BM25Okapi
 from sentence_transformers import SentenceTransformer
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from llm import call_llm
 
@@ -21,7 +22,7 @@ from llm import call_llm
 # Configuration
 # ──────────────────────────────────────────────
 
-CORPUS_PATH = "corpus/pages.json"
+CORPUS_PATH = "corpus/pages_new.json"
 CACHE_DIR = "cache"
 
 CHUNK_SIZE = 150
@@ -39,6 +40,8 @@ SYSTEM_PROMPT = (
     "Answer using ONLY the provided context. "
     "Give a SHORT answer (under 10 words). "
     "If the answer is not clearly in the context reply UNKNOWN."
+    "If the answer asks for Yes/No, reply only with Yes or No."
+    "If there are multiple possible answers, only reply with one most probable one."
 )
 
 
@@ -250,6 +253,7 @@ class RAGModel:
                 model="meta-llama/llama-3.1-8b-instruct",
                 max_tokens=16,
                 temperature=0.0,
+                timeout=3,
             )
 
             answer = response.strip().splitlines()[0].strip()
@@ -266,23 +270,22 @@ class RAGModel:
     # Public API
     # ──────────────────────────────────────────────
 
-    def predict(self, questions):
+    def predict(self, questions: list[str]) -> list[str]:
+        answers = ["UNKNOWN"] * len(questions)
 
-        answers = []
-
-        for q in questions:
-
+        def process(i, q):
             try:
-
                 chunks = self._retrieve(q)
+                return i, self._generate(q, chunks)
+            except Exception as e:
+                print(f"Exception during inference, {e}")
+                return i, "UNKNOWN"
 
-                answer = self._generate(q, chunks)
-
-            except Exception:
-
-                answer = "UNKNOWN"
-
-            answers.append(answer)
+        with ThreadPoolExecutor(max_workers=20) as executor:
+            futures = {executor.submit(process, i, q): i for i, q in enumerate(questions)}
+            for future in as_completed(futures):
+                i, answer = future.result()
+                answers[i] = answer
 
         return answers
 
