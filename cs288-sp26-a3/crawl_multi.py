@@ -80,7 +80,10 @@ def extract_text(soup: BeautifulSoup):
     and aggressively stripping boilerplate."""
     title = soup.title.string.strip() if soup.title and soup.title.string else ""
 
-    for tag in soup(["script", "style", "noscript", "nav", "footer", "header"]):
+    meta_tag = soup.find("meta", attrs={"name": "description"})
+    meta_description = meta_tag["content"].strip() if meta_tag and meta_tag.get("content") else ""
+
+    for tag in soup(["script", "style", "noscript", "nav", "footer", "aside"]):
         tag.decompose()
 
     for table in soup.find_all("table"):
@@ -113,7 +116,7 @@ def extract_text(soup: BeautifulSoup):
 
     text = "\n".join(cleaned).strip()
     text = re.sub(r" {2,}", " ", text)
-    return title, text
+    return title, text, meta_description
 
 
 def fetch_page(url: str, session: requests.Session, delay: float):
@@ -130,16 +133,22 @@ def fetch_page(url: str, session: requests.Session, delay: float):
             return None
 
         soup = BeautifulSoup(resp.text, "html.parser")
-        title, text = extract_text(soup)
+        title, text, meta_description = extract_text(soup)
 
-        # Collect all outgoing links from this page
+        raw_len = len(resp.text)
+        if raw_len > 0:
+            ratio = len(text) / raw_len
+            if ratio < 0.05:
+                print(f"[Warning] Low text ratio ({ratio:.1%}) for {url}")
+
         links = set()
         for a_tag in soup.find_all("a", href=True):
             link = urljoin(url, a_tag["href"]).split("#")[0].split("?")[0]
             if is_allowed_url(link):
                 links.add(link)
 
-        return {"url": url, "title": title, "text": text, "links": links}
+        return {"url": url, "title": title, "text": text,
+                "meta_description": meta_description, "links": links}
 
     except Exception:
         return None
@@ -247,7 +256,8 @@ def crawl(
             with frontier_lock:
                 frontier.extend(new_links)
 
-            page = {"url": result["url"], "title": result["title"], "text": result["text"]}
+            page = {"url": result["url"], "title": result["title"],
+                    "text": result["text"], "meta_description": result["meta_description"]}
             with corpus_lock:
                 corpus.append(page)
                 count = len(corpus)
