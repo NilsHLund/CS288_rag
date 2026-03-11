@@ -20,6 +20,7 @@ Usage:
                        --pred data/predictions.txt
 """
 
+from pathlib import Path
 import re
 import string
 import json
@@ -53,6 +54,7 @@ def normalize_answer(s: str) -> str:
 def f1_score(prediction: str, ground_truth: str) -> float:
     prediction_tokens = normalize_answer(prediction).split()
     ground_truth_tokens = normalize_answer(ground_truth).split()
+    print(f"Pred: {prediction_tokens}, GT: {ground_truth_tokens}")
     common = Counter(prediction_tokens) & Counter(ground_truth_tokens)
     num_same = sum(common.values())
     if num_same == 0:
@@ -99,6 +101,10 @@ def load_predictions(path: str) -> List[str]:
         return [line.strip() for line in f]
 
 
+def load_answers(path: str) -> List[List[str]]:
+    with open(path, encoding="utf-8") as f:
+        return [[a.strip() for a in line.split("|")] for line in f]
+
 # ---------------------------------------------------------------------------
 # Evaluate
 # ---------------------------------------------------------------------------
@@ -133,13 +139,19 @@ def evaluate(predictions: List[str], golds: List[List[str]]) -> dict:
 
 def main():
     parser = argparse.ArgumentParser(description="Evaluate RAG predictions (SQuAD v1.1 scoring)")
-    parser.add_argument("reference", help="Path to reference.jsonl")
+    parser.add_argument("reference", help="Path to reference.jsonl or answers.txt")
     parser.add_argument("predictions", help="Path to predictions.txt (one answer per line)")
     parser.add_argument("--verbose", action="store_true",
                         help="Print per-question results")
     args = parser.parse_args()
 
-    questions, golds, urls = load_reference_jsonl(args.reference)
+    if Path(args.reference).suffix == ".jsonl":
+        questions, golds, urls = load_reference_jsonl(args.reference)
+    elif Path(args.reference).suffix == ".txt":
+        golds = load_answers(args.reference)
+    else:
+        raise ValueError("Reference should be .txt or .jsonl")
+    
     predictions = load_predictions(args.predictions)
 
     results = evaluate(predictions, golds)
