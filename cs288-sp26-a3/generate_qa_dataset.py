@@ -1,13 +1,17 @@
 import json
+import os
 import requests
 import random
 import time
+from dotenv import load_dotenv
+
+load_dotenv(os.path.join(os.path.dirname(__file__), "..", ".env"))
 
 INPUT_FILE = "corpus/pages_all.json"
 OUTPUT_FILE = "generated_qa.jsonl"
 
-OLLAMA_URL = "http://localhost:11434/api/generate"
-MODEL = "llama3"
+GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
+GEMINI_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key={GEMINI_API_KEY}"
 
 CHUNK_WORDS = 300
 
@@ -59,11 +63,16 @@ TEXT:
     for attempt in range(3):
         try:
             response = requests.post(
-                OLLAMA_URL,
-                json={"model": MODEL, "prompt": prompt, "stream": False},
+                GEMINI_URL,
+                json={"contents": [{"parts": [{"text": prompt}]}]},
                 timeout=30,
             )
-            text = response.json()["response"]
+            data = response.json()
+            if "error" in data:
+                print(f"API error: {data['error'].get('message', data['error'])}")
+                time.sleep(2)
+                continue
+            text = data["candidates"][0]["content"]["parts"][0]["text"]
             qa = extract_json(text)
             if qa:
                 return qa
