@@ -23,6 +23,7 @@ import time
 import re
 import argparse
 import os
+import logging
 import threading
 from collections import deque
 from urllib.parse import urljoin, urlparse
@@ -119,39 +120,73 @@ def extract_text(soup: BeautifulSoup):
     return title, text, meta_description
 
 
-def fetch_page(url: str, session: requests.Session, delay: float):
+FAILED_URLS_PATH = "corpus/failed_urls.txt"
+_failed_urls_lock = threading.Lock()
+
+
+def fetch_page(url: str, session: requests.Session, delay: float,
+               is_retry: bool = False):
     """
     Fetch a single page and return a result dict, or None on failure.
+    Retries with exponential backoff on 429/503 and connection errors.
     """
+    if url.startswith("http://"):
+        url = url.replace("http://", "https://", 1)
     time.sleep(delay)
-    try:
-        resp = session.get(url, timeout=10)
+    backoff = 5
+
+    for attempt in range(3):
+        try:
+            resp = session.get(url, timeout=10)
+        except Exception as e:
+            logging.warning("Request exception for %s: %s (attempt %d/3)",
+                            url, e, attempt + 1)
+            time.sleep(backoff)
+            backoff *= 2
+            continue
+
+        if resp.status_code in (429, 503):
+            logging.warning("Rate limited (%d) for %s — retrying in %ds (attempt %d/3)",
+                            resp.status_code, url, backoff, attempt + 1)
+            time.sleep(backoff)
+            backoff *= 2
+            continue
+
         if resp.status_code != 200:
+            logging.warning("HTTP %d for %s", resp.status_code, url)
             return None
+
         content_type = resp.headers.get("Content-Type", "")
         if "text/html" not in content_type:
             return None
 
         soup = BeautifulSoup(resp.text, "html.parser")
+
+        links = set()
+        for a_tag in soup.find_all("a", href=True):
+            link = urljoin(url, a_tag["href"]).split("#")[0].split("?")[0]
+            if link.startswith("http://"):
+                link = link.replace("http://", "https://", 1)
+            if is_allowed_url(link):
+                links.add(link)
+
         title, text, meta_description = extract_text(soup)
 
         raw_len = len(resp.text)
         if raw_len > 0:
             ratio = len(text) / raw_len
-            if ratio < 0.05:
-                print(f"[Warning] Low text ratio ({ratio:.1%}) for {url}")
-
-        links = set()
-        for a_tag in soup.find_all("a", href=True):
-            link = urljoin(url, a_tag["href"]).split("#")[0].split("?")[0]
-            if is_allowed_url(link):
-                links.add(link)
+            if ratio < 0.005:
+                logging.warning("Low text ratio (%.1f%%) for %s", ratio * 100, url)
 
         return {"url": url, "title": title, "text": text,
                 "meta_description": meta_description, "links": links}
 
-    except Exception:
-        return None
+    logging.warning("Failed after 3 retries for %s", url)
+    if not is_retry:
+        with _failed_urls_lock:
+            with open(FAILED_URLS_PATH, "a", encoding="utf-8") as f:
+                f.write(url + "\n")
+    return None
 
 
 def _checkpoint_path(output_path: str) -> str:
@@ -206,7 +241,7 @@ def _load_checkpoint(output_path: str):
 
 
 def crawl(
-    seed_url: str,
+    seed_urls: list[str],
     output_path: str,
     max_pages: Optional[int],
     num_threads: int,
@@ -214,10 +249,12 @@ def crawl(
     save_every: int,
     resume: bool = False,
 ):
+    clean_seeds = [u.split("#")[0].split("?")[0] for u in seed_urls]
+
     if resume:
         corpus, visited, frontier = _load_checkpoint(output_path)
         if not frontier and not corpus:
-            frontier = deque([seed_url])
+            frontier = deque(clean_seeds)
         elif not frontier:
             print("Checkpoint has empty frontier — crawl already finished or frontier was exhausted.")
             print(f"Corpus has {len(corpus)} pages. Nothing to resume.")
@@ -225,7 +262,7 @@ def crawl(
     else:
         corpus = []
         visited = set()
-        frontier = deque([seed_url])
+        frontier = deque(clean_seeds)
 
     visited_lock = threading.Lock()
     corpus_lock = threading.Lock()
@@ -277,42 +314,89 @@ def crawl(
                 stop_event.set()
                 return
 
-    seed_clean = seed_url.split("#")[0].split("?")[0]
-    visited.add(seed_clean)
+    visited.update(clean_seeds)
+    interrupted = False
 
     with ThreadPoolExecutor(max_workers=num_threads) as executor:
-        futures = {executor.submit(worker) for _ in range(num_threads)}
+        try:
+            futures = {executor.submit(worker) for _ in range(num_threads)}
 
-        while futures:
-            still_running = set()
-            for f in list(futures):
-                if f.done():
-                    with frontier_lock:
-                        has_work = bool(frontier)
-                    if has_work and not stop_event.is_set():
-                        still_running.add(executor.submit(worker))
-                else:
-                    still_running.add(f)
-            futures = still_running
-            time.sleep(0.05)
+            while futures:
+                still_running = set()
+                for f in list(futures):
+                    if f.done():
+                        with frontier_lock:
+                            has_work = bool(frontier)
+                        if has_work and not stop_event.is_set():
+                            still_running.add(executor.submit(worker))
+                    else:
+                        still_running.add(f)
+                futures = still_running
+                time.sleep(0.05)
+        except KeyboardInterrupt:
+            print("\nInterrupted — stopping threads...")
+            stop_event.set()
+            interrupted = True
+        finally:
+            pbar.close()
+            with visited_lock:
+                vis_snap = set(visited)
+            with frontier_lock:
+                front_snap = list(frontier)
+            _save(corpus, output_path, corpus_lock,
+                  frontier=front_snap, visited=vis_snap)
+            new_pages = len(corpus) - already
+            print(f"\nSaved. Crawled {new_pages} new pages ({len(corpus)} total) → {output_path}")
 
-    pbar.close()
+    if interrupted:
+        return
 
-    with visited_lock:
-        vis_snap = set(visited)
-    with frontier_lock:
-        front_snap = list(frontier)
-    _save(corpus, output_path, corpus_lock,
-          frontier=front_snap, visited=vis_snap)
+    # --- Slow retry phase for failed URLs ---
+    if not os.path.exists(FAILED_URLS_PATH):
+        return
 
-    new_pages = len(corpus) - already
-    print(f"\nFinished. Crawled {new_pages} new pages ({len(corpus)} total) → {output_path}")
+    with open(FAILED_URLS_PATH, "r", encoding="utf-8") as f:
+        failed = list(dict.fromkeys(line.strip() for line in f if line.strip()))
+
+    if not failed:
+        os.remove(FAILED_URLS_PATH)
+        return
+
+    print(f"\nRetrying {len(failed)} failed URLs at a slow rate...")
+    permanently_failed_path = "corpus/permanently_failed.txt"
+
+    for i, url in enumerate(failed, 1):
+        print(f"  Retry {i}/{len(failed)}: {url}")
+        result = fetch_page(url, session, delay=3.0, is_retry=True)
+
+        # Remove this URL from the failed list regardless of outcome
+        remaining = failed[i:]
+        if remaining:
+            with open(FAILED_URLS_PATH, "w", encoding="utf-8") as f:
+                f.write("\n".join(remaining) + "\n")
+        elif os.path.exists(FAILED_URLS_PATH):
+            os.remove(FAILED_URLS_PATH)
+
+        if result is None:
+            with open(permanently_failed_path, "a", encoding="utf-8") as f:
+                f.write(url + "\n")
+            continue
+
+        page = {"url": result["url"], "title": result["title"],
+                "text": result["text"], "meta_description": result["meta_description"]}
+        corpus.append(page)
+        _save(corpus, output_path, corpus_lock,
+              frontier=list(frontier), visited=visited)
+        print(f"    Recovered: {result['title'][:80]}")
+
+    print(f"Retry phase complete. Corpus now has {len(corpus)} pages.")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Multi-threaded EECS website crawler")
-    parser.add_argument("--seed", default=SEED_URL,
-                        help="Seed URL to start crawling from (default: %(default)s)")
+    parser.add_argument("--seed",
+                        default="https://eecs.berkeley.edu,https://www2.eecs.berkeley.edu",
+                        help="Comma-separated seed URLs (default: %(default)s)")
     parser.add_argument("--output", default="corpus/pages.json",
                         help="Output JSON file path")
     parser.add_argument("--max_pages", type=int, default=None,
@@ -325,14 +409,28 @@ if __name__ == "__main__":
                         help="Save corpus to disk every N pages (default: 100)")
     parser.add_argument("--resume", action="store_true",
                         help="Resume from previous checkpoint instead of starting fresh")
+    parser.add_argument("--log", default=None,
+                        help="Path to a log file for warnings (default: console only)")
     args = parser.parse_args()
 
     max_pages = args.max_pages if args.max_pages and args.max_pages > 0 else None
 
+    handlers = [logging.StreamHandler()]
+    if args.log:
+        os.makedirs(os.path.dirname(args.log) if os.path.dirname(args.log) else ".", exist_ok=True)
+        handlers.append(logging.FileHandler(args.log, mode="a", encoding="utf-8"))
+    logging.basicConfig(
+        level=logging.WARNING,
+        format="%(asctime)s %(levelname)s %(message)s",
+        handlers=handlers,
+    )
+
     os.makedirs(os.path.dirname(args.output) if os.path.dirname(args.output) else ".", exist_ok=True)
 
+    seed_urls = [s.strip() for s in args.seed.split(",") if s.strip()]
+
     crawl(
-        seed_url=args.seed,
+        seed_urls=seed_urls,
         output_path=args.output,
         max_pages=max_pages,
         num_threads=args.threads,
