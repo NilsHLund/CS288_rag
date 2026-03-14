@@ -253,7 +253,7 @@ class RAGModel:
                 model="meta-llama/llama-3.1-8b-instruct",
                 max_tokens=16,
                 temperature=0.0,
-                timeout=3,
+                timeout=10,
             )
 
             answer = response.strip().splitlines()[0].strip()
