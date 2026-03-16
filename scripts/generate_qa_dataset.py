@@ -13,7 +13,7 @@ load_dotenv(os.path.join(os.path.dirname(__file__), "..", ".env"))
 
 # --- Config ---
 INPUT_FILE = "corpus/pages_all.json"
-OUTPUT_FILE = "data/qa/generated_qa_hard.jsonl"
+OUTPUT_FILE = "data/qa/generated_qa_dense.jsonl"
 DEFAULT_LIMIT = int(os.environ.get("QA_LIMIT", "500"))  # Max QA pairs to generate
 CHUNK_WORDS = 800
 
@@ -98,49 +98,92 @@ def get_chunk(text):
 
 
 def _build_prompt(context):
-    return f"""Generate ONE factoid question-answer pair from this EECS webpage text.
+    return f"""Generate ONE factoid question-answer pair from this UC Berkeley EECS webpage text.
+
+Goal:
+- Create a question that is answerable from this webpage alone.
+- The question should favor dense retrieval / semantic retrieval, meaning it should be easier to retrieve by semantic similarity than by exact keyword overlap alone.
 
 Rules:
 - The question must be answerable from this webpage alone.
 - The answer MUST be an exact substring extracted directly from the text.
 - The answer must be under 10 words. If the natural answer would be longer, choose a different question.
-- Prefer extractive questions whose answer appears directly on the page.
+- Prefer extractive questions whose answer appears explicitly on the page.
 - The question must be fully self-contained and understandable on its own.
 - NEVER use pronouns like "he", "she", "it", "this", or "they" in the question.
-- Prefer realistic questions a student, applicant, or visitor might ask about UC Berkeley EECS.
-- Favor diversity across question types, especially:
-  1. faculty or student facts
-  2. course information
-  3. program requirements
-  4. office numbers or locations
-  5. email or contact information
-  6. awards or honors
-  7. temporal facts involving a year or "most recent"
-- Prefer questions about office locations, contact information, requirements, deadlines, awards, course details, roles, responsibilities, or temporal facts.
-- Prefer questions that require locating the correct section of the page, rather than matching a unique title or identifier.
-- Paraphrase naturally when possible, and avoid copying long titles, report names, or rare exact phrases verbatim into the question unless necessary for clarity.
-- The question and answer must refer to the same clearly identified person, role, event, or entity on the page.
-- Do not generate a question if the relevant entity-to-answer mapping is ambiguous.
-- Avoid long or messy list answers unless the list is short, explicit, and central to the page.
+- Prefer realistic questions a student, applicant, researcher, or visitor might naturally ask about UC Berkeley EECS.
+- Favor questions about:
+  - program purpose or structure
+  - requirements or eligibility
+  - roles or responsibilities
+  - relationships between people, programs, courses, awards, or research topics
+  - research themes, publication venues, academic distinctions, or substantive policies
+- Prefer questions whose wording is a natural semantic reformulation of the source text.
+- Prefer questions that require matching by meaning, role, purpose, attribute, or relationship, rather than by exact phrase overlap.
+- The answer must still be a short exact span from the page, but the question should not simply copy distinctive words or titles from the source unless necessary for clarity.
+- Prefer questions where an embedding-based retriever would have an advantage over exact lexical matching.
+- Avoid questions that can be answered mainly by copying one rare phrase from the question into a search box.
+- Avoid questions whose solution mainly depends on exact string matching of:
+  - office numbers
+  - room numbers
+  - office locations
+  - email addresses
+  - phone numbers
+  - exact event titles
+  - exact award names
+  - exact course codes alone
+  - full report names
+  - technical report numbers
+  - version numbers
+  - patent numbers
+  - grant numbers
+  - article publication dates
+- Avoid repetitive metadata lookup questions such as:
+  - publication year
+  - article publication date
+  - version number
+  - report number
+  - technical report number
+  - patent number
+  - grant number
+  - advisor names
+  - paper authors
+  - phone numbers
+  - room numbers
+  - email addresses
+- Avoid directory-style, contact-book, or identifier-lookup questions unless the fact is unusually important and central to the page.
 - DO NOT ask general questions like "Where is the department located?" or "What is this department?"
 - Avoid overly generic questions.
-- Avoid repetitive metadata lookup questions such as publication year, article publication date, version number, report numbers, technical report numbers, patent numbers, grant numbers, advisor names, or paper authors.
+- The question and answer must refer to the same clearly identified person, role, event, policy, program, course, or entity on the page.
+- Do not generate a question if the entity-to-answer mapping is ambiguous.
+- Avoid long or messy list answers unless the list is short, explicit, and central to the page.
 - Avoid questions that refer to "this page", "this report", "this paper", "the article", or similar non-self-contained phrases.
-- Output valid JSON only with keys "question" and "answer".
+
+Process:
+1. Identify a concrete fact on the page with a short extractive answer.
+2. Rewrite the question so that it asks for the fact by meaning, role, purpose, attribute, or relationship.
+3. Reduce exact lexical overlap between the question and the answer-bearing sentence whenever possible without making the question unnatural.
+4. If the question mostly works because of exact title matching, identifier matching, or contact lookup, choose a different fact.
 
 Bad questions:
-- "What is the technical report number for this EECS report?"
-- "What is the report number?"
-- "Who wrote this paper?"
-- "When was the article published?"
-- "What is the title of the paper called X?"
+- "What is Dan Klein's office number?"
+- "Which email address should students use to submit the EECS Minor Declaration Form?"
+- "What room hosted the colloquium on October 25, 2023?"
+- "What is the phone number for the Computer Science Division office?"
+- "Who won the 2021-22 Google-CMD-IT LEAP Fellowship Award?"
+- "Which speaker is scheduled to present 'Reading Alan Turing'?"
+- "What is the technical report number for this report?"
 
 Good questions:
-- "How many GSI hours do Berkeley EECS students need to obtain a doctoral degree?"
-- "Which email address should CS Ph.D. students send their Ph.D. Student Review to?"
-- "What is the office number of Dan Klein?"
-- "Who is the winner of the Eugene L. Lawler Prize in 2024-25?"
-- "What is the title of the dissertation of Dan Klein’s most recent Ph.D. graduate?"
+- "Which degree option is intended as a professional master’s program?"
+- "What minimum GPA is expected from applicants using a 4.0 grading scale?"
+- "Which program supports graduate students preparing for faculty careers?"
+- "What journal published the research on the cockroach-inspired robot?"
+- "Which Berkeley EECS option is designed for accelerated study?"
+- "What teaching requirement must doctoral students complete in GSI hours?"
+
+Output valid JSON only, with keys "question" and "answer".
+
 
 TEXT:
 {context}
