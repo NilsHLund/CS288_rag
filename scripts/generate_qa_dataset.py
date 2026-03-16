@@ -13,7 +13,7 @@ load_dotenv(os.path.join(os.path.dirname(__file__), "..", ".env"))
 
 # --- Config ---
 INPUT_FILE = "corpus/pages_all.json"
-OUTPUT_FILE = "data/qa/generated_qa_dense_02.jsonl"
+OUTPUT_FILE = "data/qa/generated_qa_yesorno.jsonl"
 DEFAULT_LIMIT = int(os.environ.get("QA_LIMIT", "500"))  # Max QA pairs to generate
 CHUNK_WORDS = 800
 
@@ -97,138 +97,47 @@ def get_chunk(text):
 
 
 def _build_prompt(context):
-    return f"""Generate ONE factoid question-answer pair from this UC Berkeley EECS webpage text.
+    return f"""Generate ONE yes/no question-answer pair from this UC Berkeley EECS webpage text.
 
 Goal:
 - Create a question that is answerable from this webpage alone.
-- The question should favor dense retrieval / semantic retrieval, meaning it should be easier to retrieve by semantic similarity than by exact keyword overlap alone.
-- Generate only medium-to-hard questions.
-- Prefer questions that test semantic understanding of requirements, eligibility, policies, program purpose, or program structure.
-- If the page does not support a strong medium-to-hard semantic question, output {{"question": "", "answer": ""}}.
+- The answer must be exactly "Yes" or "No".
+- Prefer realistic yes/no questions that a student, applicant, researcher, or visitor might naturally ask.
+- Only generate a question if the page contains clear evidence for a definite yes or no answer.
 
 Rules:
-- The question must be answerable from this webpage alone.
-- The answer MUST be an exact substring extracted directly from the text.
-- The answer must be under 10 words. If the natural answer would be longer, choose a different question.
-- Prefer extractive questions whose answer appears explicitly on the page.
 - The question must be fully self-contained and understandable on its own.
 - NEVER use pronouns like "he", "she", "it", "this", or "they" in the question.
-- Prefer realistic questions a student, applicant, researcher, or visitor might naturally ask about UC Berkeley EECS.
+- The answer must be exactly one of: "Yes" or "No".
+- The answer must be clearly supported by the webpage text.
+- Do not generate a question if the page does not provide a definite answer.
+- Prefer questions about:
+  - requirements or eligibility
+  - whether a course, program, or option has a certain feature
+  - whether a rule, policy, or restriction applies
+  - whether a specific program is intended for a certain group
+- Avoid questions that are trivial, vague, ambiguous, or based on weak inference.
+- Avoid questions that require outside knowledge.
+- Avoid questions about office numbers, phone numbers, room numbers, email addresses, report numbers, or publication dates.
+- Avoid questions whose answer depends on a highly time-sensitive detail unless the page clearly states it.
 
-Highest priority question types:
-1. requirements, eligibility, or policies
-2. program purpose or program structure
+Good examples:
+- "Is pass/fail grading allowed for this course?"
+- "Is the program intended for transfer students?"
+- "Does the course have a final exam?"
+- "Can students from outside the United States apply for this fellowship?"
 
-Secondary priority question types:
-3. roles, responsibilities, or affiliations
-4. relationships between people, programs, courses, awards, or research topics
-5. research themes, publication venues, honors, or substantive news facts
-
-Use deadlines or rules only when they are central, substantive, and not overly time-sensitive.
-
-Prefer requirement / policy / eligibility questions such as:
-- what GPA is required
-- what requirement must be completed
-- who is eligible for a program
-- what rule applies to a certain student group
-- what condition is needed for a course, degree, or application
-
-Prefer program purpose / structure questions such as:
-- which program is intended for a certain kind of student
-- which option is designed as a professional master's program
-- which program supports preparation for faculty careers
-- what a program, option, or course is meant for
-
-Prefer relation / research questions only if no strong requirement/purpose/structure question is available.
-
-- Prefer questions whose wording is a natural semantic reformulation of the source text.
-- Prefer questions that require matching by meaning, role, purpose, attribute, requirement, policy, or relationship, rather than by exact phrase overlap.
-- The answer must still be a short exact span from the page, but the question should not simply copy distinctive words or titles from the source unless necessary for clarity.
-- Prefer questions where an embedding-based retriever would have an advantage over exact lexical matching.
-- Avoid questions that can be answered mainly by copying one rare phrase from the question into a search box.
-- If a requirement/policy/purpose/structure question is available on the page, choose it instead of any easier fact lookup question.
-
-Do NOT generate questions whose solution mainly depends on exact string matching of:
-- office numbers
-- room numbers
-- office locations
-- building names by themselves
-- email addresses
-- phone numbers
-- exact event titles alone
-- exact award names alone
-- exact course codes alone
-- full report names
-- technical report numbers
-- version numbers
-- patent numbers
-- grant numbers
-- article publication dates
-
-Do NOT generate repetitive metadata lookup questions such as:
-- publication year
-- article publication date
-- version number
-- report number
-- technical report number
-- patent number
-- grant number
-- advisor names
-- paper authors
-- phone numbers
-- room numbers
-- email addresses
-
-Do NOT generate:
-- directory-style questions
-- contact-book questions
-- identifier-lookup questions
-- office / phone / email / room / building lookup questions
-- easy award-title lookup questions
-- easy exact-title lookup questions
-- speaker-bio lookup questions unless they ask about a substantive role or affiliation
-- job-posting or deadline questions that are mainly time-sensitive
-- questions solvable mainly by exact keyword overlap
-- questions that refer to "this page", "this report", "this paper", or "the article"
-- overly generic questions
-- ambiguous questions
-- long or messy list-answer questions
-
-The question and answer must refer to the same clearly identified person, role, event, policy, program, course, or entity on the page.
-Do not generate a question if the entity-to-answer mapping is ambiguous.
+Bad examples:
+- "Is UC Berkeley in California?"
+- "Is the professor important?"
+- "Does this page mention a course?"
+- "Is the phone number listed on the page?"
 
 Process:
-1. Identify a concrete fact on the page with a short extractive answer.
-2. First check whether the page supports a good requirement, eligibility, policy, program purpose, or program structure question.
-3. Only if none exists, consider a role, relationship, affiliation, research, or honor question.
-4. Rewrite the question so that it asks for the fact by meaning, role, purpose, attribute, requirement, policy, or relationship.
-5. Reduce exact lexical overlap between the question and the answer-bearing sentence whenever possible without making the question unnatural.
-6. If the candidate question feels easy, identifier-based, directory-style, highly time-sensitive, or answerable mainly by exact title match, discard it and choose another fact.
-7. Generate only one medium-to-hard question, or output {{"question": "", "answer": ""}} if no such question exists.
-
-Bad questions:
-- "What is Dan Klein's office number?"
-- "Which email address should students use to submit the EECS Minor Declaration Form?"
-- "What room hosted the colloquium on October 25, 2023?"
-- "What is the phone number for the Computer Science Division office?"
-- "Who won the 2021-22 Google-CMD-IT LEAP Fellowship Award?"
-- "Which speaker is scheduled to present 'Reading Alan Turing'?"
-- "What is the technical report number for this report?"
-- "What office location does Benjamin Recht have?"
-- "Which building houses a professor's office?"
-- "What year was this article published?"
-- "Which kind of opening is available with a closing date on November 21, 2025?"
-
-Good questions:
-- "Which degree option is intended as a professional master’s program?"
-- "What minimum GPA is expected from applicants using a 4.0 grading scale?"
-- "Which program supports graduate students preparing for faculty careers?"
-- "What teaching requirement must doctoral students complete in GSI hours?"
-- "Which students is the Accel Scholars program intended for?"
-- "What requirement applies to students seeking a certain degree or program?"
-- "Which Berkeley EECS option is designed for accelerated study?"
-- "Which course must students complete before taking the graduate continuation?"
-- "Which institute gives HCI researchers prototyping resources?"
+1. Find a fact on the page that clearly supports a yes/no question.
+2. Make sure the question is realistic and self-contained.
+3. Make sure the answer is definitely Yes or definitely No from the page alone.
+4. If no good yes/no question exists, output {{"question": "", "answer": ""}}.
 
 Webpage text:
 {context}
@@ -429,10 +338,7 @@ def main():
             print(f"Rejected (answer too long — {len(answer.split())} words): {answer}")
             continue
 
-        if answer.lower() not in context.lower():
-            print(f"Rejected (answer not in context): {answer}")
-            continue
-
+        # Allow answers not in context (LLM may paraphrase or extract from full page)
         q_key = question.lower()
         if q_key in seen_questions:
             print(f"Rejected (duplicate question): {question}")
