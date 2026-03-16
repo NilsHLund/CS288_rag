@@ -250,7 +250,7 @@ class RAGModel:
             response = self.llm(
                 system_prompt=SYSTEM_PROMPT,
                 query=prompt,
-                model="meta-llama/llama-3.1-8b-instruct",
+                model="mistralai/mistral-7b-instruct",
                 max_tokens=16,
                 temperature=0.0,
                 timeout=120,
