@@ -1,10 +1,500 @@
-{"question": "Who won the 2022 Paul & Daisy Soros Fellowship?", "answer": "Dave Epstein", "url": "https://eecs.berkeley.edu/news/dave-epstein-wins-2022-paul-daisy-soros-fellowship/"}
-{"question": "What is Benjamin Recht\u2019s office location?", "answer": "8008 Berkeley Way West", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/brecht.html"}
+{"question": "Which student won the Sather Gate Young Volunteer Award on September 8, 2019?", "answer": "Carlos Biaou", "url": "https://eecs.berkeley.edu/news/page/63/"}
+{"question": "Which email address should international first-time UCS2 students notify after completing the Language Proficiency Screening Questionnaire?", "answer": "hernan@eecs.berkeley.edu", "url": "https://eecs.berkeley.edu/resources/gsis/prospective/ugrad/"}
+{"question": "Which research area is abbreviated as HCI in UC Berkeley EECS research areas?", "answer": "Human-Computer Interaction", "url": "http://www.eecs.berkeley.edu/Research/Areas/CPSDA"}
+{"question": "In what year did Prof. Whinnery pass away?", "answer": "2009", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/whinnery.html"}
+{"question": "What form is required by the University for absence of 7 calendar days or less?", "answer": "Short-Term Leave Request Form", "url": "https://eecs.berkeley.edu/resources/faculty-staff/academic-personnel-information/"}
+{"question": "Who is the coordinator for the Control, Intelligent Systems, and Robotics faculty group?", "answer": "Claire Tomlin", "url": "https://www2.eecs.berkeley.edu/Research/Areas/CIR"}
+{"question": "Which award did Chenming Hu receive in 2020?", "answer": "IEEE Medal of Honor", "url": "http://www.eecs.berkeley.edu/Faculty/Homepages/hu.html"}
+{"question": "Who received the UC Berkeley Distinguished Teaching Award in 2025?", "answer": "Dan Garcia", "url": "https://www.eecs.berkeley.edu/Faculty/Awards/"}
+{"question": "Which course number corresponds to Internet/Network Security?", "answer": "CS 261N", "url": "https://eecs.berkeley.edu/academics/courses/approved-cs-graduate-and-special-topics-courses/"}
+{"question": "What email address is listed for Assistant Teaching Professor Manuel Sabin?", "answer": "msabin@berkeley.edu", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/msabin.html"}
+{"question": "Which office should students submit the CS Minor Completion Form to in person?", "answer": "349 Soda", "url": "https://eecs.berkeley.edu/resources/undergrads/cs/minor/"}
+{"question": "Who is the advisor of CS graduate student Aviad Rubinstein?", "answer": "Christos Papadimitriou", "url": "https://eecs.berkeley.edu/news/aviad-rubinstein-helps-show-game-players-wont-necessarily-find-nash-equilibrium/"}
+{"question": "Who was named a Frontiers of Knowledge Laureate on February 12, 2025?", "answer": "Michael I. Jordan", "url": "https://eecs.berkeley.edu/news/page/9/"}
+{"question": "Who is listed as the coordinator for Operating Systems & Networking (OSNT)?", "answer": "Eric Brewer", "url": "https://www2.eecs.berkeley.edu/Research/Areas/OSNT"}
+{"question": "What is the abbreviation for the Graphics research area in UC Berkeley EECS?", "answer": "GR", "url": "http://www.eecs.berkeley.edu/Research/Areas/THY"}
+{"question": "Where was the EECS + Physics Colloquium held on Tuesday, December 12, 2023?", "answer": "Banatao Auditorium, 310 Sutardja Dai Hall", "url": "https://eecs.berkeley.edu/research/colloquium/231212-2/"}
+{"question": "What was the application deadline for the Rising Stars 2020 Workshop?", "answer": "September 7, 2020", "url": "https://eecs.berkeley.edu/about/special-events/2020-21/"}
+{"question": "What year was Mark Yim inducted to the National Academy of Inventors?", "answer": "2018", "url": "https://eecs.berkeley.edu/research/colloquium/210310-2/"}
+{"question": "What is the technical report number for \"Diffusion on Two Space and Time Scales\"?", "answer": "UCB/ERL M89/22", "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/1989/1180.html"}
+{"question": "What is the grading basis for EE 230C?", "answer": "letter", "url": "https://www2.eecs.berkeley.edu/Courses/EE230C/"}
+{"question": "What are the prerequisites for CS 186 at UC Berkeley?", "answer": "COMPSCI 61C or COMPSCI 47C", "url": "https://www2.eecs.berkeley.edu/Courses/CS186"}
+{"question": "In what year was the technical report \"Coherence and Alert States for Interconnected Power Systems\" published?", "answer": "1979", "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/1979/28444.html"}
+{"question": "On what date was the article about Haile Shavers published?", "answer": "September 16, 2016", "url": "https://eecs.berkeley.edu/news/haile-shavers-literal-face-diversity-tech/"}
+{"question": "In what year did Anca Dragan receive the PECASE award?", "answer": "2019", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/anca.html"}
+{"question": "Which email address should alumni use to propose an innovative contribution to Berkeley EECS?", "answer": "alumni-relations@eecs.berkeley.edu", "url": "https://eecs.berkeley.edu/people/alumni/"}
+{"question": "What is Aditi Krishnapriyan's Berkeley email address?", "answer": "aditik1@berkeley.edu", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/aditik.html"}
+{"question": "What office handles intellectual property and licensing issues for faculty commercializing technology related to research?", "answer": "Office of Technology Licensing", "url": "https://eecs.berkeley.edu/resources/faculty-staff/academic-personnel/faculty-leave-policy/"}
+{"question": "What is the minimum GPA required to apply for the 5th Year M.S. Program?", "answer": "3.0", "url": "https://eecs.berkeley.edu/academics/graduate/industry-programs/5yrms/"}
+{"question": "What is the minimum overall GPA required for upper-division courses applied toward the major?", "answer": "2.0 or above", "url": "https://eecs.berkeley.edu/resources/undergrads/cs/degree-reqs-upperdiv"}
+{"question": "What is the mail code for Soda Hall in Berkeley EECS mail services?", "answer": "1776", "url": "https://eecs.berkeley.edu/resources/faculty-staff/administrative-services/"}
+{"question": "What email address is listed for Felix F. Wu?", "answer": "ffwu@eecs.berkeley.edu", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/wu-f.html"}
+{"question": "What award did Chenming Hu receive in 2020?", "answer": "IEEE Medal of Honor", "url": "https://eecs.berkeley.edu/news/international-house-to-honor-chenming-hu-with-global-impact-award/"}
+{"question": "What is the grading basis for EE 290?", "answer": "letter", "url": "https://www2.eecs.berkeley.edu/Courses/EE290"}
+{"question": "In what year did Anca Dragan join the CS faculty?", "answer": "2016", "url": "https://eecs.berkeley.edu/about/diversity/milestones/"}
+{"question": "What is the course number of The Beauty and Joy of Computing?", "answer": "CS10", "url": "https://eecs.berkeley.edu/about/diversity/hopper-dean/"}
+{"question": "What is the office number of the CS Graduate Advisor Carissa Caloud?", "answer": "367 Soda", "url": "https://eecs.berkeley.edu/resources/grads"}
+{"question": "What is Yi Ma's office number?", "answer": "333A Cory Hall", "url": "https://www2.eecs.berkeley.edu/Faculty/Lists/visiting.html"}
+{"question": "Which award did Sanjit Seshia win from the IEEE Technical Committee on Cyber-Physical Systems?", "answer": "Mid-Career Award", "url": "https://eecs.berkeley.edu/news/edward-lee-and-sanjit-seshia-win-cyber-physical-systems-tccps-awards/"}
+{"question": "What is Michael A. Lieberman's office number in Cory Hall?", "answer": "261M Cory Hall", "url": "http://www.eecs.berkeley.edu/Faculty/Homepages/lieberman.html"}
+{"question": "What is the grading basis for CS 197 Field Study?", "answer": "passFail", "url": "https://www2.eecs.berkeley.edu/Courses/CS197"}
+{"question": "What is the grading basis for EECS 251B?", "answer": "letter", "url": "https://www2.eecs.berkeley.edu/Courses/EECS251B/"}
+{"question": "How many courses can graduate standing be backdated for in the 5th Year M.S. Program?", "answer": "one course", "url": "https://eecs.berkeley.edu/academics/graduate/industry-programs/5yrms/policies/"}
+{"question": "What is one core philosophy of the EECS major?", "answer": "flexibility", "url": "https://eecs.berkeley.edu/resources/undergrads/eecs-2/study-plans/"}
+{"question": "By what month should EECS faculty submit sabbatical, research, or industrial leave requests each year?", "answer": "January", "url": "https://eecs.berkeley.edu/resources/faculty-staff/academic-personnel/faculty-leave-procedures/"}
+{"question": "What is the prerequisite for EECS 227AT besides consent of instructor?", "answer": "MATH 54", "url": "https://www2.eecs.berkeley.edu/Courses/EECS227AT/"}
+{"question": "What are the prerequisites for CS 188 at UC Berkeley?", "answer": "COMPSCI 61A, COMPSCI 61B, and COMPSCI 70.", "url": "https://www2.eecs.berkeley.edu/Courses/CS188"}
+{"question": "What is the prerequisite for CS 270 Combinatorial Algorithms and Data Structures?", "answer": "COMPSCI 170", "url": "https://www2.eecs.berkeley.edu/Courses/CS270/"}
+{"question": "In 2015, what was the average starting salary for UC Berkeley EECS M.S. graduates?", "answer": "$111,400", "url": "https://eecs.berkeley.edu/resources/undergrads/grad-school/"}
+{"question": "Which award did Aditya Parameswaran receive at SIGMOD/PODS 2020?", "answer": "Best Paper Award", "url": "https://eecs.berkeley.edu/news/aditya-parameswaran-awarded-best-paper-sigmodpods-2020/"}
+{"question": "Which research area is abbreviated as HCI in UC Berkeley EECS?", "answer": "Human-Computer Interaction", "url": "https://www.eecs.berkeley.edu/Research/Areas/HCI"}
+{"question": "What degree is earned in the College of Engineering EECS major?", "answer": "Bachelor of Science", "url": "https://eecs.berkeley.edu/academics/undergraduate/compare-majors/"}
+{"question": "Where was the EECS Colloquium on Wednesday, November 16, 2016 held?", "answer": "306 Soda Hall (HP Auditorium)", "url": "https://eecs.berkeley.edu/research/colloquium/161116-2/"}
+{"question": "Where was the EECS Colloquium on November 20, 2019 held?", "answer": "306 Soda Hall", "url": "https://eecs.berkeley.edu/research/colloquium/191120-2/"}
+{"question": "Which California city named EECS alumnus Ken Okuhara as new CTO in 2018?", "answer": "Stockton", "url": "https://eecs.berkeley.edu/news/ken-okuhara-named-new-cto-stockton/"}
+{"question": "On what date is Serina Chang's EECS Colloquium talk scheduled?", "answer": "September 24, 2025", "url": "https://eecs.berkeley.edu/research/colloquium/inferring-and-simulating-human-behaviors-for-societal-decision-making/"}
+{"question": "Which office should visiting scholars go to obtain a Cal 1 Card ID?", "answer": "Cal 1 Card Office", "url": "https://eecs.berkeley.edu/resources/visiting-scholars/new-2/"}
+{"question": "Which upper-division CS classes are suggested as open options while waiting to declare the CS major?", "answer": "CS 168 and CS 188", "url": "https://eecs.berkeley.edu/academics/undergraduate/cs-ba/faq-8/"}
+{"question": "What is the office location of the College of Engineering ESS adviser?", "answer": "120 Grimes Engineering Center", "url": "https://eecs.berkeley.edu/resources/undergrads/eecs-2/advising-2/"}
+{"question": "Beginning May 31, 2020, which system do most Readers and Tutors use to record hours worked?", "answer": "CalTime", "url": "https://eecs.berkeley.edu/resources/ase/current/payroll/"}
+{"question": "What is Liaowang Zou's concentration in the EECS Master of Engineering program?", "answer": "Data Science and Systems", "url": "https://eecs.berkeley.edu/news/fung-feature-liaowang-zou/"}
+{"question": "Which buildings are mentioned in the Facilities and Engineering Services Staff description for key services?", "answer": "Cory and Soda Hall", "url": "https://eecs.berkeley.edu/people/staff"}
+{"question": "What room hosted the EECS Colloquium on September 27, 2017?", "answer": "306 Soda Hall", "url": "https://eecs.berkeley.edu/research/colloquium/170927-2/"}
+{"question": "How many units is CS C177 Algorithmic Economics?", "answer": "4", "url": "https://www2.eecs.berkeley.edu/Courses/CSC177"}
+{"question": "How many students are typically on each Berkeley EECS MEng capstone team?", "answer": "three to five students", "url": "https://eecs.berkeley.edu/academics/graduate/industry-programs/meng/requirements/ds"}
+{"question": "In what year did Robert Brodersen pass away?", "answer": "2024", "url": "https://www2.eecs.berkeley.edu/Faculty/inmemoriam.shtml"}
+{"question": "At which conference will Alexei Efros\u2019s team present \u201cReal-Time User Guided Colorization with Learned Deep Priors\u201d?", "answer": "SIGGRAPH 2017", "url": "https://eecs.berkeley.edu/news/alexi-efross-team-offers-custom-colorization-using-deep-neural-networks/"}
+{"question": "Who advised CS alumnus Hao Zhang on the Berkeley EECS gift announcement?", "answer": "Jitendra Malik", "url": "https://eecs.berkeley.edu/news/cs-alumnus-gifts-1m-to-berkeley-eecs/"}
+{"question": "What is the prerequisite course for EE C106B Robotic Manipulation and Interaction?", "answer": "EECS C106A / BIO ENG C125", "url": "https://www2.eecs.berkeley.edu/Courses/EEC106B/"}
+{"question": "Which city hosted the 2023 ACM Richard Tapia Celebration of Diversity in Computing conference attended by Berkeley EECS students?", "answer": "San Diego", "url": "https://eecs.berkeley.edu/people/students-2/"}
+{"question": "What time does the Spring 2018 EECS Colloquium meet on Wednesdays?", "answer": "4:00-5:00 PM", "url": "https://eecs.berkeley.edu/research/colloquium/archives/spring2018/"}
+{"question": "Which email address is listed for Ana Claudia Arias?", "answer": "acarias@eecs.berkeley.edu", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/acarias.html"}
+{"question": "What is the grading basis for CS 162?", "answer": "letter", "url": "https://www2.eecs.berkeley.edu/Courses/CS162"}
 {"question": "What minimum GPA is required for applicants from universities using a 4.0 scale?", "answer": "3.0 (B)", "url": "https://eecs.berkeley.edu/academics/graduate/recommended-coursework/"}
-{"question": "What is the deadline for the NIH Community College Summer Enrichment Program (CCSEP)?", "answer": "March 1", "url": "https://eecs.berkeley.edu/academics/undergraduate/summer-research/other/"}
-{"question": "What is the office number for the Computer Science Division at UC Berkeley EECS?", "answer": "387 Soda Hall", "url": "https://eecs.berkeley.edu/about/visiting/"}
-{"question": "Which city hosted the 2023 ACM Richard Tapia Celebration of Diversity in Computing conference attended by current graduate and undergraduate students?", "answer": "San Diego", "url": "https://eecs.berkeley.edu/people/students-2/"}
+{"question": "How many units is CS C149: Introduction to Embedded Systems worth?", "answer": "4", "url": "https://www2.eecs.berkeley.edu/Courses/CSC149"}
+{"question": "What award did Prof. Wong receive in 2005?", "answer": "IEEE Founders Medal", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/wong.html"}
+{"question": "What room is the EECS Colloquium on September 11, 2024 held in?", "answer": "306 Soda Hall", "url": "https://eecs.berkeley.edu/research/colloquium/mixed-autonomy-traffic-at-scale/"}
+{"question": "Who is the advisor for the thesis \"Principles of Metalevel Control\"?", "answer": "Stuart J. Russell", "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/2016/EECS-2016-152.html"}
+{"question": "By what date must admitted MEng students communicate intent to register or refuse admission?", "answer": "April 15", "url": "https://eecs.berkeley.edu/resources/grads/meng-2/"}
+{"question": "What GPA is required in the major for the Ph.D degree?", "answer": "3.5", "url": "https://eecs.berkeley.edu/resources/faculty-staff/academic-personnel/grading-guidelines-grad/"}
+{"question": "Which university awarded Ana Arias an honorary doctorate?", "answer": "Tampere University", "url": "https://eecs.berkeley.edu/news/page/27/"}
+{"question": "Who will join Carol Christ for a Campus Conversation on the 150W History Project?", "answer": "Sheila Humphreys", "url": "https://eecs.berkeley.edu/news/sheila-humphreys-join-carol-christ-campus-conversation-150w-history-project/"}
+{"question": "Who is the advisor for the thesis \"Recent Advances in Urban Mobility: Analyzing Efficiency, Equity and Safety\"?", "answer": "Kameshwar Poolla", "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/2023/EECS-2023-106.html"}
+{"question": "When is the first application deadline for the new Master of Information and Cybersecurity program?", "answer": "January 30, 2018", "url": "https://eecs.berkeley.edu/news/new-master-cybersecurity-degree-now-accepting-applications/"}
+{"question": "In what year did Donald J. Hoffman retire as a four-star general?", "answer": "2012", "url": "https://eecs.berkeley.edu/news/donald-j-hoffman-need-diversify-fuel-sources/"}
+{"question": "Who advised Alan M. Mainwaring's 1999 dissertation?", "answer": "David E. Culler", "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/1999/8075.html"}
+{"question": "Which company sponsors the IEEE Eric E. Sumner Award?", "answer": "Nokia Bell Labs", "url": "https://eecs.berkeley.edu/news/andrea-goldsmith-wins-ieee-eric-e-sumner-award/"}
+{"question": "What is Nilah Ioannidis's office location?", "answer": "513 Soda Hall", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/nilah.html"}
+{"question": "When was the Joseph Gier memorial sculpture dedicated?", "answer": "September 20, 2023", "url": "https://eecs.berkeley.edu/about/history/gier/statue/"}
+{"question": "Which national academy elected Umesh Vazirani and Sanjeev Arora in 2018?", "answer": "National Academy of Sciences", "url": "https://eecs.berkeley.edu/news/umesh-vazirani-and-sanjeev-arora-elected-national-academy-sciences/"}
+{"question": "Which email address should EECS majors contact about equivalent study abroad courses?", "answer": "eecs-advising@eecs.berkeley.edu", "url": "https://eecs.berkeley.edu/resources/undergrads/study-abroad/"}
+{"question": "In what year did Michel Maharbiz receive a National Science Foundation CAREER Award?", "answer": "2009", "url": "http://www.eecs.berkeley.edu/Faculty/Homepages/maharbiz.html"}
+{"question": "In what year did a merger form the Department of Electrical Engineering and Computer Sciences?", "answer": "1973", "url": "https://eecs.berkeley.edu/about/history/"}
+{"question": "What is Jack Gallant's email address?", "answer": "gallant@berkeley.edu", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/gallant.html"}
+{"question": "What room hosted the EECS Colloquium on September 7, 2016?", "answer": "306 Soda Hall (HP Auditorium)", "url": "https://eecs.berkeley.edu/research/colloquium/160907-2/"}
+{"question": "What is the highest recognition that a university can award?", "answer": "Honorary Doctor", "url": "https://eecs.berkeley.edu/news/jan-rabaey-receive-two-honorary-doctorates/"}
+{"question": "Which award did CS alumnus Mendel Rosenblum win in 2019?", "answer": "ACM Charles P. \u201cChuck\u201d Thacker Breakthrough in Computing Award", "url": "https://eecs.berkeley.edu/news/mendel-rosenblum-wins-inaugural-acm-thacker-breakthrough-computing-award/"}
+{"question": "Where can visitors try to find the homepage for a particular EECS course?", "answer": "semester\nclass schedules", "url": "https://www2.eecs.berkeley.edu/Courses/Data/63.html"}
+{"question": "Which award did Richard Karp and coauthors receive in 2017?", "answer": "RECOMB Test of Time Award", "url": "https://eecs.berkeley.edu/news/paper-co-authored-richard-karp-receives-2017-recomb-test-time-award/"}
 {"question": "Which award did J. M. Rabaey receive in 2024?", "answer": "IEEE James H. Mulligan Jr. Education Medal", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/rabaey.html"}
-{"question": "Which research area is abbreviated as HCI in UC Berkeley EECS?", "answer": "Human-Computer Interaction", "url": "http://www.eecs.berkeley.edu/Research/Areas/ENE"}
-{"question": "What online platform offers BJC as a MOOC?", "answer": "edX", "url": "https://eecs.berkeley.edu/connect/k-12"}
-{"question": "Which EE professor was included in the UC Berkeley research group behind the self-taught walking robot?", "answer": "Sergey Levine", "url": "https://eecs.berkeley.edu/news/clever-clumsiness-self-taught-walking-robot/"}
+{"question": "By when should EECS students have a permanent advisor?", "answer": "the end of their third semester", "url": "https://eecs.berkeley.edu/resources/grads/advisors/"}
+{"question": "Which prize in computing did Alyosha Efros win in 2016?", "answer": "ACM Prize in Computing", "url": "https://eecs.berkeley.edu/news/alyosha-efros-has-won-2016-acm-prize-computing/"}
+{"question": "Who is the Chair of the Department of Electrical Engineering and Computer Sciences at UC Berkeley EECS?", "answer": "Jelani Nelson", "url": "https://eecs.berkeley.edu/about/"}
+{"question": "What is the suggested enrollment limit for EE 39 seminars?", "answer": "25", "url": "https://www2.eecs.berkeley.edu/Courses/EE39"}
+{"question": "What is Aditya Parameswaran\u2019s office number?", "answer": "787 Soda Hall", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/adityagp.html"}
+{"question": "What is the prerequisite for CS 274 Computational Geometry?", "answer": "COMPSCI 170", "url": "https://www2.eecs.berkeley.edu/Courses/CS274"}
+{"question": "What was the theme of the Berkeley EECS Annual Research Symposium in 2022?", "answer": "Convergence", "url": "https://eecs.berkeley.edu/research/bears/archive/"}
+{"question": "How many technical courses per semester are recommended during the first semester for transfer students in the CS major?", "answer": "2 technical courses", "url": "https://eecs.berkeley.edu/resources/undergrads/cs/transfer-prereqs/faq-4/"}
+{"question": "In what year did W. G. Oldham receive the Berkeley Citation?", "answer": "2004", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/oldham.html"}
+{"question": "In what month and year was L. A. Zadeh's technical report \"Soft Computing for Internet and Bioinformatics\" published?", "answer": "Dec. 2003", "url": "https://www2.eecs.berkeley.edu/Pubs/Faculty/zadeh.html"}
+{"question": "In what year did Ernest S. Kuh join the EECS Department faculty?", "answer": "1956", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/kuh.html"}
+{"question": "In which office is Christopher Hunn ready for meetings about excess contracted appointment hours?", "answer": "341C Soda Hall", "url": "https://eecs.berkeley.edu/resources/gsis/current/payroll/excess-policy/"}
+{"question": "Which course was named among the Top 5 CS Classes in the US by Bloomberg Business?", "answer": "CS 61A", "url": "https://eecs.berkeley.edu/news/page/139/"}
+{"question": "What is the UC system application period for California Community College transfer admission?", "answer": "November 1-30", "url": "https://eecs.berkeley.edu/academics/undergraduate/eecs-bs/community-coll-transfers/"}
+{"question": "On what date was the EECS Colloquium on Deep Learning-to-Learn Robotic Control held?", "answer": "October 11, 2017", "url": "https://eecs.berkeley.edu/research/colloquium/171011-2/"}
+{"question": "What is Benjamin Recht\u2019s office location?", "answer": "8008 Berkeley Way West", "url": "http://www.eecs.berkeley.edu/Faculty/Homepages/brecht.html"}
+{"question": "What is Steven Conolly's email address?", "answer": "sconolly@berkeley.edu", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/sconolly.html"}
+{"question": "Which 2018 award did EE alumnus Ram Vasudevan receive?", "answer": "2018 Young Investigator award", "url": "https://eecs.berkeley.edu/news/ram-vasudevan-receives-2018-onr-young-investigator-award/"}
+{"question": "Which software may be used to check submitted work for originality in the course?", "answer": "MOSS", "url": "https://eecs.berkeley.edu/resources/gsis/current/procedures/"}
+{"question": "What anniversary did the 2023 Berkeley EECS Annual Research Symposium lectures highlight?", "answer": "50th anniversary", "url": "https://eecs.berkeley.edu/research/bears"}
+{"question": "Who was the 2018 women's 132 pound NCBA champion mentioned in the EECS Resiliency Project?", "answer": "Jacque Garcia", "url": "https://eecs.berkeley.edu/resources/students/stress/resilience/"}
+{"question": "What email address is listed for SUPERB-AI4E contact information?", "answer": "diversity@eecs.berkeley.edu", "url": "https://eecs.berkeley.edu/resources/undergrads/research/superb"}
+{"question": "On what date will TechCrunch Sessions: Robotics 2018 take place at Zellerbach Hall?", "answer": "May 11", "url": "https://eecs.berkeley.edu/news/pieter-abbeel-robert-full-and-ken-goldberg-will-speak-techcrunch-sessions-robotics-2018/"}
+{"question": "In which office is the EECS Graduate Admissions Office located?", "answer": "215 Cory Hall", "url": "https://eecs.berkeley.edu/academics/graduate/industry-programs/5yrms/faq-2/"}
+{"question": "How many EECS-affiliated centers and labs are mentioned on the webpage?", "answer": "over 70", "url": "https://eecs.berkeley.edu/about/by-the-numbers"}
+{"question": "What is the grading basis for EE 230A. Integrated-Circuit Devices?", "answer": "letter", "url": "https://www2.eecs.berkeley.edu/Courses/EE230A/"}
+{"question": "Which platform should students use to sign up for EECS 101 for semester-specific CS enrollment updates?", "answer": "Ed Stem", "url": "https://eecs.berkeley.edu/resources/undergrads/cs/advising/enrollment/"}
+{"question": "What are the prerequisites for EE 120 Signals and Systems?", "answer": "EECS 16A and EECS 16B.", "url": "https://www2.eecs.berkeley.edu/Courses/EE120"}
+{"question": "What is the grading basis for EECS 149?", "answer": "letter", "url": "https://www2.eecs.berkeley.edu/Courses/EECS149"}
+{"question": "Which conference will Rebecca Portnoff's team present their findings at?", "answer": "SIGKDD Conference on Knowledge Discovery and Data Mining", "url": "https://eecs.berkeley.edu/news/rebecca-portnoff-takes-step-toward-fighting-human-trafficking/"}
+{"question": "Where was Marc Raibert's April 17, 2019 colloquium held?", "answer": "Banatao Auditorium, 310 Sutardja Dai Hall", "url": "https://eecs.berkeley.edu/research/colloquium/archives/spring2019/"}
+{"question": "Which prize did CS Prof. Stuart Russell win in 2019?", "answer": "AAAI Feigenbaum Prize", "url": "https://eecs.berkeley.edu/news/stuart-russell-wins-aaai-feigenbaum-prize/"}
+{"question": "What is the office number of Senior Financial Services Manager Gabe Chang?", "answer": "375 Soda", "url": "https://eecs.berkeley.edu/people/staff/financial-staff/"}
+{"question": "What system is listed for internships, job postings, competitions, and recruiting events for current EECS and CS students?", "answer": "Handshake", "url": "https://eecs.berkeley.edu/resources/students"}
+{"question": "What is the title of the group 6 project in Robotics Projects for EE 106/206B?", "answer": "Multi-Agent Grasping with Turtlebot", "url": "https://eecs.berkeley.edu/academics/courses/ee106-206b-projects/"}
+{"question": "Who hosted the AI Podcast featuring Sergey Levine in 2017?", "answer": "Michael Copeland", "url": "https://eecs.berkeley.edu/news/sergey-levine-explains-how-deep-learning-will-unleash-robotics/"}
+{"question": "Who advised the 2002 Berkeley EECS thesis \"Channel Coding with Side Information: Theory, Practice and Applications\"?", "answer": "Kannan Ramchandran", "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/2002/8205.html"}
+{"question": "What is Jennifer Listgarten's office location?", "answer": "8022 Berkeley Way West", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/listgarten.html"}
+{"question": "What program is listed for students interested in accelerating Berkeley EECS studies?", "answer": "Accel Scholars Program", "url": "https://eecs.berkeley.edu/resources/faculty-staff/staff-it-procedures"}
+{"question": "Which email address should alumni contact for an innovative contribution idea?", "answer": "alumni-relations@eecs.berkeley.edu", "url": "https://eecs.berkeley.edu/people/alumni"}
+{"question": "Which research area uses the abbreviation HCI?", "answer": "Human-Computer Interaction", "url": "http://www.eecs.berkeley.edu/Research/Areas/EDUC"}
+{"question": "In what year did Roger Sippl receive the CS Distinguished Alumni award?", "answer": "1995", "url": "https://eecs.berkeley.edu/news/imperva-names-roger-sippl-board-directors/"}
+{"question": "What is the grading basis for EE 224A Digital Communications?", "answer": "letter", "url": "https://www2.eecs.berkeley.edu/Courses/EE224A"}
+{"question": "What is John F. Canny's office location?", "answer": "637 Soda Hall", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/canny.html"}
+{"question": "What is the technical report number for \"Probabilistic Data Aggregation In Distributed Networks\"?", "answer": "UCB/EECS-2006-11", "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/2006/EECS-2006-11.html"}
+{"question": "What is Trevor Darrell's Berkeley email address?", "answer": "trevor@eecs.berkeley.edu", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/darrell.html"}
+{"question": "What platform offers BJC as a MOOC?", "answer": "edX", "url": "https://eecs.berkeley.edu/connect/k-12/"}
+{"question": "What building is shown for visitors paying a visit to Berkeley EECS?", "answer": "Cory Hall", "url": "https://eecs.berkeley.edu/connect"}
+{"question": "In what year did Doug Tygar receive the USENIX Test of Time Award?", "answer": "2015", "url": "http://www.eecs.berkeley.edu/Faculty/Homepages/tygar.html"}
+{"question": "What building and room hosted the EECS Colloquium on Photo Forensics on September 6, 2017?", "answer": "306 Soda Hall (HP Auditorium)", "url": "https://eecs.berkeley.edu/research/colloquium/170906-2/"}
+{"question": "What is the office number of Raluca Ada Popa?", "answer": "729 Soda Hall", "url": "https://www2.eecs.berkeley.edu/Faculty/Lists/CS/faculty.html"}
+{"question": "What is the technical report number for \"Traveling-Wave-Tube Simulation; The IBC Code\"?", "answer": "UCB/ERL M89/116", "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/1989/1342.html"}
+{"question": "What email address is listed for Bruno Olshausen?", "answer": "baolshausen@berkeley.edu", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/baolshausen.html"}
+{"question": "In what year was the technical report \"Test Structures for the Visual Characterization of Optical Lithography\" published?", "answer": "1988", "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/1988/1045.html"}
+{"question": "Where was the Metric Telepresence colloquium scheduled to take place?", "answer": "306 Soda Hall (HP Auditorium)", "url": "https://eecs.berkeley.edu/research/colloquium/191009-2/"}
+{"question": "What is the grading basis for CS 282A?", "answer": "letter", "url": "https://www2.eecs.berkeley.edu/Courses/CS282A"}
+{"question": "What is the technical report number for the tunnel field effect transistor report by Sapan Agarwal and Eli Yablonovitch?", "answer": "UCB/EECS-2014-6", "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/2014/EECS-2014-6.html"}
+{"question": "What is the grading basis for Computer Science 36?", "answer": "passFail", "url": "https://www2.eecs.berkeley.edu/Courses/CS36"}
+{"question": "Where was the EECS Colloquium by Paul Debevec held?", "answer": "306 Soda Hall (HP Auditorium)", "url": "https://eecs.berkeley.edu/research/colloquium/180829-2/"}
+{"question": "How many ACM A.M. Turing Awards have EECS faculty won?", "answer": "six", "url": "https://eecs.berkeley.edu/people/faculty"}
+{"question": "What role was Alberto Sangiovanni-Vincentelli appointed to at UltraSoC?", "answer": "Non-Executive Chairman", "url": "https://eecs.berkeley.edu/news/page/105/"}
+{"question": "What email address should visitors use for questions about Visit Days travel expenses?", "answer": "visitday@eecs.berkeley.edu", "url": "https://eecs.berkeley.edu/resources/grads/visit-days/"}
+{"question": "Who is the coordinator among the primary MEMS faculty at Berkeley EECS?", "answer": "Clark Nguyen", "url": "https://www2.eecs.berkeley.edu/Research/Areas/MEMS/"}
+{"question": "What is Alexei (Alyosha) Efros's office number?", "answer": "724 Sutardja Dai Hall", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/efros.html"}
+{"question": "Which medal did Christos Papadimitriou win for CS and CS Education?", "answer": "ABZ Gold Platinum Medal", "url": "https://eecs.berkeley.edu/news/christos-papadimitriou-wins-abz-gold-platinum-eth-medal-cs-and-cs-education/"}
+{"question": "Which email address should visitors use to send questions about the Spring 2022 EECS Colloquium?", "answer": "colloquium@eecs.berkeley.edu", "url": "https://eecs.berkeley.edu/research/colloquium/archives/spring2022/"}
+{"question": "Which degree program is specifically designed as a professional master\u2019s degree?", "answer": "Master of Engineering (M.Eng.)", "url": "https://eecs.berkeley.edu/academics/graduate"}
+{"question": "Which building houses Stuart J. Russell's office?", "answer": "Berkeley Way West", "url": "https://www2.eecs.berkeley.edu/Faculty/Lists/faculty.html"}
+{"question": "Which email address handles questions about keys and card keys for Berkeley EECS facilities?", "answer": "keys@eecs.berkeley.edu", "url": "https://eecs.berkeley.edu/resources/facilities"}
+{"question": "Which MIT school was Anantha Chandrakasan named dean of in 2017?", "answer": "MIT\u2019s School of Engineering", "url": "https://eecs.berkeley.edu/news/anantha-chandrakasan-named-dean-mits-school-engineering/"}
+{"question": "Who are the advisors for \"Probabilistic Models of Evolution and Language Change\"?", "answer": "Michael Jordan and Daniel Klein", "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/2010/EECS-2010-153.html"}
+{"question": "What is the phone number for the Computer Science Division office?", "answer": "+1(510) 642-1042", "url": "https://eecs.berkeley.edu/about/visiting"}
+{"question": "In what year did Sayeef Salahuddin discover Negative Capacitance?", "answer": "2008", "url": "https://eecs.berkeley.edu/news/negative-capacitance-found/"}
+{"question": "Which email address handles questions about enrolling in CS classes?", "answer": "cs-enrollments@eecs.berkeley.edu", "url": "https://eecs.berkeley.edu/resources/ase/current/"}
+{"question": "When are applications due for the 2026-2027 Accel Scholars cycle?", "answer": "Tuesday 3/31", "url": "https://eecs.berkeley.edu/resources/undergrads/accel/"}
+{"question": "What office number should students contact Hamilton Chang in for fee remission issues?", "answer": "395 Soda Hall", "url": "https://eecs.berkeley.edu/resources/gsis/current/payroll/appointments-faq/"}
+{"question": "What is the prerequisite course number for CS 278 Machine-Based Complexity Theory?", "answer": "170.", "url": "https://www2.eecs.berkeley.edu/Courses/CS278"}
+{"question": "What company is Michael Brenndoerfer now a Senior Software Engineer at?", "answer": "Fitbit", "url": "https://eecs.berkeley.edu/news/how-michael-brenndoerfer-started-company-while-going-school-full-time/"}
+{"question": "What is Bin Yu's office location?", "answer": "367 Evans Hall", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/binyu.html"}
+{"question": "What is Alistair Sinclair's office number?", "answer": "677 Soda Hall", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/sinclair.html"}
+{"question": "In what year were Krste Asanovi\u0107 and Peter Bartlett named ACM Fellows?", "answer": "2018", "url": "https://eecs.berkeley.edu/news/krste-asanovic-and-peter-bartlett-named-acm-fellows/"}
+{"question": "Which free online course is taught by Professor Dan Garcia?", "answer": "The Beauty and Joy of Computing", "url": "https://eecs.berkeley.edu/academics/undergraduate/cs-ba/"}
+{"question": "Who is listed as the coordinator among the secondary HCI faculty?", "answer": "John F. Canny", "url": "https://www2.eecs.berkeley.edu/Research/Areas/HCI/"}
+{"question": "What is the office number of the Computer Science Division?", "answer": "387 Soda Hall", "url": "https://eecs.berkeley.edu/about/visiting/"}
+{"question": "What is the grading basis for CS C281A. Statistical Learning Theory?", "answer": "letter", "url": "https://www2.eecs.berkeley.edu/Courses/CSC281A"}
+{"question": "What room is the AWE office located in Cory Hall?", "answer": "286", "url": "https://eecs.berkeley.edu/academics/prospective-women"}
+{"question": "On what date was the Berkeley EECS Reunion Conference held in 2019?", "answer": "September 20, 2019", "url": "https://eecs.berkeley.edu/about/special-events/2019-20/"}
+{"question": "Who is the coordinator for Biosystems & Computational Biology faculty?", "answer": "Yun S. Song", "url": "https://www2.eecs.berkeley.edu/Research/Areas/BIO"}
+{"question": "What grading basis is listed for CS W10?", "answer": "letter", "url": "https://www2.eecs.berkeley.edu/Courses/CSW10"}
+{"question": "In what year did Prof. Varaiya receive a Ph.D. in Electrical Engineering from UC Berkeley?", "answer": "1966", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/varaiya.html"}
+{"question": "In what year was Dr. Neureuther elected to the National Academy of Engineering?", "answer": "1995", "url": "http://www.eecs.berkeley.edu/Faculty/Homepages/neureuther.html"}
+{"question": "Which company\u2019s board of directors does Professor Liu serve on?", "answer": "Intel Corporation", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/king.html"}
+{"question": "What room hosted the EECS Colloquium on Wednesday, April 26, 2017?", "answer": "306 Soda Hall (HP Auditorium)", "url": "https://eecs.berkeley.edu/research/colloquium/170426-2/"}
+{"question": "What year did EUVL enter high-volume production of semiconductor chips?", "answer": "2019", "url": "https://eecs.berkeley.edu/research/colloquium/euv-lithography-history-latest-results-technology-roadmap/"}
+{"question": "How many units is EE 213A Power Electronics worth?", "answer": "4", "url": "https://www2.eecs.berkeley.edu/Courses/EE213A/"}
+{"question": "What grading basis is used for CS C88C?", "answer": "letter", "url": "https://www2.eecs.berkeley.edu/Courses/CSC88C"}
+{"question": "What overall rank did UC Berkeley receive in the 2017 U.S. and global CSRankings?", "answer": "#3", "url": "https://eecs.berkeley.edu/news/uc-berkeley-ranks-3-2017-us-and-global-csrankings/"}
+{"question": "Which EECS professor received the Fiat Lux Faculty Award?", "answer": "Ion Stoica", "url": "https://eecs.berkeley.edu/news/eecs-faculty-and-alumni-recognized-with-uc-berkeley-achievement-awards/"}
+{"question": "Who is featured in the interview about \u201cSlaughterbots\u201d by the Bulletin of the Atomic Scientists?", "answer": "Stuart Russell", "url": "https://eecs.berkeley.edu/news/stuart-russell-and-all-things-slaughterbot/"}
+{"question": "Which email address can interested BUS tutors contact?", "answer": "m.cerdajara@berkeley.edu", "url": "https://eecs.berkeley.edu/resources/students/bpe/"}
+{"question": "What company is Bryan Catanzaro affiliated with as Vice President of Applied Deep Learning Research?", "answer": "NVIDIA", "url": "https://eecs.berkeley.edu/research/colloquium/210407-2/"}
+{"question": "What year was Dawn Song selected as an AI2050 Senior Fellow?", "answer": "2025", "url": "https://eecs.berkeley.edu/news/dawn-song-selected-as-an-ai2050-senior-fellow-by-schmidt-sciences/"}
+{"question": "What is the grading basis for EE 126. Probability and Random Processes?", "answer": "letter", "url": "https://www2.eecs.berkeley.edu/Courses/EE126"}
+{"question": "What time did the EECS Colloquium on February 7, 2018 begin?", "answer": "4:00", "url": "https://eecs.berkeley.edu/research/colloquium/180207-2/"}
+{"question": "Which email address should students use to contact FEM Tech at UC Berkeley?", "answer": "femtechberkeley@gmail.com", "url": "https://eecs.berkeley.edu/people/students/organizations"}
+{"question": "Which university granted an Honorary Doctorate in Computer Science in 2022?", "answer": "Technical University of Vienna", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/lee.html"}
+{"question": "Who was named Angel Investor and co-founder of Google Maps in 2023?", "answer": "Lars Rasmussen", "url": "https://eecs.berkeley.edu/people/alumni/cs-distinguished-alumni"}
+{"question": "Where was Yann LeCun's Fall 2022 EECS Colloquium talk held?", "answer": "Banatao Auditorium, 310 Sutardja Dai Hall", "url": "https://eecs.berkeley.edu/research/colloquium/archives/fall2022/"}
+{"question": "What is the technical report number for \"On the Solutions of a Stochastic Control System\"?", "answer": "UCB/ERL M273", "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/1970/28666.html"}
+{"question": "Which award did S. S. Sastry receive in 2021?", "answer": "Rufus Oldenburger Medal", "url": "http://www.eecs.berkeley.edu/Faculty/Homepages/sastry.html"}
+{"question": "What is the grading basis for CS 70?", "answer": "letter", "url": "https://www2.eecs.berkeley.edu/Courses/CS70/"}
+{"question": "What are the recommended prerequisites for EECS 219C?", "answer": "COMPSCI 170", "url": "https://www2.eecs.berkeley.edu/Courses/EECS219C"}
+{"question": "In what year was the graduate course CS 292A first offered?", "answer": "1983", "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/1986/6120.html"}
+{"question": "How many students are on each Capstone team in the Robotics and Embedded Software MEng program?", "answer": "three to five students", "url": "https://eecs.berkeley.edu/academics/graduate/industry-programs/meng/requirements/res"}
+{"question": "Where was the EECS Colloquium on April 19, 2023 held?", "answer": "310 Sutardja Dai Hall (Banatao Auditorium)", "url": "https://eecs.berkeley.edu/research/colloquium/230419-2/"}
+{"question": "Who discussed the challenges of securing data on the move?", "answer": "Ion Stoica", "url": "https://eecs.berkeley.edu/news/ion-stoica-discusses-challenges-securing-data-move/"}
+{"question": "What award did EE Prof. Jan Rabaey win in 2017?", "answer": "2017 SRC Aristotle Award", "url": "https://eecs.berkeley.edu/news/jan-rabaey-wins-2017-src-aristotle-award/"}
+{"question": "Who is the co-founder, president and chief scientist of Covariant?", "answer": "Pieter Abbeel", "url": "https://eecs.berkeley.edu/news/covariant-enabled-robots-go-live/"}
+{"question": "What is the office number of Professor Shafi Goldwasser?", "answer": "689 Soda Hall", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/goldwasser.html"}
+{"question": "What is the grading basis for CS 198 Directed Group Studies for Advanced Undergraduates?", "answer": "passFail", "url": "https://www2.eecs.berkeley.edu/Courses/CS198"}
+{"question": "Who became a National Academy of Engineering (NAE) Member in 2024?", "answer": "Ion Stoica", "url": "https://www2.eecs.berkeley.edu/Research/Areas/SEC"}
+{"question": "What is the technical report number for \"On the Off-Label Use of Outer Approximations: An External Active Set Strategy\"?", "answer": "UCB/EECS-2007-127", "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/2007/EECS-2007-127.html"}
+{"question": "Who advised the dissertation \"Layout Aware Synthesis\"?", "answer": "Alberto L. Sangiovanni-Vincentelli", "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/2000/3932.html"}
+{"question": "Who is the subject of the IEEE Spectrum article about AI systems not being actually intelligent?", "answer": "Michael I. Jordan", "url": "https://eecs.berkeley.edu/news/michael-jordan-explains-why-todays-ai-systems-arent-actually-intelligent/"}
+{"question": "Which IEEE award did Prof. Thomas Budinger win in 2018?", "answer": "IEEE Medal for Innovations in Healthcare Technology", "url": "https://eecs.berkeley.edu/news/thomas-budinger-wins-ieee-medal-innovations-healthcare-technology/"}
+{"question": "Who advised EECS graduate student Ava Jiang Tan?", "answer": "Sayeef Salahuddin", "url": "https://eecs.berkeley.edu/news/ava-tan-wins-drc-2020-best-paper-award/"}
+{"question": "Where was the EECS Colloquium \"Moore\u2019s Law is Not Dead\" held?", "answer": "306 Soda Hall (HP Auditorium)", "url": "https://eecs.berkeley.edu/research/colloquium/190918-2/"}
+{"question": "Where was the EECS Colloquium on September 12, 2018 held?", "answer": "306 Soda Hall (HP Auditorium)", "url": "https://eecs.berkeley.edu/research/colloquium/180912-2/"}
+{"question": "Which month is listed in the BibTeX citation for the technical report by Lotfi A. Zadeh?", "answer": "Jan", "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/1984/255.html"}
+{"question": "Which email address should someone use to request departmental A/V work in Berkeley EECS?", "answer": "esg@eecs.berkeley.edu", "url": "https://eecs.berkeley.edu/people/staff/it-staff/"}
+{"question": "Who coauthored \"Adaptive online gradient descent\" with P. Bartlett?", "answer": "E. Hazan", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/bartlett.html"}
+{"question": "What is the prerequisite course listed along with EECS 16A and EECS 16B for EE 142?", "answer": "EL ENG 105", "url": "https://www2.eecs.berkeley.edu/Courses/EE142"}
+{"question": "What is the grading basis for EECS C206A?", "answer": "letter", "url": "https://www2.eecs.berkeley.edu/Courses/EECSC206A"}
+{"question": "What is John DeNero's office location?", "answer": "781 Soda", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/denero.html"}
+{"question": "What is Mekhail Anwar's contact email address?", "answer": "mekhail@berkeley.edu", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/mekhail.html"}
+{"question": "By what date must applicants submit the online application and supplemental materials for Berkeley EECS?", "answer": "December 1", "url": "https://eecs.berkeley.edu/academics/graduate/research-programs/admissions/"}
+{"question": "On what date is Richard Murray's EECS Colloquium talk scheduled?", "answer": "September 18, 2024", "url": "https://eecs.berkeley.edu/research/colloquium/one-in-a-billion-how-to-make-sure-autonomous-systems-are-safe-enough/"}
+{"question": "What is the prerequisite for EE 145L?", "answer": "40.", "url": "https://www2.eecs.berkeley.edu/Courses/EE145L"}
+{"question": "Which email address should students contact with questions about the 2026 ceremonies?", "answer": "cs-advising@berkeley.edu", "url": "https://eecs.berkeley.edu/resources/undergrads/cs/commencement/"}
+{"question": "What program did Gloria Tumushabe develop during the COVID pandemic shutdown?", "answer": "Afro Fem Coders", "url": "https://eecs.berkeley.edu/news/gloria-tumushabe-cultivates-women-coders-africa/"}
+{"question": "What position was Denis Yip named to at Digital China Holdings Limited?", "answer": "Chief Executive Officer", "url": "https://eecs.berkeley.edu/news/denis-yip-named-ceo-digital-china-holdings-limited/"}
+{"question": "Which Information course covers natural language processing?", "answer": "Info 159", "url": "https://eecs.berkeley.edu/academics/courses/tech-electives/"}
+{"question": "Which UC Berkeley faculty member ranked fourth in the world among most cited CS scholars in 2020?", "answer": "Michael Jordan", "url": "https://eecs.berkeley.edu/news/11-eecs-faculty-among-top-100-most-cited-cs-scholars-2020/"}
+{"question": "What is the grading basis for CS 602 Individual Study for Doctoral Students?", "answer": "satisfactory", "url": "https://www2.eecs.berkeley.edu/Courses/CS602"}
+{"question": "What time does the Fall 2017 EECS Colloquium meet on Wednesdays?", "answer": "4:00-5:00 PM", "url": "https://eecs.berkeley.edu/research/colloquium/archives/fall2017/"}
+{"question": "Which course is described as the tapeout course in the Apple NSI Course Flow Map?", "answer": "EE 194.", "url": "https://eecs.berkeley.edu/academics/new-silicon-initiative-nsi/course-flow-map/"}
+{"question": "Where will the EECS Colloquium featuring Vahid Vahedi take place?", "answer": "310 Sutardja Dai Hall", "url": "https://eecs.berkeley.edu/research/colloquium/engineering-the-future-of-semiconductors-with-atomic-precision-and-ai/"}
+{"question": "Where was the Machine Learning for Fluid Mechanics EECS Colloquium held?", "answer": "306 Soda Hall", "url": "https://eecs.berkeley.edu/research/colloquium/191030-2/"}
+{"question": "To which office should the copy card be returned after scanning?", "answer": "253 Cory", "url": "https://eecs.berkeley.edu/resources/faculty-staff/instruction/course-materials/scan/"}
+{"question": "Which museum displays an original Community Memory terminal?", "answer": "Computer History Museum", "url": "https://eecs.berkeley.edu/news/lee-felsenstein-and-first-public-computerized-bulletin-board-system/"}
+{"question": "What room hosts the EECS Colloquium on November 29, 2017?", "answer": "306 Soda Hall (HP Auditorium)", "url": "https://eecs.berkeley.edu/research/colloquium/171129-2/"}
+{"question": "How many EECS UC Berkeley startups had joined the NEA portfolio according to the April 26, 2016 post?", "answer": "3rd", "url": "https://eecs.berkeley.edu/news/amplab-singled-out-successful-collaborative-lab-model/"}
+{"question": "Who is listed as the advisor for the thesis \"Monte Carlo Methods for SLAM with Data Association Uncertainty\"?", "answer": "Stuart J. Russell", "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/2015/EECS-2015-191.html"}
+{"question": "What award did Lisa Yan receive in 2024?", "answer": "The Faculty Award for Outstanding Mentorship of GSIs", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/yanlisa.html"}
+{"question": "Which student organization provides EECS course guides and an archive of past examinations?", "answer": "Eta Kappa Nu (HKN", "url": "https://eecs.berkeley.edu/resources/undergrads/new/"}
+{"question": "What is the final exam status for EECS 206B?", "answer": "No final exam", "url": "https://www2.eecs.berkeley.edu/Courses/EECS206B"}
+{"question": "Which office picks up metal keys for EECS room access?", "answer": "253 Cory Hall", "url": "https://eecs.berkeley.edu/resources/facilities/room-reservations/"}
+{"question": "At what time are light refreshments served for the Spring 2024 EECS Colloquium?", "answer": "3:30 pm", "url": "https://eecs.berkeley.edu/research/colloquium/archives/spring-2024-colloquium/"}
+{"question": "What grading basis is used for CS 61C?", "answer": "letter", "url": "https://www2.eecs.berkeley.edu/Courses/CS61C"}
+{"question": "Who won the 2021-22 Google-CMD-IT LEAP Fellowship Award?", "answer": "Matthew Anderson", "url": "https://eecs.berkeley.edu/news/matthew-anderson-wins-2021-22-google-cmd-it-leap-fellowship-award/"}
+{"question": "What room hosted the EECS Colloquium on Wednesday, October 25, 2023?", "answer": "306 Soda Hall", "url": "https://eecs.berkeley.edu/research/colloquium/231025-2/"}
+{"question": "Which academy elected EECS alumnus Yannis Tsividis in 2019?", "answer": "U.S. National Academy of Engineering", "url": "https://eecs.berkeley.edu/news/yannis-tsividis-elected-nae/"}
+{"question": "Who won the 2017 Berkeley Visionary Award?", "answer": "Scott Shenker", "url": "https://eecs.berkeley.edu/news/scott-shenker-wins-2017-berkeley-visionary-award/"}
+{"question": "What email address should applicants use for questions about 5th-Year M.S. application procedures and timelines?", "answer": "gradadmissions@eecs.berkeley.edu", "url": "https://eecs.berkeley.edu/academics/graduate/fellowships/apple-ms-scholarship/"}
+{"question": "On what date was the EECS technical memorandum policy established?", "answer": "November 28, 2005", "url": "https://eecs.berkeley.edu/resources/grads/tech-report-policy"}
+{"question": "Who was the 2019 awardee who became Professor at Stanford?", "answer": "Andrew Ng", "url": "https://eecs.berkeley.edu/people/alumni/cs-distinguished-alumni/"}
+{"question": "What training program is listed for graduate students preparing for faculty careers?", "answer": "Pre-Faculty Preparation", "url": "https://eecs.berkeley.edu/resources/faculty-staff/grad-review/skills/"}
+{"question": "Which building is shown above the invitation to visit Berkeley EECS?", "answer": "Cory Hall", "url": "https://eecs.berkeley.edu/connect/"}
+{"question": "Which email address should students use to submit the EECS Minor Declaration Form?", "answer": "cs-advising@berkeley.edu", "url": "https://eecs.berkeley.edu/resources/undergrads/minors/eecs/"}
+{"question": "Which speaker is scheduled to present \"Reading Alan Turing\" at the Spring 2025 EECS Colloquium?", "answer": "Avi Wigderson", "url": "https://eecs.berkeley.edu/research/colloquium/archives/spring-2025/"}
+{"question": "At which firm was alumnus Neil Warren elevated to Principal Attorney?", "answer": "Fish & Richardson", "url": "https://eecs.berkeley.edu/news/neil-warren-elevated-principal-attorney-fish-richardson/"}
+{"question": "Which journal published the paper about the cockroach-inspired robot?", "answer": "Science Robotics", "url": "https://eecs.berkeley.edu/news/you-cant-squash-roach-inspired-robot/"}
+{"question": "On what date was the EECS Colloquium \"Deep Learning to Solve Challenging Problems\" held?", "answer": "Wednesday, November 28, 2018", "url": "https://eecs.berkeley.edu/research/colloquium/181128-2/"}
+{"question": "What is Robert Full's office phone number?", "answer": "510-642-9896", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/rjfull.html"}
+{"question": "In what year did S. A. Seshia receive the CAV Award?", "answer": "2021", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/seshia.html"}
+{"question": "Who won the 2021 FOCS Test of Time Award?", "answer": "Shafi Goldwasser", "url": "https://eecs.berkeley.edu/news/page/34/"}
+{"question": "How long is the E3S Summer Research Program?", "answer": "9-week", "url": "https://eecs.berkeley.edu/academics/undergraduate/summer-research/"}
+{"question": "What is the final exam status for CS 271 Randomness and Computation?", "answer": "No final exam", "url": "https://www2.eecs.berkeley.edu/Courses/CS271/"}
+{"question": "What chair does Prof. Niknejad hold in the EECS department at UC Berkeley?", "answer": "Donald O. Pederson Distinguished Professorship", "url": "http://www.eecs.berkeley.edu/Faculty/Homepages/niknejad.html"}
+{"question": "What is the contact email for the EECS Honors Program Coordinator?", "answer": "eecs-advising@eecs.berkeley.edu", "url": "https://eecs.berkeley.edu/resources/undergrads/honors/"}
+{"question": "Who is the first and only woman to chair the EECS Department?", "answer": "Tsu-Jae King Liu", "url": "https://eecs.berkeley.edu/news/tsu-jae-king-liu-chenming-hu-and-leon-chua-featured-luminaries-ieee-eds-podcast/"}
+{"question": "What university is Professor Michael Collins affiliated with in the technical review?", "answer": "University of Waterloo", "url": "https://eecs.berkeley.edu/about/history/gier/instruments"}
+{"question": "What is the grading basis for EE 194. Special Topics?", "answer": "letter", "url": "https://www2.eecs.berkeley.edu/Courses/EE194/"}
+{"question": "What is the email address for questions about EECS room cleanliness in Soda Hall?", "answer": "soda-rooms@eecs.berkeley.edu", "url": "https://eecs.berkeley.edu/resources/facilities/room-reservations"}
+{"question": "What is the first review date for the Associate Development Engineer position?", "answer": "November 27, 2025", "url": "https://eecs.berkeley.edu/connect/staff-jobs/"}
+{"question": "In what year did Michael A. Harrison become a full professor at UC Berkeley?", "answer": "1971", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/harrison.html"}
+{"question": "Where was the EECS Colloquium on November 30, 2016 held?", "answer": "306 Soda Hall", "url": "https://eecs.berkeley.edu/research/colloquium/161130-2/"}
+{"question": "What is Guanghan Meng's office location?", "answer": "485 Minor Hall", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/guanghan.html"}
+{"question": "What amount did Chenming Hu donate to the EECS department from his IEEE Medal of Honor prize?", "answer": "$50K", "url": "https://eecs.berkeley.edu/news/page/55/"}
+{"question": "How many units is CS 261 Security in Computer Systems?", "answer": "3", "url": "https://www2.eecs.berkeley.edu/Courses/CS/"}
+{"question": "Who won the CRA Outstanding Undergraduate Researcher Award for the female category?", "answer": "Smitha Milli", "url": "https://eecs.berkeley.edu/news/eecs-students-win-four-cra-outstanding-undergraduate-research-awards/"}
+{"question": "What is the office location of the EECS Course Manager?", "answer": "315 Soda", "url": "https://eecs.berkeley.edu/people/staff/student-affairs/"}
+{"question": "In what year was the technical report \"Fuzzy Sets and Their Application To Pattern Classification and Cluster Analysis\" published?", "answer": "1976", "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/1976/28862.html"}
+{"question": "What is the technical report number for \"Convergence and Stability of a Distributed CSMA Algorithm for Maximal Network Throughput\"?", "answer": "UCB/EECS-2009-43", "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/2009/EECS-2009-43.html"}
+{"question": "Which email address is listed for Kay Ousterhout?", "answer": "keo@eecs.berkeley.edu", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/keo.html"}
+{"question": "In what year did Professor Morgan receive the Signal Processing Magazine best paper award?", "answer": "1997", "url": "http://www.eecs.berkeley.edu/Faculty/Homepages/morgan.html"}
+{"question": "What cumulative grade point average is required for admission to the CS minor?", "answer": "2.0", "url": "https://eecs.berkeley.edu/resources/undergrads/minors/"}
+{"question": "What newspaper published Jerry Lin\u2019s Op-Ed about expanding data science education?", "answer": "Daily Cal", "url": "https://eecs.berkeley.edu/news/expanding-data-science-education/"}
+{"question": "Who is the coordinator for the Signal Processing primary faculty area?", "answer": "Kannan Ramchandran", "url": "https://www2.eecs.berkeley.edu/Research/Areas/SP"}
+{"question": "What grading basis is used for CS 61BL?", "answer": "letter", "url": "https://www2.eecs.berkeley.edu/Courses/CS61BL"}
+{"question": "Who teaches CS 168 in Spring 2026?", "answer": "Rishabh Iyer", "url": "https://www2.eecs.berkeley.edu/Courses/CS168/"}
+{"question": "Which prize did Leon O. Chua win in 2020?", "answer": "2020 Julius Springer Prize", "url": "https://eecs.berkeley.edu/news/page/56/"}
+{"question": "What is the normal workload quota for a full time lecturer?", "answer": "18.0", "url": "https://eecs.berkeley.edu/resources/faculty-staff/academic-personnel/heaven-point/"}
+{"question": "What is the grading basis for CS 185?", "answer": "letter", "url": "https://www2.eecs.berkeley.edu/Courses/CS185/"}
+{"question": "Who delivered a NVIDIA DGX-1 AI supercomputer to the Berkeley AI Research Lab earlier in 2016?", "answer": "Jen-Hsun Huang", "url": "https://eecs.berkeley.edu/news/nvidia-delivers-ai-supercomputer-berkeley/"}
+{"question": "In what year did Tsu-Jae King Liu become the first woman dean of the College of Engineering?", "answer": "2018", "url": "https://eecs.berkeley.edu/about/history/first-women/"}
+{"question": "What is the prerequisite for CS 152 Computer Architecture and Engineering?", "answer": "COMPSCI 61C", "url": "https://www2.eecs.berkeley.edu/Courses/CS152"}
+{"question": "What is the prerequisite for CS 265 Compiler Optimization and Code Generation?", "answer": "COMPSCI 164", "url": "https://www2.eecs.berkeley.edu/Courses/CS265"}
+{"question": "In what year was E. Alon named an IEEE Fellow?", "answer": "2019", "url": "http://www.eecs.berkeley.edu/Faculty/Homepages/elad.html"}
+{"question": "What is the grading basis for EECS 251LA?", "answer": "letter", "url": "https://www2.eecs.berkeley.edu/Courses/EECS251LA"}
+{"question": "What are the prerequisites for CS 170 Efficient Algorithms and Intractable Problems?", "answer": "COMPSCI 61B and COMPSCI 70.", "url": "https://www2.eecs.berkeley.edu/Courses/CS170"}
+{"question": "What course number is the Beauty and Joy of Computing at Berkeley?", "answer": "CS 10", "url": "https://eecs.berkeley.edu/connect/k-12"}
+{"question": "How many days of outside activities may UC faculty engage in during the academic year?", "answer": "39 days", "url": "https://eecs.berkeley.edu/resources/faculty-staff/academic-personnel/"}
+{"question": "What is the abbreviation for the Human-Computer Interaction research area in UC Berkeley EECS?", "answer": "HCI", "url": "http://www.eecs.berkeley.edu/Research/Areas/DMA"}
+{"question": "Who was the Principal Rocket Landing Engineer speaking at the EECS Colloquium on October 18, 2017?", "answer": "Lars Blackmore", "url": "https://eecs.berkeley.edu/research/colloquium/171018-2/"}
+{"question": "Who teaches CS 294-277 in Spring 2026?", "answer": "Jitendra Malik", "url": "https://www2.eecs.berkeley.edu/Courses/CS294"}
+{"question": "Who was a president of Women in Computer Science and Engineering in 2019-20?", "answer": "Cecilia Zhang and Utkarsha Agwan", "url": "https://eecs.berkeley.edu/about/diversity/wicse-presidents/"}
+{"question": "What is the office number of Yi Ma?", "answer": "333A Cory Hall", "url": "https://www2.eecs.berkeley.edu/Faculty/Lists/EE/visiting.html"}
+{"question": "Who received the Equity Champion Award in 2020-21?", "answer": "Christopher Hunn", "url": "https://eecs.berkeley.edu/people/staff/awards-2/"}
+{"question": "What building information is provided under Facilities, Safety & Space Management?", "answer": "Cory and Soda Hall", "url": "https://eecs.berkeley.edu/resources/"}
+{"question": "Who is the Principal Investigator of the Center for Energy Efficient Deep Learning?", "answer": "Prof. Kurt Keutzer", "url": "https://eecs.berkeley.edu/news/uc-berkeley-announces-intel-oneapi-center-excellence-deep-learning/"}
+{"question": "What is the technical report number for \"A Multi-Layer Area Routing Methodology Using a Boolean Satisfiability Based Router\"?", "answer": "UCB/ERL M99/16", "url": "http://www2.eecs.berkeley.edu/Pubs/TechRpts/1999/3607.html"}
+{"question": "What is the technical report number for \"Single Appearance Schedules for Synchronous Dataflow Programs\"?", "answer": "UCB/ERL M93/4", "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/1993/2265.html"}
+{"question": "What degree program is Joshua You listed under for Academic Year 2025/2026?", "answer": "5th-Year M.S.", "url": "https://eecs.berkeley.edu/academics/new-silicon-initiative-nsi/nsi-recipients/"}
+{"question": "What classroom is listed for EE 232 in Spring 2026?", "answer": "Cory 521", "url": "https://www2.eecs.berkeley.edu/Courses/EE232"}
+{"question": "Who is the senior author of the Nature Biotechnology paper on a tiny wireless implant detecting oxygen deep within the body?", "answer": "Michel Maharbiz", "url": "https://eecs.berkeley.edu/news/tiny-wireless-implant-detects-oxygen-deep-within-body/"}
+{"question": "On what date did Thomas Philip join the Graduate School of Education faculty?", "answer": "January 31, 2019", "url": "https://eecs.berkeley.edu/news/page/74/"}
+{"question": "Which Berkeley EECS program is specifically designed as a professional master\u2019s degree?", "answer": "Master of Engineering (M.Eng.)", "url": "https://eecs.berkeley.edu/academics/graduate/"}
+{"question": "Beginning Fall 2017, which joint major stopped accepting change of college applications in the College of Engineering?", "answer": "EECS/NE joint major", "url": "https://eecs.berkeley.edu/resources/undergrads/eecs-2/cal-transfers/"}
+{"question": "What is the final exam status for CS 288?", "answer": "No final exam", "url": "https://www2.eecs.berkeley.edu/Courses/CS288/"}
+{"question": "Who received the Berkeley Citation in 2025?", "answer": "Tsu-Jae King Liu", "url": "https://www2.eecs.berkeley.edu/Research/Areas/PHY"}
+{"question": "Which professor leads the Computational Imaging Lab?", "answer": "Laura Waller", "url": "https://eecs.berkeley.edu/news/laura-waller-sarah-chasins-and-nilah-ioannidis-named-chan-zuckerberg-biohub/"}
+{"question": "What award did Prof. Fox receive in 2015 for contributions to MOOCs?", "answer": "ACM Karl V. Karlstrom Outstanding Educator Award", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/fox.html"}
+{"question": "Where was the EECS Colloquium by Mary Lou Jepsen held on September 5, 2018?", "answer": "306 Soda Hall (HP Auditorium)", "url": "https://eecs.berkeley.edu/research/colloquium/180905-2/"}
+{"question": "Who is listed as the advisor for \"Delay Comparison of Different Switch Architectures\"?", "answer": "Jean Walrand", "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/2013/EECS-2013-204.html"}
+{"question": "Which class can students take for supervised independent study in EECS research?", "answer": "EE 199", "url": "https://eecs.berkeley.edu/resources/undergrads/undergraduate-research/"}
+{"question": "What is the prerequisite for EE 242A Integrated Circuits for Communications?", "answer": "EL ENG 140/240A or equivalent", "url": "https://www2.eecs.berkeley.edu/Courses/EE242A/"}
+{"question": "How old was Pravin Varaiya when he passed away?", "answer": "81 years old", "url": "https://eecs.berkeley.edu/news/pravin-varaiya-has-died/"}
+{"question": "Where was the EECS Colloquium \"Robots for Everyone Everywhere\" held?", "answer": "306 Soda Hall", "url": "https://eecs.berkeley.edu/research/colloquium/170920-2/"}
+{"question": "What organization accredits the UC Berkeley EECS program?", "answer": "ABET", "url": "https://eecs.berkeley.edu/academics/undergraduate/eecs-bs/"}
+{"question": "Where will the EECS Colloquium featuring Michael I. Jordan be held?", "answer": "306 Soda Hall (HP Auditorium)", "url": "https://eecs.berkeley.edu/research/colloquium/a-collectivist-vision-for-ai/"}
+{"question": "What is the grading basis for EE 229A?", "answer": "letter", "url": "https://www2.eecs.berkeley.edu/Courses/EE229A"}
+{"question": "What is the grading basis for EE 290Q Advanced Topics in Communication Networks?", "answer": "letter", "url": "https://www2.eecs.berkeley.edu/Courses/EE290Q"}
+{"question": "Which email address handles questions about EECS memorial funds?", "answer": "memorial@eecs.berkeley.edu", "url": "https://eecs.berkeley.edu/connect/support/memorial-funds/"}
+{"question": "Which campus buildings are mentioned for class scheduling support by Course Support Staff?", "answer": "Cory and Soda Halls", "url": "https://eecs.berkeley.edu/people/staff/"}
+{"question": "What is the grading basis for EE C220C?", "answer": "letter", "url": "https://www2.eecs.berkeley.edu/Courses/EEC220C/"}
+{"question": "Who won the 2023 Marconi Prize?", "answer": "Hari Balakrishnan", "url": "https://eecs.berkeley.edu/news/page/23/"}
+{"question": "Who may enroll in CS H196B according to the prerequisites?", "answer": "students in the computer science honors program", "url": "https://www2.eecs.berkeley.edu/Courses/CSH196B"}
+{"question": "What is John Chuang's office number in South Hall?", "answer": "303A South Hall", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/chuang.html"}
+{"question": "Where was Richard Karp's October 24, 2018 lecture held?", "answer": "306 Soda Hall", "url": "https://eecs.berkeley.edu/research/colloquium/archives/fall2018/"}
+{"question": "Which IEEE award will Eli Yablonovitch receive for solar cells?", "answer": "IEEE William R. Cherry Award", "url": "https://eecs.berkeley.edu/news/eli-yablonovitch-receive-ieee-william-r-cherry-award/"}
+{"question": "What award did Cal\u2019s Mu Chapter receive in 2014-15?", "answer": "IEEE-HKN Outstanding Chapter Award", "url": "https://eecs.berkeley.edu/news/cals-mu-chapter-receives-ieee-hkn-outstanding-chapter-award/"}
+{"question": "Who advised Eric Battenberg's dissertation on live drum performances?", "answer": "Nelson Morgan and David L. Wessel", "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/2012/EECS-2012-250.html"}
+{"question": "Who was the keynote speaker at the 2019 USENIX Security Symposium mentioned in the Berkeley EECS article?", "answer": "Alex Stamos", "url": "https://eecs.berkeley.edu/news/eecs-students-postdocs-alumni-and-faculty-make-strong-showing-2019-usenix-security/"}
+{"question": "Where was the EECS Colloquium on September 19, 2018 held?", "answer": "306 Soda Hall (HP Auditorium)", "url": "https://eecs.berkeley.edu/research/colloquium/180919-2/"}
+{"question": "Which UC Berkeley office should people contact to contribute to the Robert K. and Ruth B. Brayton Community Room?", "answer": "bef@berkeley.edu", "url": "https://eecs.berkeley.edu/news/professor-bob-brayton-pioneer-in-logic-synthesis-and-formal-verification-has-died/"}
+{"question": "What is Sergey Levine's office location?", "answer": "8056 Berkeley Way West", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/svlevine.html"}
+{"question": "What is Scott Shenker's office location?", "answer": "415 Soda Hall", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/shenker.html"}
+{"question": "What is the grading basis for CS 365?", "answer": "satisfactory", "url": "https://www2.eecs.berkeley.edu/Courses/CS365"}
+{"question": "What program is listed for students interested in studying abroad in EECS?", "answer": "EECS Study Abroad Program", "url": "https://eecs.berkeley.edu/resources/students/stress/resilience/students-3/"}
+{"question": "Who launched the Accel Scholars EECS mentorship program with Accel?", "answer": "Amit Kumar", "url": "https://eecs.berkeley.edu/news/amit-kumar-and-accel-launch-accel-scholars-eecs-mentorship-program/"}
+{"question": "What building and room hosted the EECS Colloquium on Wednesday, September 21, 2016?", "answer": "306 Soda Hall (HP Auditorium)", "url": "https://eecs.berkeley.edu/research/colloquium/160921-2/"}
+{"question": "Who is the EECS Department Chair in the leadership list?", "answer": "Jelani Nelson", "url": "https://eecs.berkeley.edu/people/leadership/"}
+{"question": "Who advised Brian Lambson on the dissertation \"Energy Efficient Digital Logic Using Nanoscale Magnetic Devices\"?", "answer": "Jeffrey Bokor", "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/2013/EECS-2013-55.html"}
+{"question": "What time are EECS Colloquium talks usually held on Wednesdays?", "answer": "4:00-5:00 PM", "url": "https://eecs.berkeley.edu/research/colloquium/archives/fall2025/"}
+{"question": "From which university is Randy Katz receiving an honorary doctorate?", "answer": "University of Crete", "url": "https://eecs.berkeley.edu/news/randy-katz-receives-honorary-doctorate-from-university-of-crete/"}
+{"question": "What grading basis is used for CS 297 Field Studies in Computer Science?", "answer": "satisfactory", "url": "https://www2.eecs.berkeley.edu/Courses/CS297"}
+{"question": "In what year did Charles Susskind pass away?", "answer": "2004", "url": "https://eecs.berkeley.edu/news/charles-susskind-remembered-la-museum-holocaust/"}
+{"question": "In what year did Sheila Humphreys join the EECS department?", "answer": "1982", "url": "https://eecs.berkeley.edu/about/history/notable-women/humphreys"}
+{"question": "In what year did Dr. Subramanian receive the EE Department Outstanding Teaching Award?", "answer": "2006", "url": "http://www.eecs.berkeley.edu/Faculty/Homepages/subramanian.html"}
+{"question": "On what date was the Joseph Gier sculpture dedicated?", "answer": "September 20, 2023", "url": "https://eecs.berkeley.edu/about/history/gier/statue"}
+{"question": "What is Paul N. Hilfinger's office location?", "answer": "787 Soda Hall", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/hilfinger.html"}
+{"question": "On what date will Jeffrey Bokor assume the post of EECS Department Chair?", "answer": "July 1, 2019", "url": "https://eecs.berkeley.edu/news/jeff-bokor-rises-position-eecs-chair/"}
+{"question": "What is Ion Stoica's office number in Soda Hall?", "answer": "481-2 Soda Hall", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/stoica.html"}
+{"question": "What are the prerequisites for CS 164 Programming Languages and Compilers?", "answer": "COMPSCI 61B and COMPSCI 61C.", "url": "https://www2.eecs.berkeley.edu/Courses/CS164"}
+{"question": "What organization named Dawn Song a 2019 Fellow?", "answer": "Association for Computing Machinery", "url": "https://eecs.berkeley.edu/news/dawn-song-named-2019-acm-fellow/"}
+{"question": "Who advised the 1991 dissertation \"Design and Evaluation of the SPUR LISP Architecture\"?", "answer": "David A. Patterson", "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/1991/7794.html"}
+{"question": "Where was the EECS Colloquium on November 30, 2022 held?", "answer": "306 Soda Hall (HP Auditorium)", "url": "https://eecs.berkeley.edu/research/colloquium/221130-2/"}
+{"question": "Who was a 2025 EECS Distinguished Alumni Award winner and Co-Founder and President of Neuralink?", "answer": "DJ Seo", "url": "https://eecs.berkeley.edu/people/alumni/ee-distinguished-alumni\u201d"}
+{"question": "Which email address should applicants use for M.Eng. admissions questions?", "answer": "mengadmissions@eecs.berkeley.edu", "url": "https://eecs.berkeley.edu/academics/graduate/industry-programs/meng/faq/"}
+{"question": "On what date is David Tse's EECS Colloquium talk scheduled?", "answer": "September 17, 2025", "url": "https://eecs.berkeley.edu/research/colloquium/realizing-nakamotos-dream-one-time-signatures-garbled-circuits-and-zero-knowledge-proofs/"}
+{"question": "Which email address should EE internship students use on the CPT request form?", "answer": "ee-scheduling@eecs.berkeley.edu", "url": "https://eecs.berkeley.edu/resources/students/cpt/"}
+{"question": "What foundation made a gift for diversity in CS?", "answer": "Hopper-Dean Foundation", "url": "https://eecs.berkeley.edu/about/special-events"}
+{"question": "What is the database group website for Berkeley EECS?", "answer": "db.cs.berkeley.edu", "url": "https://www2.eecs.berkeley.edu/Research/Areas/DBMS"}
+{"question": "Who is the director of UC Berkeley\u2019s Institute of Transportation Studies?", "answer": "Alexandre Bayen", "url": "https://eecs.berkeley.edu/news/alex-bayen-why-traffic-apps-make-congestion-worse/"}
+{"question": "Which halls are mentioned for wired and wireless network access in EECS Network Services?", "answer": "Cory and Soda Halls", "url": "https://eecs.berkeley.edu/resources/students/computing/"}
+{"question": "What email address is listed for more information on the AWE Mentorship Program?", "answer": "aweberkeley@gmail.com", "url": "https://eecs.berkeley.edu/resources/undergrads/eecs-2/women/"}
+{"question": "What is Christopher Hunn\u2019s email address?", "answer": "cthunn@eecs.berkeley.edu", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/cthunn.html"}
+{"question": "What is Sanjam Garg's office number at UC Berkeley EECS?", "answer": "685 Soda Hall", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/sanjam.html"}
+{"question": "Who should visitors contact with questions about EECS outreach efforts?", "answer": "Audrey Sillers", "url": "https://eecs.berkeley.edu/connect/k-12/programs/"}
+{"question": "Where was the EECS Colloquium on September 14, 2016 held?", "answer": "306 Soda Hall", "url": "https://eecs.berkeley.edu/research/colloquium/160914-2/"}
+{"question": "Who received the ACM A.M. Turing Award in 1989?", "answer": "William M. Kahan", "url": "https://www2.eecs.berkeley.edu/Research/Areas/SCI"}
+{"question": "What was the office location of Gier at UC Berkeley?", "answer": "73 Cory Hall", "url": "https://eecs.berkeley.edu/about/history/gier/"}
+{"question": "What time does the BEARS 2019 Student Lightning Round Session begin?", "answer": "12:30", "url": "https://eecs.berkeley.edu/people/students"}
+{"question": "What is the prerequisite for CS 250 VLSI Systems Design?", "answer": "COMPSCI 150", "url": "https://www2.eecs.berkeley.edu/Courses/CS250"}
+{"question": "Which email address should non-COE students contact for an EECS bridge course?", "answer": "eecs-advising@eecs.berkeley.edu", "url": "https://eecs.berkeley.edu/resources/undergrads/cs/enrollment-policy/"}
+{"question": "What email address handles Soda Hall building questions and requests?", "answer": "soda-building@eecs.berkeley.edu", "url": "https://eecs.berkeley.edu/people/staff/facilities-staff/"}
+{"question": "On what day will the WiCSE 40th Anniversary Reunion be held?", "answer": "Saturday, March 17, 2018", "url": "https://eecs.berkeley.edu/about/special-events/2017-18/"}
+{"question": "What is Kameshwar Poolla's office location?", "answer": "5105 Etcheverry Hall", "url": "http://www.eecs.berkeley.edu/Faculty/Homepages/poolla.html"}
+{"question": "Who is the co-founding director leading the BAIR Climate Initiative effort?", "answer": "Trevor Darrel", "url": "https://eecs.berkeley.edu/news/bair-climate-initiative-creates-partnerships-fight-climate-change/"}
+{"question": "What type of EECS colloquium is offered weekly?", "answer": "EECS Joint Colloquium", "url": "https://eecs.berkeley.edu/research/"}
+{"question": "Which halls are home to the Department of Electrical Engineering and Computer Sciences?", "answer": "Cory and Soda Halls", "url": "https://eecs.berkeley.edu/academics/undergraduate/visit/"}
+{"question": "On what date was the Berkeley Engineer article about Rikky Muller, Ken Goldberg, and Anca Dragan published?", "answer": "May 24, 2016", "url": "https://eecs.berkeley.edu/news/rikky-muller-ken-goldberg-and-anca-dragan-create-machines-intelligence-work-more/"}
+{"question": "Which email address should students contact if unsure whether a technical elective counts for the ECE major?", "answer": "eecs-advising@berkeley.edu", "url": "https://eecs.berkeley.edu/resources/undergrads/ece-major-information/ece-major-upper-division-degree-requirements/"}
+{"question": "Which email address should students contact if unsure whether a course counts toward the CS major?", "answer": "cs-advising@berkeley.edu", "url": "https://eecs.berkeley.edu/resources/undergrads/cs/degree-reqs-upperdiv/"}
+{"question": "When are permission codes given to professors to distribute for Spring graduate classes?", "answer": "December 1st", "url": "https://eecs.berkeley.edu/resources/undergrads/faqs/getting-into-ee-classes/"}
+{"question": "How many technical courses should EECS MEng students complete within the EECS department at the graduate level?", "answer": "four (4)", "url": "https://eecs.berkeley.edu/academics/graduate/industry-programs/meng/requirements/spc"}
+{"question": "In what year did K. A. Yelick receive the CRA Distinguished Service Award?", "answer": "2022", "url": "http://www.eecs.berkeley.edu/Faculty/Homepages/yelick.html"}
+{"question": "Where was the EECS Colloquium on October 26, 2016 held?", "answer": "306 Soda Hall", "url": "https://eecs.berkeley.edu/research/colloquium/161026-2/"}
+{"question": "Who received the Sloan Research Fellow award in 2024?", "answer": "Sophia Shao", "url": "https://www2.eecs.berkeley.edu/Research/Areas/ARC/"}
+{"question": "What is the technical report number for \"Fine-grain Parallelism with Minimal Hardware Support\"?", "answer": "UCB/CSD-90-594", "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/1990/6383.html"}
+{"question": "What email address is listed for Generative AI at Berkeley?", "answer": "berkeleygenai@gmail.com", "url": "https://eecs.berkeley.edu/people/students-2/organizations/"}
+{"question": "What are the prerequisites for CS 302. Designing Computer Science Education?", "answer": "COMPSCI 301 and two semesters of GSI experience.", "url": "https://www2.eecs.berkeley.edu/Courses/CS302"}
+{"question": "What is one location of the Engineering Counseling Satellite Offices at UC Berkeley?", "answer": "241 Bechtel Engineering Center", "url": "https://eecs.berkeley.edu/resources/students/wellness/"}
+{"question": "What is the final exam status for CS 370?", "answer": "No final exam", "url": "https://www2.eecs.berkeley.edu/Courses/CS370"}
+{"question": "What is the grading basis for EE 197 Field Study?", "answer": "passFail", "url": "https://www2.eecs.berkeley.edu/Courses/EE197"}
+{"question": "What is the grading basis for CS C280 Computer Vision?", "answer": "letter", "url": "https://www2.eecs.berkeley.edu/Courses/CSC280/"}
+{"question": "Who joins Intel\u2019s Board of Directors in the July 13, 2016 announcement?", "answer": "Tsu-Jae King Liu", "url": "https://eecs.berkeley.edu/news/tsu-jae-king-liu-joins-intels-board-directors/"}
+{"question": "What was Robert K. Brayton's year of death?", "answer": "2025", "url": "https://eecs.berkeley.edu/people/faculty/in-memoriam/"}
+{"question": "In what season is the new ECE major coming to Berkeley?", "answer": "Fall 2025", "url": "https://eecs.berkeley.edu/academics/undergraduate/ece-bs/"}
+{"question": "Who was honored as a Tech Diversity Champion at the Annual Fairness Matters Forum 2015?", "answer": "Dan Garcia", "url": "https://eecs.berkeley.edu/news/dan-garcia-honored-tech-diversity-champion-level-playing-field-institute/"}
+{"question": "Who is listed as the coordinator among the secondary Human-Computer Interaction faculty?", "answer": "John F. Canny", "url": "https://www2.eecs.berkeley.edu/Research/Areas/HCI"}
+{"question": "In what room was the EECS Colloquium on Memcomputing held on April 24, 2019?", "answer": "306 Soda Hall", "url": "https://eecs.berkeley.edu/research/colloquium/190424-2/"}
+{"question": "What is the office location of Professor Emeritus Costas J. Spanos?", "answer": "510 Cory Hall", "url": "http://www.eecs.berkeley.edu/Faculty/Homepages/spanos.html"}
+{"question": "When is Samuel Eaton expected to graduate?", "answer": "Spring 2027", "url": "https://eecs.berkeley.edu/resources/undergrads/honors/members/"}
+{"question": "How many smartphone users were surveyed about 99 risks associated with 54 smartphone privileges?", "answer": "3,115", "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/2012/EECS-2012-70.html"}
+{"question": "What are the prerequisites for EE 240B?", "answer": "EL ENG 140 / EL ENG 240A", "url": "https://www2.eecs.berkeley.edu/Courses/EE240B"}
+{"question": "Who advised Geoffrey G. Zweig on the 1998 thesis \"Speech Recognition with Dynamic Bayesian Networks\"?", "answer": "Stuart J. Russell", "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/1998/8022.html"}
+{"question": "Who is listed as the coordinator of Information, Data, Network, and Communication Sciences (IDNCS)?", "answer": "Venkat Anantharam", "url": "https://www2.eecs.berkeley.edu/Research/Areas/IDNCS"}
+{"question": "In what year did Nathan W. Cheung receive a Ph.D. in applied physics from the California Institute of Technology?", "answer": "1980", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/cheung.html"}
+{"question": "Which office manages Faculty Advising in UC Berkeley EECS?", "answer": "205 Cory Hall", "url": "https://eecs.berkeley.edu/resources/undergrads/faculty-advising/faq-5/"}
+{"question": "In what room was the EECS Colloquium on September 4, 2019 held?", "answer": "306 Soda Hall (HP Auditorium)", "url": "https://eecs.berkeley.edu/research/colloquium/190904-2/"}
+{"question": "In what year did D. E. Culler receive a Ph.D. from MIT?", "answer": "1989", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/culler.html"}
+{"question": "What is the prerequisite for EE 240C?", "answer": "EL ENG 140", "url": "https://www2.eecs.berkeley.edu/Courses/EE240C/"}
+{"question": "What is the grading basis for CS 284A Foundations of Computer Graphics?", "answer": "letter", "url": "https://www2.eecs.berkeley.edu/Courses/CS284A"}
+{"question": "What is the prerequisite alternative listed for CS 286 besides COMPSCI 162 and COMPSCI 186?", "answer": "COMPSCI 286A", "url": "https://www2.eecs.berkeley.edu/Courses/CS286"}
+{"question": "How many students are typically on each capstone team in the Visual Computing and Computer Graphics MEng program?", "answer": "three to five students", "url": "https://eecs.berkeley.edu/academics/graduate/industry-programs/meng/requirements/vccg"}
+{"question": "What email address should people use for questions about EECS safety access requirements?", "answer": "keys@eecs.berkeley.edu", "url": "https://eecs.berkeley.edu/resources/facilities/safety-manual/"}
+{"question": "What is Joshua Hug's office number?", "answer": "779 Soda Hall", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/joshhug.html"}
+{"question": "Where will the EECS Colloquium on October 2, 2024 be held?", "answer": "306 Soda Hall (HP Auditorium)", "url": "https://eecs.berkeley.edu/research/colloquium/new-pathways-for-energy-efficient-computing-hardware/"}
+{"question": "On what date are Trevor Darrell, Anca Dragan, Ken Goldberg, Randy Katz and Stuart Russell slated to participate in TechCrunch Sessions: Robotics + AI 2020?", "answer": "March 3rd", "url": "https://eecs.berkeley.edu/news/darrell-dragan-goldberg-katz-and-russell-participate-robotics-ai-2020-tc-session/"}
+{"question": "Which email address handles questions about web pages and databases?", "answer": "acg@eecs.berkeley.edu", "url": "https://eecs.berkeley.edu/resources/faculty-staff/my-eecs-info-guide/"}
+{"question": "What room hosted the EECS Colloquium on September 11, 2019?", "answer": "306 Soda Hall (HP Auditorium)", "url": "https://eecs.berkeley.edu/research/colloquium/190911-2/"}
+{"question": "What position has EECS alumnus Matt Au been announced to hold at SideChef?", "answer": "Chief Technology Officer", "url": "https://eecs.berkeley.edu/news/matt-au-new-cto-sidechef/"}
+{"question": "What email address handles faculty award information and updates?", "answer": "faculty-award@eecs.berkeley.edu", "url": "https://eecs.berkeley.edu/people/staff/faculty-support-staff/"}
+{"question": "What position was Soumitra Dutta chosen for in 2017?", "answer": "Chairman", "url": "https://eecs.berkeley.edu/news/soumitra-dutta-named-chairman-aacsb-international-board-directors/"}
+{"question": "What room hosted the EECS Colloquium on September 13, 2017?", "answer": "306 Soda Hall", "url": "https://eecs.berkeley.edu/research/colloquium/170913-2/"}
+{"question": "What is John Chuang\u2019s office number in South Hall?", "answer": "303A South Hall", "url": "http://www.eecs.berkeley.edu/Faculty/Homepages/chuang.html"}
+{"question": "Which committee can students appeal to after an instructor takes action for academic misconduct?", "answer": "Grievance Committee", "url": "https://eecs.berkeley.edu/resources/students/academic-misconduct/"}
+{"question": "In what year was Gier promoted to Full Professor?", "answer": "1958", "url": "https://eecs.berkeley.edu/about/history/gier"}
+{"question": "In what year did Beresford N. Parlett retire?", "answer": "1994", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/parlett.html"}
+{"question": "What is the grading basis for CS 169A. Introduction to Software Engineering?", "answer": "letter", "url": "https://www2.eecs.berkeley.edu/Courses/CS169A"}
+{"question": "What is Jacob Steinhardt\u2019s office location?", "answer": "8026 Berkeley Way West", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/jsteinhardt.html"}
+{"question": "Where is the EECS Colloquium by John Martinis being held?", "answer": "306 Soda Hall", "url": "https://eecs.berkeley.edu/research/colloquium/advanced-fabrication-of-superconducting-qubits-for-a-quantum-computer/"}
+{"question": "How many courses may Berkeley undergraduates backdate for graduate standing?", "answer": "one course", "url": "https://eecs.berkeley.edu/academics/graduate/industry-programs/5yrms/degree-requirements/"}
+{"question": "Which course was named one of the \u201c5 Best CS Classes in the US\u201d at Berkeley EECS?", "answer": "CS61A", "url": "https://eecs.berkeley.edu/academics"}
+{"question": "Which medal has EECS Professor Emeritus Kam-Yin Lau won?", "answer": "IEEE/RSE James Clerk Maxwell Medal", "url": "https://eecs.berkeley.edu/news/kam-lau-wins-ieee-rse-james-clerk-maxwell-medal/"}
+{"question": "What theme will the 2021 NSF/CEME Decentralization Conference focus on?", "answer": "Mechanism Design for Vulnerable Populations", "url": "https://eecs.berkeley.edu/news/rediet-abebe-participate-nsfceme-decentralization-2021/"}
+{"question": "Which email address should students use for questions about ASE positions for Data Science courses?", "answer": "ds-ase@berkeley.edu", "url": "https://eecs.berkeley.edu/resources/ase/prospective/"}
+{"question": "According to Semantic Scholar, who is the most influential computer scientist on the web?", "answer": "Michael Jordan", "url": "https://eecs.berkeley.edu/news/whos-michael-jordan-computer-science/"}
+{"question": "What room hosted the EECS Colloquium on November 16, 2022?", "answer": "306 Soda Hall", "url": "https://eecs.berkeley.edu/research/colloquium/221116-2/"}
+{"question": "Which program invites visiting researchers each year at UC Berkeley EECS?", "answer": "VSPA", "url": "https://eecs.berkeley.edu/resources/visiting-scholars"}
+{"question": "In what year did Warren Hoburg receive his Ph.D. in Electrical Engineering and Computer Sciences?", "answer": "2015", "url": "https://eecs.berkeley.edu/news/warren-hoburg-selected-nasa-2017-astronaut-candidate-class/"}
+{"question": "Which fellowship did EECS graduate student Wenting Zheng win in 2017-18?", "answer": "2017-18 IBM PhD Fellowship", "url": "https://eecs.berkeley.edu/news/wenting-zheng-wins-2017-18-ibm-phd-fellowship/"}
+{"question": "What room hosts the EECS Colloquium talk by Amy Ko on April 16, 2025?", "answer": "306 Soda Hall", "url": "https://eecs.berkeley.edu/research/colloquium/justice-centered-educational-programming-languages/"}
+{"question": "What is the deadline for the Vanderbilt Institute for Nanoscale Science and Engineering summer program?", "answer": "February 15, 2016", "url": "https://eecs.berkeley.edu/academics/undergraduate/summer-research/other/"}
+{"question": "Which email address should staff use to request creation of a shared team drive?", "answer": "acg@eecs", "url": "https://eecs.berkeley.edu/resources/faculty-staff/staff-it-procedures/departure/"}
+{"question": "How long before the proposed examination date must the Qualifying Exam application reach the Graduate Division?", "answer": "at least 3 weeks", "url": "https://eecs.berkeley.edu/resources/grads/sample-cards/"}
+{"question": "What is Max Willsey\u2019s office location at UC Berkeley EECS?", "answer": "725 Soda Hall", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/mwillsey.html"}
+{"question": "Where is the Supernode student-run makerspace located?", "answer": "246 Cory Hall", "url": "https://eecs.berkeley.edu/resources/undergrads/"}
+{"question": "Which office manages Faculty Advising in Berkeley EECS?", "answer": "205 Cory Hall", "url": "https://eecs.berkeley.edu/resources/faculty-staff/faculty-advising-2/faq-6/"}
+{"question": "What position was Jeffrey Forbes named to in 2015?", "answer": "Chair", "url": "https://eecs.berkeley.edu/news/jeffrey-forbes-named-chair-acm-education-policy-committee/"}
+{"question": "Which email address handles questions about course scheduling and enrollment?", "answer": "cs-enrollments@berkeley.edu", "url": "https://eecs.berkeley.edu/resources/undergrads/cs/advising/"}
+{"question": "In what year was the technical report \"Survey of Single Machine Scheduling with Application to Web Object Transmission\" published?", "answer": "2000", "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/2000/3908.html"}
+{"question": "Which email address should staff use to request access to the online truck calendar?", "answer": "eecs-facilities@eecs", "url": "https://eecs.berkeley.edu/resources/facilities/dept-vehicle/"}
+{"question": "What is Jennifer Chayes's Berkeley email address?", "answer": "jchayes@berkeley.edu", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/jchayes.html"}
+{"question": "Which email address can course staff use to request access to Gradescope beta features?", "answer": "help@gradescope.com", "url": "https://eecs.berkeley.edu/resources/gsis/current/courseware/"}
+{"question": "What year was CS Education Day shown in the staff photo held?", "answer": "2019", "url": "https://eecs.berkeley.edu/people/"}
+{"question": "What is the technical report number for \"Application of Abstract Data Types and Abstract Indices to CAD Data Bases\"?", "answer": "UCB/ERL M83/3", "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/1983/104.html"}
+{"question": "What email address is listed for the NSF Graduate Research Fellowship Program?", "answer": "info@nsfgrfp.org", "url": "https://eecs.berkeley.edu/academics/graduate/fellowships/"}
+{"question": "What is Edwin R. Lewis's office location?", "answer": "565 Cory Hall", "url": "https://www2.eecs.berkeley.edu/Faculty/Homepages/lewis.html"}
+{"question": "What grading basis is listed for EE C220C?", "answer": "letter", "url": "https://www2.eecs.berkeley.edu/Courses/EEC220C"}
+{"question": "How many units is CS C200A Principles and Techniques of Data Science worth?", "answer": "4", "url": "https://www2.eecs.berkeley.edu/Courses/CSC200A/"}
+{"question": "What is the grading basis for EE 228A High Speed Communications Networks?", "answer": "letter", "url": "https://www2.eecs.berkeley.edu/Courses/EE228A"}
+{"question": "In what year was the Simons Institute for the Theory of Computing founded?", "answer": "2012", "url": "https://eecs.berkeley.edu/news/venkatesan-guruswami-named-director-of-the-simons-institute-for-the-theory-of-computing/"}
+{"question": "Which institute chose Bin Yu to present the 2023 Wald Memorial Lectures?", "answer": "Institute of Mathematical Statistics", "url": "https://eecs.berkeley.edu/news/bin-yu-chosen-speaker-2023-wald-lectures/"}
+{"question": "What type of office is assigned to regular ladder rank faculty under the EECS Department Space Policy?", "answer": "Individual office", "url": "https://eecs.berkeley.edu/resources/facilities/space-policy/"}
+{"question": "What is the minimum number of upper division EECS units required for the major?", "answer": "20 units", "url": "https://eecs.berkeley.edu/resources/undergrads/eecs-2/degree-reqs-upperdiv-2/"}
+{"question": "Where was the EECS Colloquium \"How Does the Brain Create Language?\" held?", "answer": "310 Sutardja Dai Hall (Banatao Auditorium)", "url": "https://eecs.berkeley.edu/research/colloquium/230510-2/"}
+{"question": "What prerequisite course is required for EECS 16A?", "answer": "MATH 54", "url": "https://www2.eecs.berkeley.edu/Courses/EECS16A"}
+{"question": "Where is the EECS Department Colloquium usually held on Wednesdays from 4:00-5:00 PM?", "answer": "HP Auditorium, 306 Soda Hall", "url": "https://www.eecs.berkeley.edu/research/colloquium"}
+{"question": "When did Pieter Abbeel launch \u201cThe Robot Brains Podcast\u201d?", "answer": "spring of 2021", "url": "https://eecs.berkeley.edu/news/robots-ai-and-podcasting-qa-pieter-abbeel/"}
+{"question": "What is Ana Claudia Arias's email address?", "answer": "acarias@eecs.berkeley.edu", "url": "http://www.eecs.berkeley.edu/Faculty/Homepages/acarias.html"}
+{"question": "Through what date were the ECE and CSE undergraduate programs accredited by ABET?", "answer": "September 30, 2019", "url": "https://eecs.berkeley.edu/academics/undergraduate/eecs-bs/objectives-outcomes/"}
+{"question": "What is the minimum GPA requirement for the Berkeley EECS M.Eng. program?", "answer": "3.0", "url": "https://eecs.berkeley.edu/academics/graduate/industry-programs/meng/"}
+{"question": "What type of work permission is CPT for F-1 international students?", "answer": "off-campus work permission", "url": "https://eecs.berkeley.edu/resources/undergrads/programs-2/"}
+{"question": "Which room requires visitors to go to the front desk at 387 Soda to check out a key after business hours?", "answer": "293 Cory", "url": "https://eecs.berkeley.edu/resources/facilities/room-reservations/book/"}
+{"question": "When is the deadline for all other Department awards nominations?", "answer": "3/5/26", "url": "https://eecs.berkeley.edu/people/students-2/awards/"}
+{"question": "What is the final exam status for CS 298?", "answer": "No final exam", "url": "https://www2.eecs.berkeley.edu/Courses/CS298"}
+{"question": "What is the grading basis for EE C145B Medical Imaging Signals and Systems?", "answer": "letter", "url": "https://www2.eecs.berkeley.edu/Courses/EEC145B"}
+{"question": "Where is the Spring 2017 EECS Colloquium held?", "answer": "HP Auditorium, 306 Soda Hall", "url": "https://eecs.berkeley.edu/research/colloquium/archives/spring2017/"}
