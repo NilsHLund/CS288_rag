@@ -11,18 +11,20 @@ Assumptions:
 - Output file: one answer per line (aligned).
 """
 
-# A hack to make environment variables work for me, it is not automatically working for some reason
+# Load .env if present (local dev); autograder uses env vars directly
 import os
-with open(".env") as f:
-    for line in f:
-        if line.strip() and not line.startswith("#"):
-            key, value = line.strip().split("=", 1)
-            os.environ[key] = value
-            
+from pathlib import Path
+_env_path = Path(__file__).resolve().parent.parent / ".env"
+if _env_path.exists():
+    with open(_env_path) as f:
+        for line in f:
+            if line.strip() and not line.startswith("#"):
+                key, value = line.strip().split("=", 1)
+                os.environ[key] = value
+
 import argparse
 import json
 import time
-from pathlib import Path
 from typing import List
 from rag import RAGModel
 
