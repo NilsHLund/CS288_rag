@@ -1,6 +1,3 @@
-# Data or Cache
-cache/
-
 # Should be ignored
 submission.zip
 .env
