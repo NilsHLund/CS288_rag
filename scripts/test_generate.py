@@ -1,6 +1,6 @@
 import json
 import os
-import requests
+# import requests
 import random
 import time
 from dotenv import load_dotenv

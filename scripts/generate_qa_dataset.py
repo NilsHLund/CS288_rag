@@ -6,7 +6,7 @@ import time
 from collections import defaultdict
 from urllib.parse import urlparse, unquote
 
-import requests
+# import requests
 from dotenv import load_dotenv
 
 load_dotenv(os.path.join(os.path.dirname(__file__), "..", ".env"))

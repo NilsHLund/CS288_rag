@@ -7,8 +7,8 @@ Open: http://localhost:5050
 import json
 import os
 import sys
-import requests as req
-from flask import Flask, render_template_string, request, redirect, url_for
+# import requests as req
+# from flask import Flask, render_template_string, request, redirect, url_for
 from urllib.parse import quote, unquote
 
 ANNOTATION_FILE = sys.argv[1] if len(sys.argv) > 1 else "annotations/iaa_annotator2_template.jsonl"

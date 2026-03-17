@@ -30,7 +30,7 @@ from urllib.parse import urljoin, urlparse
 from concurrent.futures import ThreadPoolExecutor
 from typing import Optional
 
-import requests
+# import requests
 from bs4 import BeautifulSoup, NavigableString
 from tqdm import tqdm
 
