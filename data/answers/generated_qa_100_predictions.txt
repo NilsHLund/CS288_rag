@@ -1,100 +1,300 @@
-Magdalene L. Crowley
-1.75 meters per second.
-Professor Dan Garcia.
+The University of Pennsylvania.
 UNKNOWN
-Tianshi Wang.
-N000141010934
-Jan 30-Feb 3, 2000.
-James W. Demmel and Nicholas J. Higham.
-BSIM3.
-Ferroelectric field-effect transistors (FeFETs).
-Elizaveta Tremsina.
-Computational Methods for Human Networks and High-Stakes Decisions.
-0.1 ps.
-Reachability analysis.
-UCB/EECS-2010-105
+A bronze statue.
+Incoming EECS students.
+Graduate Student Instructor (GSI).
+Latino Association of Graduate Students in Engineering and Science (LAGSES).
+3.0 (B)
 UNKNOWN
-Lotfi A. Zadeh.
-57,897 images.
-James Kuffner.
-Ren Ng.
-The Faculty Vice Chair.
-2011.
-Fetch robot.
-Project Euclid.
-Peter Sonsini.
-At the entrance of Blum Hall.
-Scientific Reports.
-7,412,016
-Prof. Ned Birdsall.
-A BEE2 compute module.
-The 3rd floor lobby in Soda Hall.
-Generalized sphere-packing arguments.
-Gilbert Henry Gates Endowed Chair.
-Forrest Huang.
-EECS, EE, or CS instructors.
-Brian P. Otis.
-Cadence Design Systems and Synopsys, Inc.
-Alessandro Chiesa.
-Alvin Cheung.
-G. S. May.
-Byron Reese.
-Berkeley AI Research (BAIR) Lab.
-Trinity College, University of Cambridge, in England.
-Michael George Luby.
-Ronald S. Fearing.
-Search User Interfaces.
-UNKNOWN
-Magnetic-Resonance-Imaging of the Brain.
-CS294-43.
-Berkeley Annual Research Symposium (BEARS).
+ELENG 105 (Microelectronic Devices).
+Changes to the PDF file content.
+Undergraduate students with a GSI appointment of 25% time or more.
+AI safety.
+President's Early Career Award for Scientists and Engineers.
+A "P" grade.
+Course Support Staff.
+Women in Computer Science and Engineering (WICSE).
+An exchange of ideas between the department's community and the outside world.
+Grainger College of Engineering at the University of Illinois.
+tutoring or academic intern experience.
+PhD-only degree.
+Movement data.
+ASML.
+RISELab.
+Technical development.
+After hours (weeknights after 5pm and weekends).
+Berkeley Artificial Intelligence (BAIR) Lab.
+Opt-out through the ACG student advising portal.
+U.S. citizens or current permanent residents.
+Feynman Prize for Excellence in Teaching.
+A chance for speakers to engage with the department.
+Students who took W10, 61A, 61B, or
+Self-funded.
+EE 194.
+Be in either EECS 151LA or EECS 151LB.
+Yale University.
+Computer Science (CS)
 UNKNOWN
 UNKNOWN
-NP-complete.
-Alexandra von Meier.
-Sanchita Pal
-2012 ASEE Frederick Emmons Terman Award.
-Appointment as graduate student instructor.
-KRON4 News.
-COMPSCI 61A.
-Ming C. Wu.
-About 8 minutes.
-John Hennessy.
-2019
-C. J. Progler.
-Pieter Abbeel.
-Vladimir Stojanovic.
-Security, systems, and applied cryptography.
-randomized channel access and network coding.
-Madison, WI.
-October 31, 2012.
-Coding it Forward in Washington, D.C.
-Association for Women in Mathematics (AWM)
-The UCLID verifier and decision procedure.
-Dawn Song.
-Oasis Labs.
-Feb 9, 2023.
-Prof. Chenming Hu and Prof. Sayeef Salahuddin.
-Magdalene L. Crowley
-$2 million.
-2005-09-12 18:54
-Cory 140.
-[31, 26,3]
-G. Piazza, P. J. Stephanou, and A. Pisano.
-Custom hardware.
+F-1 international students.
+Google Research's Responsible AI division.
+3.0
+tele-surgery and locomotion.
+Control, Intelligent Systems, and Robotics (CIR).
+999 (placeholder) discussion section.
+A faculty advisor from EECS with an Above-the-line appointment.
+Immigrants and children of immigrants.
+Instructional Support Group (ISG)
+National University of Singapore.
+Letter
+RISC-V International.
+CS Kickstart Program.
+Unknown
+Math 54.
+Optical Society of America
+EECS Course Archives.
+Math 54.
+remotely share spaces with each other.
+Electrical and Electronic Engineering.
+SIGCSE.
+Private ceremony at the Faculty Club.
+Student Affairs Staff.
+EECS Faculty
+Add themselves to the degree list.
+Computer User Support Group (CUSG).
+TEALS EECS Education Day.
+Undergraduate registered student organizations.
+African Americans and those from low socioeconomic status.
+C- or better.
+Proactive approach.
+EL ENG 140/240A or equivalent.
+Berkeley Wireless Research Center (BWRC).
+Suspension or dismissal from the University.
+continual prefix sum.
+Faculty work further advancing computer science curriculum or instruction.
+power, cost, and form factor.
+IBM.
+CS 272.
+Non-EECS MEng Students
+Mathematics and Computer Science Division.
+ESS College Advisor.
+Disruptive innovation and collaboration.
+International students planning to work off-campus during summer semester.
+Correlations of loss patterns across the receiver set.
+3.0 or higher.
+Semester class schedules.
+The Richard Tapia Celebration of Diversity in Computing.
+Students from kindergarten through high school.
+Jacobs Institute for Design Innovation.
+IEEE Brain Community.
+Summer Undergraduate Program in Engineering Research at Berkeley (SUPERB).
+Student Affairs
+Meta-learning for action.
+IEEE SSCS.
+Information and coding
+A strong quantitative background.
+FHL Vive Center for Enhanced Reality.
+Four business days.
+Center for Human Compatible Artificial Intelligence (CHAI).
+Incoming freshman women.
+The 4Ms (Model, Machine, Mechanization, Map).
+Black and white images.
+Only approved Non-CS technical elective courses.
+A cheaper, more efficient, and wearable system.
+Invenia.
+Contactless sensors.
+Department chair.
+Consent of instructor.
+Instructional Support Group (ISG)
+No grace period.
+Lawrence Berkeley National Laboratory.
+Undergraduate controls course (e.g. MECENG 132, ELE
+EL ENG 120, MATH 54.
+Through the Corporate Access Program (CAP).
+3.0
+CS 170.
+All female-identifying, transgender, non-binary, and gender non-conforming
+EECS 16A AND EECS 16B.
+Master of Science (M.S.)
 UNKNOWN
-Nika Haghtalab.
-Software innovation and leadership in high-performance computing.
-Shantou University.
-6 ps electrical pulses.
-January 1, 2017.
-GamesCrafters.
-Salar Fattahi.
-IEEE Founders Medal.
-George Necula.
-D Kuchta.
-306 Soda Hall (HP Auditorium).
-Duisburg, Germany.
-Technion, Israel Institute of Technology.
-Americas 50: The world's first top 50 North, Central and
-Yun S. Song
+Berkeley Wireless Research Center (BWRC)
+Consent of instructor and major adviser.
+Try our semester class schedules.
+AC Transit and Bay Area Rapid Transit (BART).
+B- and below.
+AWE.
+Christopher Hunn, Director of Undergraduate Student Instruction.
+Three.
+The Future of Medicine: An EECS Perspective.
+A data science connector course (numbered 88 in a range of departments).
+completion of 100% of the required core preparation courses.
+2-year M.S. degree in EECS.
+Aggressively mark as duplicates and move to the appropriate threads.
+Students with little to no computational background prior to coming to the unive
+The Chair of the CS Space Committee.
+IGETC is not mentioned in the provided context.
+Outstanding collaborative scientific interactions between industry and research.
+Computer Science (CS) Major.
+David Patterson.
+Auto-grading strategies and collaboration tools.
+COMPSCI 61B.
+The Center for Augmented Cognition.
+Human analysts with domain knowledge.
+Technological innovation.
+weather-related power and Internet outages.
+Two one-hour sessions.
+Junior faculty working on artificial intelligence.
+UNKNOWN
+At least one hour on Monday, Wednesday, or Friday, and another on Tuesday
+Knowledge exchange.
+UNKNOWN
+mass storage and farms of CPUs and GPUs.
+Meets the programming prerequisite for 61A.
+Institute of Electrical and Electronics Engineers (IEEE).
+Math 54.
+The Beauty and Joy of Computing (BJC).
+Senior staff engineer.
+EL ENG 122 or equivalent.
+CS Kickstart.
+Google.
+Math 54.
+University of Pennsylvania
+Pre-Faculty Preparation Forms for Current Graduate Students.
+13 months.
+UNKNOWN
+Generalization capabilities.
+Cross-disciplinary, team-driven projects.
+Jeffrey Bokor.
+F-1 international students.
+Canceled.
+Computer Science Major.
+BIO ENG C145L
+EECS 16A, EECS 16B, and EL ENG
+The Computer Science Reentry Program.
+Four business days.
+personal datebooks and addressbooks.
+UC Extension Continuing education.
+At least three.
+Institute for Advanced Study, Princeton.
+External Relations Group (XRG)
+African Americans and those born into low socioeconomic status.
+Facebook Reality Lab
+Completion of Physics 5A and 7B will not fulfill the requirement.
+At most three.
+Juniors and seniors.
+CS 285.
+No prior coursework is specified.
+IBM's T.J. Watson Research Center.
+Carissa Caloud.
+CS Scholars Program.
+UNKNOWN
+UNKNOWN
+Berkeley AI Research Group.
+Letting it happen without addressing the issue.
+Dynamic movement.
+The School of Information.
+60-80 semester units.
+Theory group.
+Declared EECS major.
+Prerequisites: Instructor consent for undergraduate and masters students.
+EECS instructional account.
+Students approaching graduation.
+Tactile images.
+EE White Card.
+Eli Yablonovitch
+Take CS169A and/or CS169L.
+Computer Science 61C.
+Four business days.
+Disability Specialists.
+At least five months.
+EE White Card.
+UNKNOWN
+CS+X program.
+Accessible, liberatory, transparent, cultural, obtainable, democratic, and endur
+The EECS Resiliency Project.
+UNKNOWN
+One in a billion.
+Physics.
+The iSchool Inclusion Institute (i3).
+More than 50%
+Massachusetts Institute of Technology (MIT).
+Machine-learning methods.
+Admission to the 5th Year M.S. Program.
+EECS 16A and EECS 16B.
+UC Davis ADVANCE Scholar Award.
+UCPD using their non-emergency phone number: 510-642-676
+Letter grade.
+EECS 16A and EECS 16B.
+Cross-disciplinary, team-driven projects.
+Math 54 completion or strong discouragement for Fall 2024 students.
+Computational social choice (COMSOC).
+Berkeley Student Advocate Office (SAO)
+Visitor's name, affiliation, and a chartstring.
+classes.berkeley.edu
+esg@eecs.berkeley.edu
+No ranking mentioned.
+Rising Stars 2020 and 2021.
+New student application.
+Math 52.
+matrix multiplies by static coefficients.
+Enrolled in the minimum number of units approved by your college.
+Amazon AI PhD Fellowship program.
+Center for Cellular Construction.
+Berkeley Sensor & Actuator Center (BSAC).
+Steps 1-4 of the Soda and Cory Building Access Requirements.
+Real-world challenges.
+Intellectual exchange through research and ideas.
+VIP Lab.
+UNKNOWN
+Symposium on Theory of Computing (STOC)
+Annual Multicultural Business Youth Educational Services Embarkment (Ambyese).
+A minimum GPA of 3.0 (B) is required.
+At least 3.
+Attendance is mandatory.
+PhD in 2000.
+CalTime.
+studies and analyses in the fields of information and telecommunications.
+2.0 or above.
+Prepaid card.
+Programming Systems (PS)
+COMPSCI 164.
+cortical modem.
+Pass/Fail
+Unless stated otherwise, students can assume that prerequisites are strongly rec
+One.
+CS KickStart Program
+The House.
+psychology of programming research.
+Onsager Computing.
+Previous award recipients are ineligible to receive the same award again.
+National Science Foundation.
+senior mentorships and a lifelong professional network.
+Significant and substantial contribution to research in magnetic resonance in me
+Tenure track or tenured position.
+Massachusetts Institute of Technology (MIT).
+2xyC, 2xyD, etc.
+Berkeley Staff Assembly Certificate of Excellence in Management (EIM)
+UNKNOWN
+UNKNOWN
+Prospective 5th-year M.S. students.
+Transfer to Excellence (TTE).
+Master of Information and Cybersecurity.
+Elad Alon
+Prospective EECS Master of Engineering (MEng) student.
+CalTime.
+Senior Vice President and General Manager.
+Math 54.
+the next generation of scholars.
+The Apple Masters Scholarship in Integrated Systems is available to students fro
+Research positions at Exxon and Bell Telephone Laboratories.
+Students may not complete both the EECS and CS minors.
+CRA-W Graduate Cohort for Women Program.
+EECS 16A and EECS 16B.
+Ensuring AI technology is useful and usable by people.
+Accel Scholars program.
+Department of Electrical Engineering and Computer Sciences.
+UNKNOWN
+EECS Graduate Admissions Office located in 215 Cory Hall.
+Completion of a portion of the subject matter of COMPSCI 61B.
+teaching, research, and/or diversity statements.
+Mastery learning grading system.

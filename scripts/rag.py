@@ -29,10 +29,10 @@ CACHE_DIR = "cache"
 CHUNK_SIZE = 150
 CHUNK_OVERLAP = 40
 
-TOP_K_RETRIEVE = 5
+TOP_K_RETRIEVE = 7
 
-BM25_WEIGHT = 1.0
-DENSE_WEIGHT = 0.0
+BM25_WEIGHT = 0.5
+DENSE_WEIGHT = 0.5
 
 EMBED_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 
@@ -254,7 +254,7 @@ class RAGModel:
                 model=MODEL,
                 max_tokens=16,
                 temperature=0.0,
-                timeout=60,
+                timeout=150,
             )
 
             answer = response.strip().splitlines()[0].strip()
