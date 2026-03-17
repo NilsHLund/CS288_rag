@@ -2,6 +2,7 @@
 cache/
 
 # Should be ignored
+submission.zip
 .env
 *.pyc
 __pycache__/

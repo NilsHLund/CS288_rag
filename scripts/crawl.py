@@ -18,8 +18,8 @@ import re
 import argparse
 from collections import deque
 from urllib.parse import urljoin, urlparse
+from urllib.request import urlopen, Request
 
-import requests
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 
@@ -63,29 +63,25 @@ def crawl(seed_url: str, max_pages: int, output_path: str, delay: float = 0.3):
     queue = deque([seed_url])
     corpus = []
 
-    session = requests.Session()
-    session.headers.update({"User-Agent": "Mozilla/5.0 (CS288 RAG Assignment)"})
-
+    req_headers = {"User-Agent": "Mozilla/5.0 (CS288 RAG Assignment)"}
     pbar = tqdm(total=max_pages, desc="Crawling")
 
     while queue and len(corpus) < max_pages:
         url = queue.popleft()
         url = url.split("#")[0]  # strip fragments
-        url = "https://www2.eecs.berkeley.edu/Directories/directory-nostudents.html"
 
         if url in visited or not is_allowed_url(url):
             continue
         visited.add(url)
 
         try:
-            resp = session.get(url, timeout=10)
-            if resp.status_code != 200:
-                continue
-            content_type = resp.headers.get("Content-Type", "")
-            if "text/html" not in content_type:
-                continue
-
-            soup = BeautifulSoup(resp.text, "html.parser")
+            req = Request(url, headers=req_headers)
+            with urlopen(req, timeout=10) as resp:
+                content_type = resp.headers.get("Content-Type", "")
+                if "text/html" not in content_type:
+                    continue
+                html = resp.read().decode(errors="replace")
+            soup = BeautifulSoup(html, "html.parser")
             title, text = extract_text(soup)
 
             if len(text) < 100:  # skip nearly empty pages

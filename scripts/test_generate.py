@@ -1,8 +1,8 @@
 import json
 import os
-import requests
 import random
 import time
+from urllib.request import urlopen, Request
 from dotenv import load_dotenv
 
 load_dotenv(os.path.join(os.path.dirname(__file__), "..", ".env"))
@@ -62,12 +62,10 @@ TEXT:
 
     for attempt in range(3):
         try:
-            response = requests.post(
-                GEMINI_URL,
-                json={"contents": [{"parts": [{"text": prompt}]}]},
-                timeout=30,
-            )
-            data = response.json()
+            payload = json.dumps({"contents": [{"parts": [{"text": prompt}]}]}).encode()
+            req = Request(GEMINI_URL, data=payload, headers={"Content-Type": "application/json"}, method="POST")
+            with urlopen(req, timeout=30) as response:
+                data = json.loads(response.read().decode())
             if "error" in data:
                 print(f"API error: {data['error'].get('message', data['error'])}")
                 time.sleep(2)

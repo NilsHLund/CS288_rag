@@ -5,8 +5,8 @@ import random
 import time
 from collections import defaultdict
 from urllib.parse import urlparse, unquote
+from urllib.request import urlopen, Request
 
-import requests
 from dotenv import load_dotenv
 
 load_dotenv(os.path.join(os.path.dirname(__file__), "..", ".env"))
@@ -147,31 +147,31 @@ Output valid JSON only, with keys "question" and "answer".
 
 
 def _ask_gemini(prompt):
-    response = requests.post(
-        GEMINI_URL,
-        json={"contents": [{"parts": [{"text": prompt}]}]},
-        timeout=30,
-    )
-    data = response.json()
+    payload = json.dumps({"contents": [{"parts": [{"text": prompt}]}]}).encode()
+    req = Request(GEMINI_URL, data=payload, headers={"Content-Type": "application/json"}, method="POST")
+    with urlopen(req, timeout=30) as response:
+        data = json.loads(response.read().decode())
     if "error" in data:
         raise RuntimeError(data["error"].get("message", data["error"]))
     return data["candidates"][0]["content"]["parts"][0]["text"]
 
 
 def _ask_chatgpt(prompt):
-    response = requests.post(
+    payload = json.dumps({
+        "model": OPENAI_MODEL,
+        "messages": [{"role": "user", "content": prompt}],
+    }).encode()
+    req = Request(
         OPENAI_URL,
+        data=payload,
         headers={
             "Authorization": f"Bearer {OPENAI_API_KEY}",
             "Content-Type": "application/json",
         },
-        json={
-            "model": OPENAI_MODEL,
-            "messages": [{"role": "user", "content": prompt}],
-        },
-        timeout=30,
+        method="POST",
     )
-    data = response.json()
+    with urlopen(req, timeout=30) as response:
+        data = json.loads(response.read().decode())
     if "error" in data:
         raise RuntimeError(data["error"].get("message", data["error"]))
     return data["choices"][0]["message"]["content"]

@@ -28,20 +28,21 @@ CACHE_DIR = "cache"
 CHUNK_SIZE = 150
 CHUNK_OVERLAP = 40
 
-TOP_K_RETRIEVE = 5
+TOP_K_RETRIEVE = 20
 
-BM25_WEIGHT = 0.7
-DENSE_WEIGHT = 0.3
+BM25_WEIGHT = 1.0
+DENSE_WEIGHT = 1.0
 
-EMBED_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
+EMBED_MODEL = "BAAI/bge-base-en-v1.5"
 
 SYSTEM_PROMPT = (
     "You are a helpful assistant answering questions about UC Berkeley EECS. "
     "Answer using ONLY the provided context. "
+    "Use the exact wording from the context when possible; do not paraphrase. "
     "Give a SHORT answer (under 10 words). "
-    "If the answer is not clearly in the context reply UNKNOWN."
+    "Only reply UNKNOWN if the answer is clearly absent from the context."
     "If the answer asks for Yes/No, reply only with Yes or No."
-    "If there are multiple possible answers, only reply with one most probable one."
+    "If there are multiple possible answers, pick the one that most directly answers the question."
 )
 
 
@@ -201,7 +202,7 @@ class RAGModel:
 
         n = len(self.chunks)
 
-        fetch_k = min(top_k * 10, n)
+        fetch_k = min(top_k * 15, n)
 
         bm25_scores = np.array(
             self.bm25.get_scores(normalize(question).split())
@@ -211,7 +212,7 @@ class RAGModel:
             bm25_scores /= bm25_scores.max()
 
         q_emb = self.embedder.encode(
-            [question],
+            ["Represent this sentence for searching relevant passages: " + question],
             normalize_embeddings=True,
             convert_to_numpy=True,
         ).astype("float32")
@@ -250,8 +251,8 @@ class RAGModel:
             response = self.llm(
                 system_prompt=SYSTEM_PROMPT,
                 query=prompt,
-                model="mistralai/mistral-7b-instruct",
-                max_tokens=16,
+                model="meta-llama/llama-3.1-8b-instruct",
+                max_tokens=24,
                 temperature=0.0,
                 timeout=120,
             )

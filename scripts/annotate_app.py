@@ -7,7 +7,7 @@ Open: http://localhost:5050
 import json
 import os
 import sys
-import requests as req
+from urllib.request import urlopen, Request
 from flask import Flask, render_template_string, request, redirect, url_for
 from urllib.parse import quote, unquote
 
@@ -260,11 +260,14 @@ def proxy():
     try:
         if target.startswith("http://"):
             target = target.replace("http://", "https://", 1)
-        r = req.get(target, timeout=15, headers={"User-Agent": "Mozilla/5.0"})
-        content = r.text
+        req = Request(target, headers={"User-Agent": "Mozilla/5.0"})
+        with urlopen(req, timeout=15) as r:
+            content = r.read().decode(errors="replace")
+            status = r.getcode()
+            content_type = r.headers.get("Content-Type", "text/html")
         base_tag = f'<base href="{target}" target="_blank">'
         content = content.replace("<head>", f"<head>{base_tag}", 1)
-        return content, r.status_code, {"Content-Type": r.headers.get("Content-Type", "text/html")}
+        return content, status, {"Content-Type": content_type}
     except Exception as e:
         return f"<h2>Could not load page</h2><p>{e}</p><p><a href='{target}' target='_blank'>Open directly</a></p>", 502
 

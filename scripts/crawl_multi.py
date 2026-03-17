@@ -29,8 +29,8 @@ from collections import deque
 from urllib.parse import urljoin, urlparse
 from concurrent.futures import ThreadPoolExecutor
 from typing import Optional
+from urllib.request import urlopen, Request
 
-import requests
 from bs4 import BeautifulSoup, NavigableString
 from tqdm import tqdm
 
@@ -124,7 +124,7 @@ FAILED_URLS_PATH = "corpus/failed_urls.txt"
 _failed_urls_lock = threading.Lock()
 
 
-def fetch_page(url: str, session: requests.Session, delay: float,
+def fetch_page(url: str, _session, delay: float,
                is_retry: bool = False):
     """
     Fetch a single page and return a result dict, or None on failure.
@@ -134,10 +134,26 @@ def fetch_page(url: str, session: requests.Session, delay: float,
         url = url.replace("http://", "https://", 1)
     time.sleep(delay)
     backoff = 5
+    headers = {"User-Agent": "Mozilla/5.0 (CS288 RAG Assignment)"}
 
     for attempt in range(3):
         try:
-            resp = session.get(url, timeout=10)
+            req = Request(url, headers=headers)
+            with urlopen(req, timeout=10) as resp:
+                status = resp.getcode()
+                content_type = resp.headers.get("Content-Type", "")
+                if status in (429, 503):
+                    logging.warning("Rate limited (%d) for %s — retrying in %ds (attempt %d/3)",
+                                    status, url, backoff, attempt + 1)
+                    time.sleep(backoff)
+                    backoff *= 2
+                    continue
+                if status != 200:
+                    logging.warning("HTTP %d for %s", status, url)
+                    return None
+                if "text/html" not in content_type:
+                    return None
+                html = resp.read().decode(errors="replace")
         except Exception as e:
             logging.warning("Request exception for %s: %s (attempt %d/3)",
                             url, e, attempt + 1)
@@ -145,22 +161,7 @@ def fetch_page(url: str, session: requests.Session, delay: float,
             backoff *= 2
             continue
 
-        if resp.status_code in (429, 503):
-            logging.warning("Rate limited (%d) for %s — retrying in %ds (attempt %d/3)",
-                            resp.status_code, url, backoff, attempt + 1)
-            time.sleep(backoff)
-            backoff *= 2
-            continue
-
-        if resp.status_code != 200:
-            logging.warning("HTTP %d for %s", resp.status_code, url)
-            return None
-
-        content_type = resp.headers.get("Content-Type", "")
-        if "text/html" not in content_type:
-            return None
-
-        soup = BeautifulSoup(resp.text, "html.parser")
+        soup = BeautifulSoup(html, "html.parser")
 
         links = set()
         for a_tag in soup.find_all("a", href=True):
@@ -172,7 +173,7 @@ def fetch_page(url: str, session: requests.Session, delay: float,
 
         title, text, meta_description = extract_text(soup)
 
-        raw_len = len(resp.text)
+        raw_len = len(html)
         if raw_len > 0:
             ratio = len(text) / raw_len
             if ratio < 0.005:
@@ -268,8 +269,7 @@ def crawl(
     corpus_lock = threading.Lock()
     frontier_lock = threading.Lock()
 
-    session = requests.Session()
-    session.headers.update({"User-Agent": "Mozilla/5.0 (CS288 RAG Assignment)"})
+    session = None  # unused, fetch_page uses urllib
 
     already = len(corpus)
     pbar = tqdm(desc="Crawling", unit="pages", initial=already)
