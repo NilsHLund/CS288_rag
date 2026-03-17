@@ -21,6 +21,7 @@ from llm import call_llm
 # ──────────────────────────────────────────────
 # Configuration
 # ──────────────────────────────────────────────
+MODEL = "meta-llama/llama-3.1-8b-instruct"
 
 CORPUS_PATH = "corpus/pages_all.json"
 CACHE_DIR = "cache"
@@ -30,8 +31,8 @@ CHUNK_OVERLAP = 40
 
 TOP_K_RETRIEVE = 5
 
-BM25_WEIGHT = 0.7
-DENSE_WEIGHT = 0.3
+BM25_WEIGHT = 1.0
+DENSE_WEIGHT = 0.0
 
 EMBED_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 
@@ -250,10 +251,10 @@ class RAGModel:
             response = self.llm(
                 system_prompt=SYSTEM_PROMPT,
                 query=prompt,
-                model="mistralai/mistral-7b-instruct",
+                model=MODEL,
                 max_tokens=16,
                 temperature=0.0,
-                timeout=120,
+                timeout=60,
             )
 
             answer = response.strip().splitlines()[0].strip()
