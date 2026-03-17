@@ -29,12 +29,12 @@ CACHE_DIR = "cache"
 CHUNK_SIZE = 150
 CHUNK_OVERLAP = 40
 
-TOP_K_RETRIEVE = 7
+TOP_K_RETRIEVE = 5
 
 BM25_WEIGHT = 0.5
 DENSE_WEIGHT = 0.5
 
-EMBED_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
+EMBED_MODEL = "sentence-transformers/all-MiniLM-L6-v2" # "BAAI/bge-small-en-v1.5"
 
 SYSTEM_PROMPT = (
     "You are a helpful assistant answering questions about UC Berkeley EECS. "
