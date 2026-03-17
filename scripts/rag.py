@@ -8,6 +8,7 @@ import pickle
 import string
 from pathlib import Path
 from typing import List
+from urllib.parse import urlparse
 
 import numpy as np
 import faiss
@@ -23,7 +24,12 @@ from llm import call_llm
 # ──────────────────────────────────────────────
 
 CORPUS_PATH = "corpus/pages_all.json"
-CACHE_DIR = "cache"
+
+# Exclude low-value path prefixes to trim corpus (empty = use full corpus)
+PATH_PREFIX_EXCLUDE = ["Pubs", "news"]  # [] for full corpus; ["Pubs","news"] ~7k pages removed
+
+# Separate cache per config: cache/ = full, cache/bge_base_filtered/ = reduced corpus + bge-base
+CACHE_DIR = "cache/bge_base_filtered" if PATH_PREFIX_EXCLUDE else "cache"
 
 CHUNK_SIZE = 150
 CHUNK_OVERLAP = 40
@@ -33,7 +39,7 @@ TOP_K_RETRIEVE = 30
 BM25_WEIGHT = 0.5
 DENSE_WEIGHT = 1.0
 
-EMBED_MODEL = "BAAI/bge-small-en-v1.5"  # 33M params, 384d (between MiniLM-L6 and BGE-base)
+EMBED_MODEL = "BAAI/bge-base-en-v1.5"  # 109M params, 768d — better retrieval, fits with reduced corpus
 
 SYSTEM_PROMPT = (
     "You are a helpful assistant answering questions about UC Berkeley EECS. "
@@ -51,6 +57,25 @@ SYSTEM_PROMPT = (
 # ──────────────────────────────────────────────
 # Utilities
 # ──────────────────────────────────────────────
+
+def get_path_prefix(url: str) -> str:
+    """Extract first path segment from URL (e.g. 'academics' from /academics/graduate/...)."""
+    path = urlparse(url).path.strip("/")
+    return path.split("/")[0] if path else ""
+
+
+def filter_pages_by_path(pages: list, exclude_prefixes: list[str]) -> list:
+    """Keep only pages whose URL path prefix is not in exclude_prefixes."""
+    exclude = set(p.strip().lower() for p in exclude_prefixes if p.strip())
+    if not exclude:
+        return pages
+    kept = []
+    for p in pages:
+        prefix = get_path_prefix(p.get("url", "")).lower()
+        if prefix not in exclude:
+            kept.append(p)
+    return kept
+
 
 def normalize(text: str) -> str:
     import re
@@ -160,6 +185,9 @@ class RAGModel:
 
             with open(CORPUS_PATH) as f:
                 pages = json.load(f)
+
+            pages = filter_pages_by_path(pages, PATH_PREFIX_EXCLUDE)
+            print(f"[RAGModel] Using {len(pages)} pages (excluded: {PATH_PREFIX_EXCLUDE})")
 
             self.chunks = build_corpus_chunks(pages)
 
