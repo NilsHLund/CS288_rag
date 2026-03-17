@@ -28,9 +28,9 @@ CACHE_DIR = "cache"
 CHUNK_SIZE = 150
 CHUNK_OVERLAP = 40
 
-TOP_K_RETRIEVE = 10
+TOP_K_RETRIEVE = 20
 
-BM25_WEIGHT = 0.3
+BM25_WEIGHT = 0.5
 DENSE_WEIGHT = 1.0
 
 EMBED_MODEL = "BAAI/bge-small-en-v1.5"  # 33M params, 384d (between MiniLM-L6 and BGE-base)
@@ -38,10 +38,12 @@ EMBED_MODEL = "BAAI/bge-small-en-v1.5"  # 33M params, 384d (between MiniLM-L6 an
 SYSTEM_PROMPT = (
     "You are a helpful assistant answering questions about UC Berkeley EECS. "
     "Answer using ONLY the provided context. "
-    "Use the exact wording from the context when possible; do not paraphrase. "
+    "Extract the EXACT answer phrase from the context; do not paraphrase or give surrounding text. "
     "Give a SHORT answer (under 10 words). "
-    "Only reply UNKNOWN if the answer is clearly absent from the context."
-    "If the answer asks for Yes/No, reply only with Yes or No."
+    "Only reply UNKNOWN if the answer is clearly absent from the context. "
+    "If the question asks for Yes/No, reply only with Yes or No. "
+    "If the question asks for an acronym or abbreviation (e.g. HKN, AUWICSEE), use that form. "
+    "If the question asks for a specific identifier (course number, person name, organization), extract that exact one—not a related or parent concept. "
     "If there are multiple possible answers, pick the one that most directly answers the question."
 )
 

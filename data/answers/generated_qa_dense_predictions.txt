@@ -1,48 +1,48 @@
-Jonathan Shewchuk.
+Kannan Ramchandran
 The Berkeley Citation.
 Berkeley Artificial Intelligence Research Lab (BAIR)
 Google.
 Master of Engineering (M.Eng.)
-Coursera MOOC platform.
-The HKN honor society.
-Akamai Technologies.
-Computer Science Mentors.
+Coursera MOOC platform
+HKN honor society
+Akamai Technologies
+Kresge Engineering Library
 Karla Thao.
 Consent of instructor.
 American Academy of Arts and Sciences.
 Jennifer Chayes.
-Program to increase research opportunities for students committed to pursuing ca
-Josh Hug.
-Joseph T. Gier.
-Contactless sensors.
+SUPERB
+Josh Hug
+Joseph Gier
+AI-powered, contactless sensors.
 The Association of Women EE & CS (AWE).
-The National Academy of Engineering (NAE).
+National Academy of Engineering (NAE).
 UNIX Operating System.
 UC Davis
-Solar energy.
-Professor Emeritus, Professor in the Graduate School.
+solar energy
+Professor Emeritus, Professor in the Graduate School
 The Chair of the CS Space Committee.
 cross-disciplinary, team-driven projects.
-Computer architecture.
-Queer Graduate Students in Computer Science and Electrical Engineering (QICSE).
+computer architecture
+Queer Graduate Students in Computer Science and Electrical Engineering (QICSE)
 Human-Computer Interaction (HCI).
-metrics-based.
-Unknown
+metrics-based
+Fourandsix Technologies
 Precision Medicine.
 EECS major.
-climate-first lens
+climate-first approach.
 Dan Garcia.
 supportive and inclusive culture.
-Sergey Levine.
-Reed College.
+Sergey Levine
+Reed College
 Operating Systems & Networking (OSNT)
-The Beauty and Joy of Computing (BJC) or CS 10.
-The Future of Medicine.
+CS 10.
+The Future of Medicine
 Physical Electronics (PHY)
-Massachusetts Institute of Technology
-EE 194
-Berkeley Artificial Intelligence Research Lab (BAIR).
-May 11.
+Tel Aviv University and MIT.
+EE 194.
+Berkeley Artificial Intelligence Research Lab (BAIR)
+Commencement.
 Integrated Circuits (INC)
 Human-Computer Interaction (HCI)
 Cal Day.
@@ -52,49 +52,49 @@ Center for Student Affairs.
 over 70
 MEC ENG C231A
 Eta Kappa Nu (HKN)
-NEMO
+NEMO.
 Robert Pilawa-Podgurski
 Math 54 or Physics 89.
 academia, government, industry, and entrepreneurial pursuits.
 Berkeley Artificial Intelligence (BAIR) Lab.
 EE 147.
 Lecturer.
-Tamara Broderick (Statistics Ph.D. ’14)
-EECS DeCal
-Four.
-Women in Computer Science and Electrical Engineering (WiCSE).
-Visiting EECS Scholar and Postdoc Affairs
+Tamara Broderick
+DeCal
+Four
+Women in Computer Science and Electrical Engineering (WICSE)
+ERSO HR & Payroll
 Stanford University.
-Berkeley Wireless Research Center.
+Berkeley ASPIRE lab
 Roshan Rao
 California community college students.
 letter
-A computer-aided design system for cellular structure.
-COMPSCI 61C.
-CS Kickstart.
-The Beauty and Joy of Computing (BJC)
+CellCAD
+COMPSCI 61C
+CS Kickstart
+CS 10
 Databricks.
 Satisfactory.
-Human Resources Staff.
+Human Resources Staff
 Three to five students.
-A research-level final project.
-CS KickStart Program.
-EL ENG 120.
+research-level final project
+CS KickStart Program
+EL ENG 120
 Technical Report
 Computer Science.
-ASEs (Academic Student Employees).
+ASEs (Academic Student Employees)
 CS KickStart.
 Faculty, students, staff, and alumni.
 The Undergraduate Research Apprentice Program (URAP).
-Wednesdays 4:00-5:00 PM.
+Wednesdays 4:00-5:00 PM
 Symantec Graduate Fellowship Program.
-EL ENG 105.
+EL ENG 105
 DB-100.
 EE 194.
-External Relations Group (XRG).
-20 minutes.
+External Relations Group (XRG)
+20 minutes
 exascale computing
-IRIS information Help and news for departmental computing infrastructure.
+cs-enrollments@eecs.berkeley.edu
 emotional intelligence.
 COMPSCI 61B and COMPSCI 61C.
-The instructor's preference.
+instructor preference.
