@@ -12,12 +12,12 @@ Assumptions:
 """
 
 # A hack to make environment variables work for me, it is not automatically working for some reason
-import os
-with open(".env") as f:
-    for line in f:
-        if line.strip() and not line.startswith("#"):
-            key, value = line.strip().split("=", 1)
-            os.environ[key] = value
+# import os
+# with open(".env") as f:
+#     for line in f:
+#         if line.strip() and not line.startswith("#"):
+#             key, value = line.strip().split("=", 1)
+#             os.environ[key] = value
             
 import argparse
 import json
