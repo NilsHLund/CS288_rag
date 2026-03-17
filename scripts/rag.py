@@ -30,7 +30,7 @@ CHUNK_OVERLAP = 40
 
 TOP_K_RETRIEVE = 20
 
-BM25_WEIGHT = 1.0
+BM25_WEIGHT = 0.5
 DENSE_WEIGHT = 1.0
 
 EMBED_MODEL = "BAAI/bge-small-en-v1.5"  # 33M params, 384d (between MiniLM-L6 and BGE-base)
