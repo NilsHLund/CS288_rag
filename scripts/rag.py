@@ -137,6 +137,7 @@ class RAGModel:
             chunks_cache.exists()
             and bm25_cache.exists()
             and faiss_cache.exists()
+            and embeddings_cache.exists()
         ):
 
             print("[RAGModel] Loading cached index...")
@@ -282,7 +283,7 @@ class RAGModel:
                 print(f"Exception during inference, {e}")
                 return i, "UNKNOWN"
 
-        with ThreadPoolExecutor(max_workers=20) as executor:
+        with ThreadPoolExecutor(max_workers=4) as executor:
             futures = {executor.submit(process, i, q): i for i, q in enumerate(questions)}
             for future in as_completed(futures):
                 i, answer = future.result()

@@ -4,6 +4,9 @@
 
 set -e
 
+# Ensure we run from submission root (paths are relative)
+cd "$(dirname "$0")"
+
 QUESTIONS_PATH="$1"
 PREDICTIONS_PATH="$2"
 
