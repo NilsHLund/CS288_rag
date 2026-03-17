@@ -28,9 +28,9 @@ CACHE_DIR = "cache"
 CHUNK_SIZE = 150
 CHUNK_OVERLAP = 40
 
-TOP_K_RETRIEVE = 20
+TOP_K_RETRIEVE = 10
 
-BM25_WEIGHT = 0.5
+BM25_WEIGHT = 0.3
 DENSE_WEIGHT = 1.0
 
 EMBED_MODEL = "BAAI/bge-small-en-v1.5"  # 33M params, 384d (between MiniLM-L6 and BGE-base)
