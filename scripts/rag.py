@@ -19,6 +19,7 @@ import pickle
 import re
 import string
 from pathlib import Path
+from collections import Counter
 from typing import List
 from urllib.parse import urlparse
 
@@ -46,7 +47,7 @@ PARENT_WINDOW = 350          # words — wider context window passed to LLM
 CHUNK_SIZE = CHILD_CHUNK_SIZE  # alias kept for ablation.py compatibility
 
 EMBED_MODEL = "BAAI/bge-small-en-v1.5"
-RERANKER_MODEL = "cross-encoder/ms-marco-MiniLM-L-12-v2"
+RERANKER_MODEL = "BAAI/bge-reranker-base"
 GENERATION_MODEL = "meta-llama/llama-3.1-8b-instruct"
 
 _cache_suffix = f"sent_{CHILD_CHUNK_SIZE}_{CHILD_CHUNK_OVERLAP}"
@@ -54,8 +55,8 @@ _embed_tag = EMBED_MODEL.split("/")[-1].replace(".", "_")  # e.g. bge-small-en-v
 _filter_tag = "_filtered" if PATH_PREFIX_EXCLUDE else ""
 CACHE_DIR = f"cache/{_embed_tag}{_filter_tag}_{_cache_suffix}"
 
-TOP_K_RETRIEVE = 30
-TOP_K_RERANK = 8
+TOP_K_RETRIEVE = 40
+TOP_K_RERANK = 10
 MAX_CHUNKS_PER_URL = 2       # deduplication cap per URL after reranking
 
 BM25_WEIGHT = 1.0
@@ -83,6 +84,8 @@ _ANSWER_PREFIX_RE = re.compile(
     r"^(short answer[:\s]+|answer[:\s]+|the answer is[:\s]+|based on the context[,\s]+)",
     re.IGNORECASE,
 )
+
+
 
 
 # ──────────────────────────────────────────────
@@ -436,6 +439,7 @@ class RAGModel:
         if not self.reranker or not chunks:
             return chunks[:top_k]
 
+        # BGE-reranker expects [query, passage] pairs
         pairs = [[question, c["text"]] for c in chunks]
         scores = self.reranker.predict(pairs)
         ranked = sorted(zip(chunks, scores), key=lambda x: x[1], reverse=True)
@@ -477,24 +481,33 @@ class RAGModel:
             "Short answer:"
         )
 
+        SELF_CONSISTENCY_SAMPLES = 3
+
+        answers: list[str] = []
         for attempt in range(3):
             try:
-                response = self.llm(
-                    system_prompt=SYSTEM_PROMPT,
-                    query=prompt,
-                    model=GENERATION_MODEL,
-                    max_tokens=24,
-                    temperature=0.0,
-                    timeout=120,
-                )
-                response = (response or "").strip()
-                answer = response.splitlines()[0].strip() if response else "UNKNOWN"
-                answer = _ANSWER_PREFIX_RE.sub("", answer).strip()
-                return answer[:80]
+                for _ in range(SELF_CONSISTENCY_SAMPLES):
+                    response = self.llm(
+                        system_prompt=SYSTEM_PROMPT,
+                        query=prompt,
+                        model=GENERATION_MODEL,
+                        max_tokens=45,
+                        temperature=0.3,
+                        timeout=120,
+                    )
+                    response = (response or "").strip()
+                    ans = response.splitlines()[0].strip() if response else "UNKNOWN"
+                    ans = _ANSWER_PREFIX_RE.sub("", ans).strip()
+                    answers.append(ans[:80] if ans else "UNKNOWN")
+                # Majority vote: pick most common answer
+                if answers:
+                    return Counter(answers).most_common(1)[0][0]
+                return "UNKNOWN"
             except Exception as e:
                 if attempt < 2:
+                    answers = []
                     continue
-                return "UNKNOWN"
+                return Counter(answers).most_common(1)[0][0] if answers else "UNKNOWN"
 
     # ──────────────────────────────────────────────
     # Public API

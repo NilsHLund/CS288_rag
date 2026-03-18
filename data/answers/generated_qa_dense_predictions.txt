@@ -1,26 +1,26 @@
 James O'Brien
-Berkeley Citation.
+The Berkeley Citation.
 Berkeley Artificial Intelligence Research Lab (BAIR)
-Google
+Google.
 Master of Engineering (M.Eng.)
 Coursera MOOC platform.
-HKN honor society.
-Akamai Technologies
-Bias Busters
+The HKN honor society.
+Akamai Technologies.
+Bias Busters.
 Karla Thao.
 Consent of instructor.
-American Academy of Arts and Sciences
+American Academy of Arts and Sciences.
 Jennifer Chayes
-SUPERB
-Josh Hug
-Joseph Gier
-Wireless sensors.
-The Association of Women EE & CS (AWE).
+SUPERB.
+CS Assistant Teaching Prof. Josh Hug.
+Joseph T. Gier.
+vision and sound sensors.
+The Association of Women in EECS (AWE).
 National Academy of Engineering (NAE)
 UNIX Operating System.
 UC Davis
 solar energy
-Professor of the Graduate School and Distinguished Professor Emeritus.
+Professor Emeritus, Professor in the Graduate School.
 The Chair of the CS Space Committee.
 cross-disciplinary, team-driven projects.
 computer architecture
@@ -33,13 +33,13 @@ CS major.
 climate-first
 Dan Garcia.
 supportive and inclusive culture.
-Sergey Levine
+Sergey Levine.
 Reed College.
 Operating Systems & Networking (OSNT)
 CS 10
-The Future of Medicine.
+medicine
 Physical Electronics (PHY)
-Massachusetts Institute of Technology
+MIT
 EE 194.
 Berkeley Artificial Intelligence Research Lab (BAIR)
 Commencement.
@@ -50,8 +50,8 @@ External Relations
 Center for Student Affairs.
 13
 over 70
-MEC ENG C232
-Eta Kappa Nu (HKN)
+MEC ENG C231A
+Eta Kappa Nu, the EECS Honor Society.
 NEMO.
 Robert Pilawa-Podgurski
 Physics 89.
@@ -60,41 +60,41 @@ Berkeley Artificial Intelligence Research Lab (BAIR)
 EE 147.
 Lecturer.
 Aram John Thomasian
-EECS C106B
+CS 294-084.
 Four.
 Association of Women in EE & CS (AWE)
-ERSO
-Stanford University
+ERSO HR
+Stanford University.
 Berkeley Wireless Research Center
-Roshan Rao
+Roshan Rao.
 California community college students.
 letter
-CellCAD
+computer aided design system.
 COMPSCI 61C.
-CS Kickstart.
-CS 10.
-Databricks
+CS KickStart.
+CS 10
+Databricks.
 satisfactory
 Human Resources Staff.
 Three to five students.
 a research-level final project.
-CS KickStart Program.
+The CS KickStart Program.
 EL ENG 120
 Technical Report
-Computer Science
+Computer Science.
 ASEs
-CS Kickstart Program
-Faculty, students, staff, and alumni.
-Undergraduate Research Apprentice Program (URAP)
-Wednesdays 4:00-5:00 PM.
+CS KickStart.
+Faculty, students, staff and alumni.
+The Undergraduate Research Apprentice Program (URAP).
+Wednesdays 4:00-5:00 PM
 Symantec Graduate Fellowship Program.
 EL ENG 105
-DB-100.
+The DB-100.
 EE 194.
-External Relations Group (XRG)
+External Relations Group (XRG).
 around 20 minutes
 exascale computing
 EECS 101 on Ed Stem.
 emotional intelligence.
 COMPSCI 61B and COMPSCI 61C.
-Consult with a Graduate Student Advisor
+non-EECS Graduate students
