@@ -1,0 +1,100 @@
+Which Berkeley scientific computing faculty member serves as the group's coordinator?
+What was the highest campus honor Wil Zeilinger received for service and loyalty?
+Which Berkeley research lab is associated with Song Mei’s work in artificial intelligence?
+Which company acquired the startup Urban Engines founded by Shiva Shivakumar?
+Which Berkeley graduate degree is meant for students planning to enter engineering practice right away rather than continue to a doctorate?
+Which online platform hosts the Illinois Master of CS in Data Science for-credit degree mentioned in the colloquium?
+Which student group leads tours of the EECS department for visitors?
+Which company does Bruce Maggs serve in a part-time research leadership role at?
+What campus group provides archived exams and term-by-term reviews for Berkeley EECS courses?
+Which staff member handles issuing and troubleshooting copy cards for Cory and Soda Halls?
+What approval is required before signing up for EE 194 Special Topics?
+Which organization recently selected Professor Robert Full as a member?
+Which Berkeley leader described the division’s pioneering vision and progress toward a campus-wide organization for data science and computing?
+What Berkeley summer research initiative helps undergraduates move on to STEM graduate study?
+Which professor was thanked by undergraduate Taylor Choe for changing an initially negative impression of Berkeley?
+Who was the earliest known Black Berkeley student to complete a bachelor's degree in mechanical engineering?
+What kind of sensors does Dina Katabi envision enabling smart health environments?
+Which student group automatically includes all women in EECS when admitted to Berkeley?
+What organization elected EE alumnus Colin Parris as a member?
+Which operating system did Ken Thompson create that led to induction into the National Inventors Hall of Fame?
+Which UC campus does EECS alumnus Gary S. May lead as chancellor?
+Which renewable power source did Joseph Gier investigate at UCLA before his death?
+What role does Edward A. Lee hold at UC Berkeley?
+Who is responsible for making decisions that carry out the computer science space-use policies?
+What kind of projects are described as a key strength of UC Berkeley EECS?
+Which field has Professor David A. Patterson spent four decades helping advance?
+Which Berkeley EECS graduate student group was created to support queer students and allies in the department?
+Which Berkeley EECS research area focuses on how people interact with computing technology?
+What kind of methodology does the alternative computer science ranking use to evaluate departments?
+What organization does the speaker for the colloquium lead research at as co-founder and research director?
+Which field does Adam Yala combine with machine learning in research on equitable healthcare?
+Which Berkeley engineering major admits students straight into the program as freshmen for the full four years?
+What kind of perspective did Armando Fox and Victor Huang use when preparing new teaching assistants in computer science instruction?
+Which Berkeley faculty member received the UC Berkeley Distinguished Teaching Award in 2025?
+What kind of culture does Berkeley EECS say it has alongside collaboration and outreach?
+Which UC Berkeley computer science professor is featured in a story about teaching robots everyday reasoning?
+Which undergraduate institution awarded Kater Murch's bachelor's degree in physics?
+Which broad EECS research area includes Sylvia Ratnasamy’s work on networked systems?
+Which Berkeley course is also used in high schools for AP Computer Science Principles?
+What major scientific area was highlighted in the 2019 event about medicine from an EECS viewpoint?
+What subject area is associated with EE 236A in the related areas listing?
+Which institution is Nir Shavit affiliated with as a professor in electrical engineering and computer science?
+Which class is described as the tapeout course for students exploring chip design and hardware careers?
+Which Berkeley research lab is affiliated with Narges Norouzi's work in artificial intelligence?
+Which Berkeley event marks the end-of-year ceremony for graduates in the 2023–24 EECS planning calendar?
+Which subject area includes EE 240B in the Berkeley EECS course listings?
+Which Berkeley EECS research area focuses on user interaction with computing systems?
+What campus visit event offers workshops, presentations, demonstrations, and lab tours for students exploring Berkeley ECE?
+Which administrative area is responsible for corporate and alumni partnerships in the EECS department?
+Which campus office provides individual academic and administrative help for all EECS students?
+How many EECS faculty members have received UC Berkeley’s distinguished teaching honor?
+How many Berkeley EECS research centers and labs are affiliated with the department?
+Which cross-listed class is available under Mechanical Engineering for EE C220B?
+Which honor society hosts department tours for visitors interested in Berkeley EECS?
+Which simplified mathematical brain model is presented as supporting language acquisition and other cognitive abilities?
+Who supervised Pourya Assem's thesis on point-of-load power delivery converters?
+Which course may students substitute to meet the linear algebra and differential equations requirement in the ECE lower division program?
+Which kinds of future professionals does the department aim to prepare through its rigorous curriculum?
+Which Berkeley research lab is associated with artificial intelligence research in Pieter Abbeel's profile?
+Which earlier class prevents students from earning credit for EE 247A as well?
+What job title is used for the department’s temporary instructors who are not on the tenure track?
+Which Berkeley EECS faculty member listed in memoriam had a Statistics doctorate?
+What is the usual catalog designation for student-run EECS classes in the schedule of classes?
+How many graduate-level EECS technical classes are MEng students expected to finish in the computer systems track?
+Which student group for undergraduate women in computing and electrical engineering was established within Berkeley EECS?
+Which EECS office supports appointments for postdocs and visiting researchers?
+Which university granted Jitendra Malik's doctorate in computer science?
+Which research center lists Krste Asanović as an associate director?
+Who presented research on using machine learning for predicting protein structures and biochemistry at the BEARS 2019 student lightning round?
+Which transfer applicants receive priority consideration in the University of California system?
+What grading scheme is used for CS 271 Randomness and Computation?
+What kind of design platform does Wallace Marshall's talk describe for shaping cellular architecture?
+What prior class must students complete before taking the computer architecture and engineering course CS 152?
+Which Berkeley EECS initiative is a one-week course aimed at introducing beginners to computer science?
+Which Berkeley course also serves as an AP Computer Science Principles curriculum in high schools?
+What company does the speaker lead as chief executive and founder?
+What grading basis is used for the supervised teaching preparation course CS 399?
+Which staff group handles payroll and employee benefits for UC Berkeley EECS?
+What is the required team size range for the MEng capstone project groups?
+What kind of culminating assignment does the deep reinforcement learning course let students pursue with staff support?
+Which program can receive memorial donations in honor of Floraine Berthouzoz?
+What prior course must students complete before taking the digital signal processing class EE 123?
+What kind of document is "Macroscopic Modelling of R.F. Plasma Discharges" classified as?
+In which field was Ren Ng recognized by the 2017 Sloan Research Fellowship?
+Which group can find information intended for prospective and current academic student employees?
+Which Berkeley EECS initiative is meant to help beginners get introduced to computer science?
+Which groups of people are described as being central to the department’s success at UC Berkeley EECS?
+Which Berkeley program gives undergraduates hands-on research experience with mentoring from graduate students and professors?
+What day and time does the EECS colloquium usually meet during Fall 2023?
+Which fellowship program is specifically open to international students and centered on computer security topics?
+What prior course is required before enrolling in Analog Integrated Circuits?
+Which instrument was long used to obtain emissivity values commonly listed in undergraduate heat transfer textbooks?
+Which course are EECS and CS students specifically encouraged to take for tapeout experience?
+Which group serves as the EECS department’s main connection to the broader public?
+About how long is each individual meeting with a faculty mentor expected to last during Rising Stars 2020 mentoring sessions?
+What computing milestone describes machines able to perform a billion billion calculations each second?
+Which online platform should students join to get term-specific updates about enrolling in computer science courses?
+What quality does Anca Dragan say self-driving vehicles need in order to anticipate human behavior on the road?
+Which prior classes must students complete before taking the web-based introduction to database systems course?
+For most graduate classes, whose preference determines whether non-EECS graduate students can get enrolled from the waitlist?
