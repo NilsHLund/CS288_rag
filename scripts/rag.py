@@ -26,15 +26,15 @@ MODEL = "meta-llama/llama-3.1-8b-instruct"
 CORPUS_PATH = "corpus/pages_all.json"
 CACHE_DIR = "cache"
 
-CHUNK_SIZE = 150
-CHUNK_OVERLAP = 40
+CHUNK_SIZE = 200
+CHUNK_OVERLAP = 80
 
 TOP_K_RETRIEVE = 5
 
 BM25_WEIGHT = 0.5
 DENSE_WEIGHT = 0.5
 
-EMBED_MODEL = "sentence-transformers/all-MiniLM-L6-v2" # "BAAI/bge-small-en-v1.5"
+EMBED_MODEL =  "BAAI/bge-small-en-v1.5"  # "sentence-transformers/all-MiniLM-L6-v2"
 
 SYSTEM_PROMPT = (
     "You are a helpful assistant answering questions about UC Berkeley EECS. "
