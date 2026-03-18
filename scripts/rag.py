@@ -47,7 +47,7 @@ CHUNK_SIZE = CHILD_CHUNK_SIZE  # alias kept for ablation.py compatibility
 
 EMBED_MODEL = "BAAI/bge-small-en-v1.5"
 RERANKER_MODEL = "cross-encoder/ms-marco-MiniLM-L-12-v2"
-GENERATION_MODEL = "qwen/qwen3-8b"
+GENERATION_MODEL = "meta-llama/llama-3.1-8b-instruct"
 
 _cache_suffix = f"sent_{CHILD_CHUNK_SIZE}_{CHILD_CHUNK_OVERLAP}"
 _embed_tag = EMBED_MODEL.split("/")[-1].replace(".", "_")  # e.g. bge-small-en-v1_5
@@ -477,22 +477,24 @@ class RAGModel:
             "Short answer:"
         )
 
-        try:
-            response = self.llm(
-                system_prompt=SYSTEM_PROMPT,
-                query=prompt,
-                model=GENERATION_MODEL,
-                max_tokens=24,
-                temperature=0.0,
-                timeout=120,
-            )
-            response = (response or "").strip()
-            answer = response.splitlines()[0].strip() if response else "UNKNOWN"
-            answer = _ANSWER_PREFIX_RE.sub("", answer).strip()
-            return answer[:80]
-        except Exception as e:
-            print(e)
-            return "UNKNOWN"
+        for attempt in range(3):
+            try:
+                response = self.llm(
+                    system_prompt=SYSTEM_PROMPT,
+                    query=prompt,
+                    model=GENERATION_MODEL,
+                    max_tokens=24,
+                    temperature=0.0,
+                    timeout=120,
+                )
+                response = (response or "").strip()
+                answer = response.splitlines()[0].strip() if response else "UNKNOWN"
+                answer = _ANSWER_PREFIX_RE.sub("", answer).strip()
+                return answer[:80]
+            except Exception as e:
+                if attempt < 2:
+                    continue
+                return "UNKNOWN"
 
     # ──────────────────────────────────────────────
     # Public API
@@ -510,7 +512,7 @@ class RAGModel:
                 print(f"Exception during inference: {e}")
                 return i, "UNKNOWN"
 
-        with ThreadPoolExecutor(max_workers=4) as executor:
+        with ThreadPoolExecutor(max_workers=2) as executor:
             futures = {executor.submit(process, i, q): i for i, q in enumerate(questions)}
             for future in as_completed(futures):
                 i, answer = future.result()
