@@ -11,7 +11,15 @@ import requests as req
 from flask import Flask, render_template_string, request, redirect, url_for
 from urllib.parse import quote, unquote
 
-ANNOTATION_FILE = sys.argv[1] if len(sys.argv) > 1 else "annotations/iaa_annotator2_template.jsonl"
+import argparse
+
+_parser = argparse.ArgumentParser(description="QA Annotation Web App")
+_parser.add_argument("file", nargs="?", default="annotations/iaa_annotator2_template.jsonl",
+                     help="Path to the annotation JSONL file")
+_parser.add_argument("--port", type=int, default=5050, help="Port to run on (default 5050)")
+_args = _parser.parse_args()
+
+ANNOTATION_FILE = _args.file
 CORPUS_FILE = "corpus/pages_all.json"
 
 app = Flask(__name__)
@@ -297,4 +305,5 @@ def save(idx):
 
 
 if __name__ == "__main__":
-    app.run(port=5050, debug=True)
+    print(f"Annotating: {ANNOTATION_FILE}")
+    app.run(port=_args.port, debug=True)
