@@ -35,7 +35,7 @@ RERANK_FETCH_K = 60         # candidates fetched before re-ranking
 BM25_WEIGHT = 0.6
 DENSE_WEIGHT = 0.4
 
-EMBED_MODEL = "BAAI/bge-base-en-v1.5"  # 768d, stronger retrieval (requires cache rebuild)
+EMBED_MODEL = "Snowflake/snowflake-arctic-embed-s"  # 384d, under ~400MB; rebuild cache after model change
 RERANK_MODEL = "cross-encoder/ms-marco-MiniLM-L-12-v2"  # 33M params, stronger cross-encoder
 
 SYSTEM_PROMPT = (
