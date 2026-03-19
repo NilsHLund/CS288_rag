@@ -53,6 +53,9 @@ EMBED_MODEL = "BAAI/bge-small-en-v1.5"  # 33M params, 384d (between MiniLM-L6 an
 ENABLE_RERANKER = os.environ.get("RAG_ENABLE_RERANKER", "0").strip().lower() in {"1", "true", "yes", "y"}
 ENABLE_PROGRESS_LOGS = os.environ.get("RAG_PROGRESS_LOGS", "0").strip().lower() in {"1", "true", "yes", "y"}
 RERANKER_BACKEND = os.environ.get("RAG_RERANKER_BACKEND", "safe").strip().lower()
+LLM_RETRIES = max(1, int(os.environ.get("RAG_LLM_RETRIES", "1")))
+LLM_TIMEOUT_SECONDS = max(5, int(os.environ.get("RAG_LLM_TIMEOUT", "25")))
+LLM_RETRY_SLEEP_SECONDS = max(0.0, float(os.environ.get("RAG_LLM_RETRY_SLEEP", "0.5")))
 
 SYSTEM_PROMPT = (
     "You are a helpful assistant answering questions about UC Berkeley EECS. "
@@ -337,6 +340,7 @@ class RAGModel:
         self.llm = call_llm
         self._profile_llm = os.environ.get("RAG_PROFILE_LLM", "").strip().lower() in {"1", "true", "yes", "y"}
         self._progress_logs = ENABLE_PROGRESS_LOGS
+        self._dense_enabled = True
         if self._progress_logs:
             print(f"[RAG_PROGRESS] init start | reranker_enabled={ENABLE_RERANKER}")
         if ENABLE_RERANKER and RERANKER_BACKEND == "crossencoder":
@@ -463,9 +467,15 @@ class RAGModel:
                     f"embeddings_shape={self.embeddings.shape}"
                 )
 
-        self.embedder = SentenceTransformer(EMBED_MODEL)
-        if self._progress_logs:
-            print("[RAG_PROGRESS] embedder ready")
+        try:
+            self.embedder = SentenceTransformer(EMBED_MODEL)
+            if self._progress_logs:
+                print("[RAG_PROGRESS] embedder ready")
+        except Exception as e:
+            self.embedder = None
+            self._dense_enabled = False
+            self.reranker = None
+            print(f"[RAGModel] Warning: embedder unavailable, using BM25-only retrieval. Error: {e}")
 
     # ──────────────────────────────────────────────
     # Retrieval
@@ -483,6 +493,10 @@ class RAGModel:
 
         if bm25_scores.max() > 0:
             bm25_scores /= bm25_scores.max()
+
+        if not self._dense_enabled or self.embedder is None:
+            top_indices = np.argsort(bm25_scores)[::-1][:top_k]
+            return [self.chunks[i] for i in top_indices]
 
         q_emb = self.embedder.encode(
             ["Represent this sentence for searching relevant passages: " + question],
@@ -509,6 +523,8 @@ class RAGModel:
         keep_k = keep_k or self._rerank_keep_k
         # Default "safe" backend: no CrossEncoder.predict call (avoids segfault on some macOS stacks).
         if ENABLE_RERANKER and RERANKER_BACKEND != "crossencoder":
+            if self.embedder is None:
+                return chunks[:keep_k]
             q_emb = self.embedder.encode(
                 ["Represent this sentence for searching relevant passages: " + question],
                 normalize_embeddings=True,
@@ -573,7 +589,7 @@ class RAGModel:
             "Short answer:"
         )
 
-        for attempt in range(3):
+        for attempt in range(LLM_RETRIES):
             try:
                 response = self.llm(
                     system_prompt=SYSTEM_PROMPT,
@@ -581,7 +597,7 @@ class RAGModel:
                     model="meta-llama/llama-3.1-8b-instruct",
                     max_tokens=24,
                     temperature=0.0,
-                    timeout=120,
+                    timeout=LLM_TIMEOUT_SECONDS,
                 )
                 if self._profile_llm:
                     print(f"[RAG_PROFILE_LLM] chunks={len(chunks)} prompt_chars={len(prompt)}")
@@ -589,9 +605,9 @@ class RAGModel:
                 answer = response.strip().splitlines()[0].strip()
                 return answer[:80]
             except Exception as e:
-                if attempt < 2:
+                if attempt < LLM_RETRIES - 1:
                     print(f"[RAGModel] generation attempt {attempt + 1} failed: {e}")
-                    time.sleep(1.5)
+                    time.sleep(LLM_RETRY_SLEEP_SECONDS)
                     continue
                 print(e)
                 return "UNKNOWN"
