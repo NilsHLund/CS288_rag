@@ -22,6 +22,14 @@ from sentence_transformers import SentenceTransformer, CrossEncoder
 from llm import call_llm
 
 torch.set_num_threads(2)
+try:
+    torch.set_num_interop_threads(1)
+except Exception:
+    pass
+try:
+    faiss.omp_set_num_threads(1)
+except Exception:
+    pass
 
 
 # ──────────────────────────────────────────────
@@ -35,7 +43,7 @@ CACHE_VERSION = "v2_table_signal"
 CHUNK_SIZE = 150
 CHUNK_OVERLAP = 40
 
-TOP_K_RETRIEVE = 30
+TOP_K_RETRIEVE = 15
 
 BM25_WEIGHT = 0.5
 DENSE_WEIGHT = 1.0
@@ -43,6 +51,8 @@ DENSE_WEIGHT = 1.0
 EMBED_MODEL = "BAAI/bge-small-en-v1.5"  # 33M params, 384d (between MiniLM-L6 and BGE-base)
 
 ENABLE_RERANKER = os.environ.get("RAG_ENABLE_RERANKER", "0").strip().lower() in {"1", "true", "yes", "y"}
+ENABLE_PROGRESS_LOGS = os.environ.get("RAG_PROGRESS_LOGS", "0").strip().lower() in {"1", "true", "yes", "y"}
+RERANKER_BACKEND = os.environ.get("RAG_RERANKER_BACKEND", "safe").strip().lower()
 
 SYSTEM_PROMPT = (
     "You are a helpful assistant answering questions about UC Berkeley EECS. "
@@ -326,7 +336,10 @@ class RAGModel:
 
         self.llm = call_llm
         self._profile_llm = os.environ.get("RAG_PROFILE_LLM", "").strip().lower() in {"1", "true", "yes", "y"}
-        if ENABLE_RERANKER:
+        self._progress_logs = ENABLE_PROGRESS_LOGS
+        if self._progress_logs:
+            print(f"[RAG_PROGRESS] init start | reranker_enabled={ENABLE_RERANKER}")
+        if ENABLE_RERANKER and RERANKER_BACKEND == "crossencoder":
             self.reranker = CrossEncoder(
                 "cross-encoder/ms-marco-TinyBERT-L-2-v2",
                 device="cpu",
@@ -366,28 +379,47 @@ class RAGModel:
             faiss_cache = legacy_faiss_cache
             embeddings_cache = legacy_embeddings_cache
 
-        if (
+        cache_exists = (
             chunks_cache.exists()
             and bm25_cache.exists()
             and faiss_cache.exists()
             and embeddings_cache.exists()
-        ):
+        )
+        cache_loaded = False
+
+        if cache_exists:
 
             print("[RAGModel] Loading cached index...")
+            if self._progress_logs:
+                print(
+                    "[RAG_PROGRESS] cache load from "
+                    f"{chunks_cache.name}, {bm25_cache.name}, {faiss_cache.name}, {embeddings_cache.name}"
+                )
 
-            with open(chunks_cache, "rb") as f:
-                self.chunks = pickle.load(f)
+            try:
+                with open(chunks_cache, "rb") as f:
+                    self.chunks = pickle.load(f)
 
-            with open(bm25_cache, "rb") as f:
-                self.bm25 = pickle.load(f)
+                with open(bm25_cache, "rb") as f:
+                    self.bm25 = pickle.load(f)
 
-            self.index = faiss.read_index(str(faiss_cache))
+                self.index = faiss.read_index(str(faiss_cache))
+                self.embeddings = np.load(str(embeddings_cache))
+                cache_loaded = True
 
-            self.embeddings = np.load(str(embeddings_cache))
+                if self._progress_logs:
+                    print(
+                        f"[RAG_PROGRESS] cache loaded | chunks={len(self.chunks)} "
+                        f"embeddings_shape={getattr(self.embeddings, 'shape', None)}"
+                    )
+            except Exception as e:
+                print(f"[RAGModel] Warning: cache load failed, rebuilding index. Error: {e}")
 
-        else:
+        if not cache_loaded:
 
             print("[RAGModel] Building index...")
+            if self._progress_logs:
+                print("[RAG_PROGRESS] cache miss, building index from corpus")
 
             with open(CORPUS_PATH) as f:
                 pages = json.load(f)
@@ -425,8 +457,15 @@ class RAGModel:
             faiss.write_index(self.index, str(faiss_cache))
 
             np.save(str(embeddings_cache), self.embeddings)
+            if self._progress_logs:
+                print(
+                    f"[RAG_PROGRESS] index build complete | chunks={len(self.chunks)} "
+                    f"embeddings_shape={self.embeddings.shape}"
+                )
 
         self.embedder = SentenceTransformer(EMBED_MODEL)
+        if self._progress_logs:
+            print("[RAG_PROGRESS] embedder ready")
 
     # ──────────────────────────────────────────────
     # Retrieval
@@ -465,14 +504,47 @@ class RAGModel:
         return [self.chunks[i] for i in top_indices]
 
     def _rerank(self, question: str, chunks: list[dict], keep_k: int | None = None) -> list[dict]:
-        if not chunks or not self.reranker:
+        if not chunks:
             return chunks
         keep_k = keep_k or self._rerank_keep_k
+        # Default "safe" backend: no CrossEncoder.predict call (avoids segfault on some macOS stacks).
+        if ENABLE_RERANKER and RERANKER_BACKEND != "crossencoder":
+            q_emb = self.embedder.encode(
+                ["Represent this sentence for searching relevant passages: " + question],
+                normalize_embeddings=True,
+                convert_to_numpy=True,
+            ).astype("float32")[0]
+            chunk_texts = [c.get("text", "") for c in chunks]
+            c_emb = self.embedder.encode(
+                chunk_texts,
+                batch_size=16,
+                show_progress_bar=False,
+                normalize_embeddings=True,
+                convert_to_numpy=True,
+            ).astype("float32")
+            dense_scores = np.dot(c_emb, q_emb)
+            q_tok = set(normalize(question).split())
+            overlap_scores = []
+            for c in chunks:
+                t_tok = set(normalize(c.get("text", "")).split())
+                overlap_scores.append(len(q_tok & t_tok) / max(1, len(q_tok)))
+            overlap_scores = np.array(overlap_scores, dtype="float32")
+            scores = 0.85 * dense_scores + 0.15 * overlap_scores
+            order = np.argsort(scores)[::-1]
+            top_idx = order[:keep_k]
+            reranked = [chunks[i] for i in top_idx]
+            del q_emb, chunk_texts, c_emb, dense_scores, q_tok, overlap_scores, scores, order, top_idx
+            gc.collect()
+            return reranked
+
+        if not self.reranker:
+            return chunks
+
         pairs = [(question, c.get("text", "")) for c in chunks]
         with torch.no_grad():
             scores = self.reranker.predict(
                 pairs,
-                batch_size=10,
+                batch_size=1,
                 show_progress_bar=False,
             )
         order = np.argsort(scores)[::-1]
@@ -501,27 +573,28 @@ class RAGModel:
             "Short answer:"
         )
 
-        try:
-            response = self.llm(
-                system_prompt=SYSTEM_PROMPT,
-                query=prompt,
-                model="meta-llama/llama-3.1-8b-instruct",
-                max_tokens=24,
-                temperature=0.0,
-                timeout=120,
-            )
-            if self._profile_llm:
-                print(f"[RAG_PROFILE_LLM] chunks={len(chunks)} prompt_chars={len(prompt)}")
+        for attempt in range(3):
+            try:
+                response = self.llm(
+                    system_prompt=SYSTEM_PROMPT,
+                    query=prompt,
+                    model="meta-llama/llama-3.1-8b-instruct",
+                    max_tokens=24,
+                    temperature=0.0,
+                    timeout=120,
+                )
+                if self._profile_llm:
+                    print(f"[RAG_PROFILE_LLM] chunks={len(chunks)} prompt_chars={len(prompt)}")
 
-            answer = response.strip().splitlines()[0].strip()
-
-            return answer[:80]
-
-        except Exception as e:
-
-            print(e)
-
-            return "UNKNOWN"
+                answer = response.strip().splitlines()[0].strip()
+                return answer[:80]
+            except Exception as e:
+                if attempt < 2:
+                    print(f"[RAGModel] generation attempt {attempt + 1} failed: {e}")
+                    time.sleep(1.5)
+                    continue
+                print(e)
+                return "UNKNOWN"
 
     # ──────────────────────────────────────────────
     # Public API
@@ -529,18 +602,30 @@ class RAGModel:
 
     def predict(self, questions: list[str]) -> list[str]:
         answers = ["UNKNOWN"] * len(questions)
+        if self._progress_logs:
+            print(f"[RAG_PROGRESS] predict start | total_questions={len(questions)}")
         for i, q in enumerate(questions):
             try:
+                if self._progress_logs:
+                    print(f"[RAG_PROGRESS] q{i + 1}/{len(questions)} retrieve start")
                 chunks = self._retrieve(q, top_k=TOP_K_RETRIEVE)
+                if self._progress_logs:
+                    print(f"[RAG_PROGRESS] q{i + 1}/{len(questions)} retrieved_chunks={len(chunks)}")
                 chunks = self._rerank(q, chunks, keep_k=3)
+                if self._progress_logs:
+                    print(f"[RAG_PROGRESS] q{i + 1}/{len(questions)} post_rerank_chunks={len(chunks)}")
                 t0 = time.time() if self._profile_llm else None
                 ans = self._generate(q, chunks)
                 if t0 is not None:
                     print(f"[RAG_PROFILE_LLM] openrouter_s={time.time() - t0:.3f}")
                 answers[i] = ans
+                if self._progress_logs:
+                    print(f"[RAG_PROGRESS] q{i + 1}/{len(questions)} done")
             except Exception as e:
                 print(f"Exception during inference for question {i}: {e}")
                 answers[i] = "UNKNOWN"
+        if self._progress_logs:
+            print("[RAG_PROGRESS] predict complete")
         return answers
 
 
