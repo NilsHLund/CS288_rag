@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# run.sh — Autograder entrypoint for CS288 Assignment 3
+# Usage: bash run.sh <questions_txt_path> <predictions_out_path>
+
+set -e
+
+# Ensure we run from submission root (paths are relative)
+cd "$(dirname "$0")"
+
+QUESTIONS_PATH="$1"
+PREDICTIONS_PATH="$2"
+
+python3 scripts/evaluate_rag_model.py "$QUESTIONS_PATH" "$PREDICTIONS_PATH"
