@@ -10,4 +10,4 @@ cd "$(dirname "$0")"
 QUESTIONS_PATH="$1"
 PREDICTIONS_PATH="$2"
 
-python3 scripts/evaluate_rag_model.py "$QUESTIONS_PATH" "$PREDICTIONS_PATH"
+python scripts/evaluate_rag_model.py "$QUESTIONS_PATH" "$PREDICTIONS_PATH"

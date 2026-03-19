@@ -2,20 +2,26 @@
 rag.py — RAG model for CS288 Assignment 3.
 """
 
+import gc
 import json
 import os
 import pickle
+import re
 import string
+import time
 from pathlib import Path
 from typing import List
 
 import numpy as np
 import faiss
+import torch
 from rank_bm25 import BM25Okapi
-from sentence_transformers import SentenceTransformer
+from sentence_transformers import SentenceTransformer, CrossEncoder
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from llm import call_llm
+
+torch.set_num_threads(2)
 
 
 # ──────────────────────────────────────────────
@@ -35,6 +41,8 @@ DENSE_WEIGHT = 1.0
 
 EMBED_MODEL = "BAAI/bge-small-en-v1.5"  # 33M params, 384d (between MiniLM-L6 and BGE-base)
 
+ENABLE_RERANKER = os.environ.get("RAG_ENABLE_RERANKER", "0").strip().lower() in {"1", "true", "yes", "y"}
+
 SYSTEM_PROMPT = (
     "You are a helpful assistant answering questions about UC Berkeley EECS. "
     "Answer using ONLY the provided context. "
@@ -53,8 +61,6 @@ SYSTEM_PROMPT = (
 # ──────────────────────────────────────────────
 
 def normalize(text: str) -> str:
-    import re
-
     def remove_articles(t):
         return re.sub(r"\b(a|an|the)\b", " ", t)
 
@@ -65,6 +71,24 @@ def normalize(text: str) -> str:
         return "".join(ch for ch in t if ch not in set(string.punctuation))
 
     return white_space_fix(remove_articles(remove_punc(text.lower())))
+
+
+_TAG_RE = re.compile(r"<[^>]+>")
+_ZW_CHARS_RE = re.compile(r"[\u200B-\u200F\u202A-\u202E\u2060\uFEFF]")
+_WS_RE = re.compile(r"[ \t\r\f\v]+")
+_NEWLINE_RE = re.compile(r"\n{3,}")
+
+
+def clean_chunk_text(text: str) -> str:
+    """Best-effort prompt compressor for crawled text."""
+    if not text:
+        return ""
+    t = _TAG_RE.sub(" ", text)
+    t = _ZW_CHARS_RE.sub("", t)
+    t = t.replace("\xa0", " ")
+    t = _WS_RE.sub(" ", t)
+    t = _NEWLINE_RE.sub("\n\n", t)
+    return t.strip()
 
 
 def chunk_text(text: str, chunk_size=CHUNK_SIZE, overlap=CHUNK_OVERLAP):
@@ -129,6 +153,17 @@ class RAGModel:
         os.makedirs(CACHE_DIR, exist_ok=True)
 
         self.llm = call_llm
+        self._profile_llm = os.environ.get("RAG_PROFILE_LLM", "").strip().lower() in {"1", "true", "yes", "y"}
+        if ENABLE_RERANKER:
+            self.reranker = CrossEncoder(
+                "cross-encoder/ms-marco-TinyBERT-L-2-v2",
+                device="cpu",
+                max_length=256,
+                default_activation_function=torch.nn.Sigmoid(),
+            )
+        else:
+            self.reranker = None
+        self._rerank_keep_k = 3
 
         chunks_cache = Path(CACHE_DIR) / "chunks.pkl"
         bm25_cache = Path(CACHE_DIR) / "bm25.pkl"
@@ -233,6 +268,27 @@ class RAGModel:
 
         return [self.chunks[i] for i in top_indices]
 
+    def _rerank(self, question: str, chunks: list[dict], keep_k: int | None = None) -> list[dict]:
+        if not chunks or not self.reranker:
+            return chunks
+        keep_k = keep_k or self._rerank_keep_k
+        pairs = [(question, c.get("text", "")) for c in chunks]
+        with torch.no_grad():
+            scores = self.reranker.predict(
+                pairs,
+                batch_size=10,
+                show_progress_bar=False,
+            )
+        order = np.argsort(scores)[::-1]
+        top_idx = order[:keep_k]
+        reranked = [chunks[i] for i in top_idx]
+        top_scores = scores[top_idx]
+
+        del pairs, scores, order, top_idx, top_scores
+        gc.collect()
+
+        return reranked
+
     # ──────────────────────────────────────────────
     # Generation
     # ──────────────────────────────────────────────
@@ -240,7 +296,7 @@ class RAGModel:
     def _generate(self, question, chunks):
 
         context = "\n\n---\n\n".join(
-            f"[Source: {c['url']}]\n{c['text']}" for c in chunks
+            f"[Source: {c['url']}]\n{clean_chunk_text(c.get('text', ''))}" for c in chunks
         )
 
         prompt = (
@@ -250,7 +306,6 @@ class RAGModel:
         )
 
         try:
-
             response = self.llm(
                 system_prompt=SYSTEM_PROMPT,
                 query=prompt,
@@ -259,6 +314,8 @@ class RAGModel:
                 temperature=0.0,
                 timeout=120,
             )
+            if self._profile_llm:
+                print(f"[RAG_PROFILE_LLM] chunks={len(chunks)} prompt_chars={len(prompt)}")
 
             answer = response.strip().splitlines()[0].strip()
 
@@ -276,21 +333,18 @@ class RAGModel:
 
     def predict(self, questions: list[str]) -> list[str]:
         answers = ["UNKNOWN"] * len(questions)
-
-        def process(i, q):
+        for i, q in enumerate(questions):
             try:
-                chunks = self._retrieve(q)
-                return i, self._generate(q, chunks)
+                chunks = self._retrieve(q, top_k=TOP_K_RETRIEVE)
+                chunks = self._rerank(q, chunks, keep_k=3)
+                t0 = time.time() if self._profile_llm else None
+                ans = self._generate(q, chunks)
+                if t0 is not None:
+                    print(f"[RAG_PROFILE_LLM] openrouter_s={time.time() - t0:.3f}")
+                answers[i] = ans
             except Exception as e:
-                print(f"Exception during inference, {e}")
-                return i, "UNKNOWN"
-
-        with ThreadPoolExecutor(max_workers=4) as executor:
-            futures = {executor.submit(process, i, q): i for i, q in enumerate(questions)}
-            for future in as_completed(futures):
-                i, answer = future.result()
-                answers[i] = answer
-
+                print(f"Exception during inference for question {i}: {e}")
+                answers[i] = "UNKNOWN"
         return answers
 
 
