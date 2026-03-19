@@ -34,6 +34,24 @@ from typing import List, Tuple
 # Normalization — exactly mirrors SQuAD v1.1 evaluate-v1.1.py
 # ---------------------------------------------------------------------------
 
+_WORD_TO_NUM = {
+    "zero": "0", "one": "1", "two": "2", "three": "3", "four": "4",
+    "five": "5", "six": "6", "seven": "7", "eight": "8", "nine": "9",
+    "ten": "10", "eleven": "11", "twelve": "12", "thirteen": "13",
+    "fourteen": "14", "fifteen": "15", "sixteen": "16", "seventeen": "17",
+    "eighteen": "18", "nineteen": "19", "twenty": "20", "thirty": "30",
+    "forty": "40", "fifty": "50", "sixty": "60", "seventy": "70",
+    "eighty": "80", "ninety": "90", "hundred": "100",
+}
+
+def _normalize_numbers(text: str) -> str:
+    """Replace English number words with digits, standalone only."""
+    return re.sub(
+        r'\b(' + '|'.join(_WORD_TO_NUM.keys()) + r')\b',
+        lambda m: _WORD_TO_NUM[m.group(0)],
+        text,
+    )
+
 def normalize_answer(s: str) -> str:
     def remove_articles(text):
         return re.sub(r'\b(a|an|the)\b', ' ', text)
@@ -44,7 +62,7 @@ def normalize_answer(s: str) -> str:
         return ''.join(ch for ch in text if ch not in exclude)
     def lower(text):
         return text.lower()
-    return white_space_fix(remove_articles(remove_punc(lower(s))))
+    return white_space_fix(remove_articles(remove_punc(_normalize_numbers(lower(s)))))
 
 
 # ---------------------------------------------------------------------------
@@ -54,7 +72,6 @@ def normalize_answer(s: str) -> str:
 def f1_score(prediction: str, ground_truth: str) -> float:
     prediction_tokens = normalize_answer(prediction).split()
     ground_truth_tokens = normalize_answer(ground_truth).split()
-    print(f"Pred: {prediction_tokens}, GT: {ground_truth_tokens}")
     common = Counter(prediction_tokens) & Counter(ground_truth_tokens)
     num_same = sum(common.values())
     if num_same == 0:

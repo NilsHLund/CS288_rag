@@ -12,7 +12,7 @@ from typing import List
 import numpy as np
 import faiss
 from rank_bm25 import BM25Okapi
-from sentence_transformers import SentenceTransformer
+from sentence_transformers import SentenceTransformer, CrossEncoder
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from llm import call_llm
@@ -28,12 +28,14 @@ CACHE_DIR = "cache"
 CHUNK_SIZE = 150
 CHUNK_OVERLAP = 40
 
-TOP_K_RETRIEVE = 30
+TOP_K_RETRIEVE = 15         # final chunks passed to LLM after re-ranking
+RERANK_FETCH_K = 60         # candidates fetched before re-ranking
 
-BM25_WEIGHT = 0.5
-DENSE_WEIGHT = 1.0
+BM25_WEIGHT = 0.3
+DENSE_WEIGHT = 0.7
 
 EMBED_MODEL = "BAAI/bge-small-en-v1.5"  # 33M params, 384d (between MiniLM-L6 and BGE-base)
+RERANK_MODEL = "cross-encoder/ms-marco-MiniLM-L-6-v2"  # 22M params, fast cross-encoder
 
 SYSTEM_PROMPT = (
     "You are a helpful assistant answering questions about UC Berkeley EECS. "
@@ -196,17 +198,18 @@ class RAGModel:
             np.save(str(embeddings_cache), self.embeddings)
 
         self.embedder = SentenceTransformer(EMBED_MODEL)
+        self.reranker = CrossEncoder(RERANK_MODEL, max_length=512)
 
     # ──────────────────────────────────────────────
     # Retrieval
     # ──────────────────────────────────────────────
 
-    def _retrieve(self, question, top_k=TOP_K_RETRIEVE):
+    def _retrieve(self, question, top_k=TOP_K_RETRIEVE, fetch_k=RERANK_FETCH_K):
 
         n = len(self.chunks)
+        fetch_k = min(fetch_k, n)
 
-        fetch_k = min(top_k * 15, n)
-
+        # Stage 1: Hybrid BM25 + dense retrieval
         bm25_scores = np.array(
             self.bm25.get_scores(normalize(question).split())
         )
@@ -228,10 +231,15 @@ class RAGModel:
             dense_scores[idx] = score
 
         hybrid = BM25_WEIGHT * bm25_scores + DENSE_WEIGHT * dense_scores
+        candidate_indices = np.argsort(hybrid)[::-1][:fetch_k]
+        candidates = [self.chunks[i] for i in candidate_indices]
 
-        top_indices = np.argsort(hybrid)[::-1][:top_k]
+        # Stage 2: Cross-encoder re-ranking
+        pairs = [[question, c["text"]] for c in candidates]
+        rerank_scores = self.reranker.predict(pairs)
+        ranked = sorted(zip(rerank_scores, candidates), key=lambda x: x[0], reverse=True)
 
-        return [self.chunks[i] for i in top_indices]
+        return [c for _, c in ranked[:top_k]]
 
     # ──────────────────────────────────────────────
     # Generation
