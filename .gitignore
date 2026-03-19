@@ -3,3 +3,6 @@ submission.zip
 .env
 *.pyc
 __pycache__/
+
+# Cache files (too large for GitHub)
+cache/

@@ -77,14 +77,20 @@ def evaluate(predictions: List[str], references: List[List[str]]) -> Tuple[float
 # ──────────────────────────────────────────────
 
 ABLATIONS = [
-    # (label, bm25_weight, dense_weight, top_k, chunk_size)
-    ("BM25 only",           1.0, 0.0, 5, 200),
-    ("Dense only",          0.0, 1.0, 5, 200),
-    ("Hybrid 30/70 k=5",    0.3, 0.7, 5, 200),  # default
-    ("Hybrid 30/70 k=10",   0.3, 0.7, 10, 200),
-    ("Hybrid 50/50 k=5",    0.5, 0.5, 5, 200),
-    ("Chunk=100",           0.3, 0.7, 5, 100),
-    ("Chunk=400",           0.3, 0.7, 5, 400),
+    # (label,               bm25_w, dense_w, top_k, chunk_size)
+    # --- weight sweep (keep top_k=8, chunk_size=150 fixed) ---
+    ("BM25 only",            1.0,   0.0,    8, 150),
+    ("Dense only",           0.0,   1.0,    8, 150),
+    ("Hybrid 10/90",         0.1,   0.9,    8, 150),
+    ("Hybrid 20/80",         0.2,   0.8,    8, 150),
+    ("Hybrid 30/70",         0.3,   0.7,    8, 150),  # current default
+    ("Hybrid 40/60",         0.4,   0.6,    8, 150),
+    ("Hybrid 50/50",         0.5,   0.5,    8, 150),
+    ("Hybrid 60/40",         0.6,   0.4,    8, 150),
+    # --- top_k sweep (best weights above, chunk_size=150) ---
+    ("top_k=5",              0.3,   0.7,    5, 150),
+    ("top_k=10",             0.3,   0.7,   10, 150),
+    ("top_k=15",             0.3,   0.7,   15, 150),
 ]
 
 
@@ -106,20 +112,29 @@ def run_ablation(questions, references, bm25_w, dense_w, top_k, chunk_size):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("questions", help="Path to questions.txt")
-    parser.add_argument("answers", 
-                        help="Path to reference_answers.json (list of lists or list of strings)")
+    parser.add_argument("questions", help="Path to questions.txt or reference.jsonl")
+    parser.add_argument("answers",
+                        help="Path to reference_answers.json / .txt / .jsonl")
+    parser.add_argument("--sample", type=int, default=0,
+                        help="Only use first N questions (0 = all)")
     args = parser.parse_args()
 
     with open(args.questions) as f:
         questions = [l.strip() for l in f if l.strip()]
 
     if Path(args.answers).suffix == ".jsonl":
+        references = []
+        questions = []
         with open(args.answers) as f:
-            raw = json.load(f)
-        # Support both list-of-strings and list-of-lists (multiple valid answers)
-        references = [r if isinstance(r, list) else [r] for r in raw]
-        
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                obj = json.loads(line)
+                questions.append(obj["question"])
+                answers = [a.strip() for a in obj["answer"].split("|")]
+                references.append(answers)
+        # Ignore the questions arg when using jsonl (it contains both)
     elif Path(args.answers).suffix == ".txt":
         with open(args.answers) as f:
             references = [[t.strip() for t in line.split("|")] for line in f]
@@ -127,6 +142,13 @@ def main():
         raise ValueError("Answer should be .txt or .jsonl")
 
     assert len(questions) == len(references), "Question/answer count mismatch."
+
+    if args.sample > 0:
+        import random
+        idx = random.sample(range(len(questions)), min(args.sample, len(questions)))
+        questions = [questions[i] for i in idx]
+        references = [references[i] for i in idx]
+        print(f"Running on {len(questions)} sampled questions")
 
     print(f"\n{'Config':<25} {'EM':>6} {'F1':>6}")
     print("-" * 40)

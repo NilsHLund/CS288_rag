@@ -5,6 +5,7 @@ rag.py — RAG model for CS288 Assignment 3.
 import json
 import os
 import pickle
+import re
 import string
 from pathlib import Path
 from typing import List
@@ -31,22 +32,23 @@ CHUNK_OVERLAP = 40
 TOP_K_RETRIEVE = 15         # final chunks passed to LLM after re-ranking
 RERANK_FETCH_K = 60         # candidates fetched before re-ranking
 
-BM25_WEIGHT = 0.3
-DENSE_WEIGHT = 0.7
+BM25_WEIGHT = 0.6
+DENSE_WEIGHT = 0.4
 
-EMBED_MODEL = "BAAI/bge-small-en-v1.5"  # 33M params, 384d (between MiniLM-L6 and BGE-base)
-RERANK_MODEL = "cross-encoder/ms-marco-MiniLM-L-6-v2"  # 22M params, fast cross-encoder
+EMBED_MODEL = "BAAI/bge-base-en-v1.5"  # 768d, stronger retrieval (requires cache rebuild)
+RERANK_MODEL = "cross-encoder/ms-marco-MiniLM-L-12-v2"  # 33M params, stronger cross-encoder
 
 SYSTEM_PROMPT = (
-    "You are a helpful assistant answering questions about UC Berkeley EECS. "
-    "Answer using ONLY the provided context. "
-    "Extract the EXACT answer phrase from the context; do not paraphrase or give surrounding text. "
-    "Give a SHORT answer (under 10 words). "
-    "Only reply UNKNOWN if the answer is clearly absent from the context. "
-    "If the question asks for Yes/No, reply only with Yes or No. "
-    "If the question asks for an acronym or abbreviation (e.g. HKN, AUWICSEE), use that form. "
-    "If the question asks for a specific identifier (course number, person name, organization), extract that exact one—not a related or parent concept. "
-    "If there are multiple possible answers, pick the one that most directly answers the question."
+    "You are a precise answer extractor for UC Berkeley EECS questions. "
+    "Rules (follow strictly):\n"
+    "1. Extract the EXACT answer phrase from the context — copy it verbatim, do not paraphrase.\n"
+    "2. Answer must be UNDER 10 words. Never give full sentences.\n"
+    "3. For Yes/No questions: reply only 'Yes' or 'No'.\n"
+    "4. For numbers: always use digits ('3' not 'three', '4' not 'four').\n"
+    "5. For acronyms or abbreviations: use the short form (e.g. 'HKN', 'BAIR', 'NSF').\n"
+    "6. For names, courses, organizations: extract the exact identifier, nothing more.\n"
+    "7. Never start with 'The answer is', 'According to', or any preamble — give only the answer.\n"
+    "8. Reply UNKNOWN only if the answer is completely absent from the context."
 )
 
 
@@ -67,6 +69,25 @@ def normalize(text: str) -> str:
         return "".join(ch for ch in t if ch not in set(string.punctuation))
 
     return white_space_fix(remove_articles(remove_punc(text.lower())))
+
+
+_PREAMBLE_RE = re.compile(
+    r'^(?:the answer is|answer:|according to (?:the )?context,?|based on (?:the )?context,?'
+    r'|short answer:|yes[,.]?\s+|no[,.]?\s+(?=\w))\s*',
+    re.IGNORECASE,
+)
+_TRAILING_PUNC_RE = re.compile(r'[.\s]+$')
+
+def _clean_answer(text: str) -> str:
+    """Strip common LLM preambles and trailing punctuation from answers."""
+    text = _PREAMBLE_RE.sub('', text.strip())
+    # Re-handle yes/no that got partially stripped
+    lower = text.lower()
+    if lower.startswith('yes'):
+        return 'Yes'
+    if lower.startswith('no'):
+        return 'No'
+    return _TRAILING_PUNC_RE.sub('', text)
 
 
 def chunk_text(text: str, chunk_size=CHUNK_SIZE, overlap=CHUNK_OVERLAP):
@@ -263,12 +284,13 @@ class RAGModel:
                 system_prompt=SYSTEM_PROMPT,
                 query=prompt,
                 model="meta-llama/llama-3.1-8b-instruct",
-                max_tokens=24,
+                max_tokens=32,
                 temperature=0.0,
                 timeout=120,
             )
 
             answer = response.strip().splitlines()[0].strip()
+            answer = _clean_answer(answer)
 
             return answer[:80]
 
@@ -290,10 +312,10 @@ class RAGModel:
                 chunks = self._retrieve(q)
                 return i, self._generate(q, chunks)
             except Exception as e:
-                print(f"Exception during inference, {e}")
+                print(f"Exception during inference [{type(e).__name__}]: {e}")
                 return i, "UNKNOWN"
 
-        with ThreadPoolExecutor(max_workers=4) as executor:
+        with ThreadPoolExecutor(max_workers=2) as executor:
             futures = {executor.submit(process, i, q): i for i, q in enumerate(questions)}
             for future in as_completed(futures):
                 i, answer = future.result()

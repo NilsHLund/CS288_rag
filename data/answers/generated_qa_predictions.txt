@@ -1,500 +1,500 @@
-Tsu-Jae King Liu.
+Tsu-Jae King Liu
 4
 EE 194
-IEEE-HKN Outstanding Chapter Award.
-only one course.
-Self-funded.
-EE 194.
-Rebecca Chery, Taewoo Han
-A faculty advisor from EECS with an Above-the-line appointment.
+IEEE-HKN Outstanding Chapter Award
+one
+Self-funded
+EE 194
+Antoine Davis
+Faculty research advisor
 Berkeley Artificial Intelligence Research Lab (BAIR)
 UCB/ERL M273
 Shafi Goldwasser
-Faculty whose work further advances computer science curriculum or instruction a
-Coursera MOOC platform.
-Seven
-CS10: The Beauty and Joy of Computing.
-Department chair.
-CS Prof. Trevor Darrel.
+UNKNOWN
+Coursera MOOC platform
+5
+CS10: The Beauty and Joy of Computing
+Department chair
+CS Prof. Trevor Darrel
 Jelani Nelson
-decode phase
-EECS 16A and EECS 16B.
+autoregressive
+EECS 16A and EECS 16B
 Ion Stoica
 Graduate Student Instructor (GSI)
 Robert Pilawa-Podgurski
 Ion Stoica
-No final exam.
-One in a billion.
-EECS Joint Colloquium.
-Institute for Advanced Study.
+final exam
+1 in a billion
+EECS Joint Colloquium
+Institute for Advanced Study
 DJ Seo
-Ion Stoica
+Scott Shenker
 Alexandre Bayen
-2018
-Department of Electrical Engineering and Computer Sciences.
-39 days.
 UNKNOWN
+Department of Electrical Engineering and Computer Sciences
+39
+Joseph Thomas Gier
 passFail
-Only one course.
+one course
 Lars Blackmore
-Prof. Kurt Keutzer.
-David Patterson.
-AI-powered, contactless sensors.
-81 years old.
-AI safety.
+Kurt Keutzer
+David Patterson
+Invisibles
+81 years old
+AI safety
 Kannan Ramchandran
-Michael Jordan.
-3rd and latest
-Commencement.
+Michael Jordan
+3
+Commencement
 Institute of Mathematical Statistics (IMS)
-Prof. Michael Jordan.
+Prof. Michael Jordan
 CS KickStart Program
 National Academy of Engineering (NAE)
-EECS C106A / BIO ENG C125.
-teaching, research, and/or diversity statements.
-The Undergraduate Research Apprentice Program (URAP).
-The Berkeley Citation.
+EECS C106A / BIO ENG C125
+teaching, research, and/or diversity statements
+URAP
+Berkeley Citation
 Maintaining a secret mental or digital list of TAs who haven’t been pulling thei
 2025
-AAAI Feigenbaum Prize.
+AAAI Feigenbaum Prize
 2019
-National University of Singapore.
-The Computer Science Reentry Program.
+National University of Singapore
+Computer Science Reentry Program
 1958
 2004
-UNKNOWN
-Tenure track or tenured.
+Ming Wu
+Tenure track or tenured (Assistant, Associate, or Full Professor) position
 all female-identifying, transgender, non-binary, and gender non-conforming gradu
-the modern semiconductor industry.
+the modern semiconductor industry
 Integrated Circuits (INC)
 letter
 CRA-W Graduate Cohort for Women Program
-UNKNOWN
-They must be approved by the EECS External Relations Group (cap-admin@eecs-berke
+2
+Via the EECS Corporate Access Program or with EECS External Relations Group appr
 2019
-Aug
+Jan
 Stuart J. Russell
-Junior faculty working on artificial intelligence.
-Berkeley Artificial Intelligence (BAIR) Lab.
-Previous award recipients are ineligible to receive the same award again.
+Junior faculty working on artificial intelligence
+Berkeley Artificial Intelligence (BAIR) Lab
+Previous award recipients are ineligible to receive the same award again
 2018
-William M. Kahan.
-Olivia Chen
+William M. Kahan
+Yun S. Song
 letter
-Collaborative locomotion.
-December 2003.
+Dynamic manipulation
+Dec 2003
 letter
-UNKNOWN
-edX.
-COMPSCI 61C.
-WiCSE.
-The 2-year M.S. degree in EECS.
-collaborative scientific interactions between industry and/or research laborator
+1991
+edX
+COMPSCI 61C
+AWE
+2-year M.S. degree
+outstanding collaborative scientific interactions
 2.0
 Lars Rasmussen
-Mathematics and Computer Science Division.
+Mathematics and Computer Science Division
 American Academy of Arts and Sciences
 Pieter Abbeel
 3
 Kameshwar Poolla
-IEEE W.R. Cherry solar cell award.
-UNKNOWN
-1980.
-Meta-learning for action.
+IEEE William R. Cherry Award
+Computer Science Department
+1980
+Meta-learning for action
 E. Hazan, A. Rakhlin
 CS 10
-Center for Cellular Construction.
+Center for Cellular Construction
 2015
-Stuart J. Russell
+Nicholas Hay
 Laura Waller
 AWE
-bronze statue.
+bronze statue
 1979
 September 30, 2019
-Early Career Award
+Mid-Career Award
 1966
-Yes.
-EL ENG 120.
-Amit Kumar.
+Yes
+EL ENG 120
+Amit Kumar
 1973
-generalization capabilities.
+Generalization capabilities
 Kannan Ramchandran
-April 15.
+April 15
 No
-remotely share spaces with each other.
+remotely share spaces with each other
 Short-Term Leave Request Form
-UCB/EECS-2013-250
-suspended or dismissed from the University.
+UCB/EECS-2014-6
+suspended or dismissed from the University
 Master of Information and Cybersecurity
 2017 SRC Aristotle Award
-Cory and Soda Halls.
-computer aided design system
-Eric Brewer.
-UNKNOWN
-Yes.
-An understanding of professional, ethical, legal, security and social issues and
-terminal M.S. degree.
-UNKNOWN
-Symantec Graduate Fellowship Program.
+Cory and Soda Halls
+CellCAD
+Eric Brewer
+PS
+Yes
+Serve the communities to which we belong
+terminal M.S. degree
+MIT
+Symantec Graduate Fellowship Program
 Bard College
-6 years.
-U.S. National Academy of Engineering (NAE)
+6
+NAE
 letter
-Four (4)
-immigrants and children of immigrants in the United States.
+4
+immigrants and children of immigrants
 Pieter Abbeel
 Scott Shenker
 Alberto L. Sangiovanni-Vincentelli
-EE 199.
-No later than the end of their third semester.
-two semesters.
-Theresa Meng
-Fish & Richardson.
-COMPSCI 61C or COMPSCI 47C.
+EE 199
+end of their third semester
+2
+Mendel Rosenblum
+Fish & Richardson
+COMPSCI 61C or COMPSCI 47C
 18.0
 2024
-Three.
+Three
 Master of Engineering (M.Eng.)
-INC
+Signal Processing Systems
 170
 SUPERB
-Stuart Russell.
-Model, Machine, Mechanization, Map.
-CS Scholars Program.
-at least 3 weeks.
-Berkeley Wireless Research Center.
-EECS Resiliency Project.
-The Daily Cal.
-Human Resources
+Stuart Russell
+Model, Machine, Mechanization, Map
+CS Scholars Program
+3 weeks
+Berkeley Wireless Research Center
+EECS Resiliency Project
+Daily Cal
+Human Resources Staff
 12:30 PM
 UCB/EECS-2006-11
-machine-learning methods.
-13
+machine-learning methods
+15
 Hari Balakrishnan
-Jacobs Institute for Design Innovation.
-CS 168 and CS 188.
-Students admitted Fall 22 or later may not use CS courses to fulfill the technic
+Jacobs Institute for Design Innovation
+CS 168 and CS 188
+No
 Department Grievance Committee
 LAGSES
 UCB/ERL M89/22
-No final exam.
-CS 169
-NSF CAREER Award
+final exam
+CS 10
+Data Science Discovery Program
 2025
-Several.
-CS 272.
-Fall 2025.
-A climate-first lens.
-Two options: EE 199 or CS 199.
+3
+CS 272
+Fall
+climate-first
+2
 UC Davis
-National Science Foundation (NSF)
+National Science Foundation
 Dan Garcia
-off-campus work permission.
-Cory and Soda Halls.
+off-campus work permission
+Cory and Soda Halls
 letter
-MIT's School of Engineering.
-weather-related power and Internet outages.
+MIT's School of Engineering
+weather-related power and Internet outages
 Master of Engineering (M.Eng.)
-Three to five students.
-NVAIL.
-Consent of instructor.
-CalTime.
-Ensuring AI technology is useful and usable by people.
+three to five students
+NVAIL
+Consent of instructor
+CalTime
+ensuring that AI technology is useful to and usable by people
 experience tutoring or as an academic intern; or concurrently serving as an acad
-Yes.
-NVIDIA.
-No.
+Yes
+NVIDIA
+No
 2012
 Ali Niknejad
-Professor of the Graduate School and Distinguished Professor Emeritus.
+Professor of the Graduate School and Distinguished Professor Emeritus in EECS
 ACM Prize in Computing
 1994
-a data science connector course (numbered 88 in a range of departments).
-COMPSCI 61A, COMPSCI 61B, and COMPSCI 70.
+data science connector course
+COMPSCI 61A, COMPSCI 61B, and COMPSCI 70
 Aggressively mark student questions as duplicates and move them to the appropria
-Yes.
-our semester class schedules.
+Yes
+semester class schedules
 human analysts
 letter
 letter
-DB-100.
-Tel Aviv University
-Four people.
-Lecturer.
+DB-100
+MIT
+4
+Lecturer
 2022
-emotional intelligence.
-3 letters of recommendation.
+emotional intelligence
+3 letters of recommendation
 HKN
 Women in Computer Science and Electrical Engineering (WICSE)
-Chairman of the Association to Advance Collegiate Schools of Business (AACSB) In
+Chairman of AACSB International Board of Directors
 letter
-Three.
-Carlos Biaou.
-NEMO.
+Three
+Carlos Biaou
+NEMO
 $50K
-IEEE Medal of Honor.
-Theory group.
-November 27, 2025
+2020 IEEE Medal of Honor
+Theory group
+No
 letter
 IEEE/RSE James Clerk Maxwell Medal
-auto-grading strategies and collaboration tools.
+auto-grading strategies and collaboration tools
 Michael Jordan and Daniel Klein
-California community college students.
+California community college students
 Christos Papadimitriou
-Six.
-CS+X program.
-External Relations Group (XRG)
-Info 159
-up to three.
+6
+CS+X program
+External Relations
+CS 288
+3
 Susan Graham
-Science Robotics.
+Science Robotics
 2019
-no curve, soft project deadlines, multiple-chance exams.
-Yes.
+Mastery learning
+Yes
 Yes
 letter
-Data Science and Systems.
-UC Berkeley Summer Institute for Preparing Future Faculty.
+Data Science and Systems
+Pre-Faculty Preparation
 letter
-Michael Copeland.
+Michael Copeland
 $111,400
-Mechanism Design for Vulnerable Populations.
-Jiantao Jiao
+Mechanism Design for Vulnerable Populations
+Rishabh Iyer
 Cecilia Zhang and Utkarsha Agwan
 3.5
-September 20, 2023.
+September 20, 2023
 1988
 letter
 2021
 UNKNOWN
 db.cs.berkeley.edu
 Chair of the ACM Education Policy Committee
-IEEE Founders Medal
+Berkeley Citation
 National Academy of Sciences (NAS)
 1989
-December 16th, 2024.
-Feynman Prize for Excellence in Teaching.
+December 16, 2025
+Caltech Distinguished Alumni Award
 January
-50th anniversary.
-Roshan Rao.
-1971.
+50th anniversary
+Roshan Rao
+1971
 University of Crete
-exascale computing
+2x10^17
 2019
-psychology of programming research.
+psychology of programming research
 IEEE James H. Mulligan, Jr. Education Medal
 2009
 Biosystems & Computational Biology (BIO)
-Computer architecture.
-EECS Study Abroad Program.
-mass storage and farms of CPUs and GPUs.
+computer architecture
+EECS Study Abroad Program
+mass storage and farms of CPUs and GPUs
+Sloan Foundation
 UNKNOWN
-5th-Year M.S.
-Jacqueline Garcia
-MEC ENG C231A
+Jacque Garcia
+MEC ENG C231B
 accessible, liberatory, transparent, cultural, obtainable, democratic, and endur
-The HKN honor society.
-Julius Springer Prize for Applied Physics.
-a research-level final project
-ABZ Gold Platinum ETH Medal.
-CS 10.
+HKN
+Julius Springer Prize
+research-level final project
+ABZ Gold Platinum ETH Medal
+CS 10
 1995
-Alex Stamos.
-Donald O. Pederson Distinguished Professorship chair.
-Precision Medicine.
-Chayes.
-computational social choice (COMSOC).
-Teaching Prof. Dan Garcia
-this month at the
-Jonathan Shewchuk
+Alex Stamos
+Donald O. Pederson Distinguished Professorship
+Precision Medicine
+Srinivas Devadas
+computational social choice (COMSOC)
+Dan Garcia
+this month
+UNKNOWN
 MOSS
 Pre-Faculty Preparation
-Prospective 5th-year M.S. students.
-UC Davis' ADVANCE Scholar Award.
+Prospective 5th-year M.S. students
+UC Davis’ ADVANCE Scholar Award
 2015
-9 years
+9
 UCB/ERL M89/116
-three to five students.
+three to five
 Michel Maharbiz
 Bachelor of Science
-EECS 101 on Ed Stem.
-Contact Berkeley EECS K-12 Outreach
-Physics 89.
-COMPSCI 61B and COMPSCI 61C.
-Claire Tomlin.
-satisfactory
-Admission to the 5th Year EECS M.S. program.
-Databricks.
+EECS 101 on Ed Stem
+eecs-visitor-coordinator@eecs.berkeley.edu
+Physics 89
+COMPSCI 61B and COMPSCI 61C
+Claire Tomlin
+Satisfactory
+Admission to the 5th Year M.S. program
+Databricks
 letter
-No.
+No
 passFail
-Thirteen months.
+thirteen months
 UNKNOWN
-MATH 54.
+MATH 54
 Multi-Agent Grasping with Turtlebot
-David Wagner
-UNKNOWN
+Irene Chen
+Spring 2027
 #3
-2 technical courses.
-A cheaper, more efficient, and wearable system.
+2
+A cheaper, more efficient, and wearable system
 UCB/EECS-2007-127
-The House.
-senior mentorships and a lifelong professional network.
-MIT
-ACM Charles P. “Chuck” Thacker Breakthrough in Computing Award.
-Yes.
-40.
-EL ENG 105
-The Intersegmental General Education Transfer Curriculum (IGETC) offered at Cali
-3.0 (B)
-over 70
-Cal Day.
-Onsager Computing.
-instructor preference.
-3.0
-familiarity with basic security concepts.
-Satisfactory.
-XRG
-EE White Card.
-Fourandsix Technologies
-Disability Specialists.
-Michael I. Jordan.
-November 28, 2005
-16 units.
-Fitbit.
+The House
+senior mentorships
+University of California, San Diego
+ACM Thacker Breakthrough in Computing Award
 Yes
-UNKNOWN
-tele-surgery and locomotion.
+40
+EL ENG 105
+IGETC is not accepted by the College of Engineering
+3.0
+over 70
+Cal Day
+Onsager Computing
+instructor preference
+3.0
+familiarity with basic security concepts
+Satisfactory
+External Relations Group (XRG)
+EE White Card
+Convex Supercomputer Company
+Disability Specialists
+Michael Jordan
+No
+8 units
+Fitbit
+Yes
+COMPSCI 170
+tele-surgery and locomotion
 SIGCSE
-Berkeley Artificial Intelligence Research Lab (BAIR)
+BAIR
 Tamara Broderick
-The Chair of the CS Space Committee.
+The Chair of the CS Space Committee
 Stanford University
 4
 4
 Center for Human Compatible Artificial Intelligence (CHAI)
-No changes can be made to the PDF file.
-Stockton.
+Content modifications
+Stockton
 2018
-Afro Fem Coders.
+Afro Fem Coders
 San Diego
 IEEE
-Yes.
+Yes
 2017 RECOMB Test of Time Award
-UNKNOWN
+2017
 Chief Technology Officer
-Intel Corporation.
+Intel Corporation
 Three
-University’s Visiting Researcher Scholar and Postdoctoral Affairs (VSPA) program
+VSPA
 2021 ASME Rufus Oldenburger Medal
-No.
+Yes
 Chief Executive Officer
-Three.
-power, cost, and form factor.
+Three
+power, cost, and form factor
 Josh Hug
-No.
-COMPSCI 170.
+No
+COMPSCI 170
 Handshake
-CS KickStart.
+CS Kickstart
 Michael I. Jordan
 ASEs
 Hopper-Dean Foundation
 Reed College
 1995
-Over 116 individuals.
+116
 Sayeef Salahuddin
 2009
 Best Paper Award
-A proactive approach.
-IBM’s T.J. Watson Research Center.
-Transfer to Excellence (TTE)
-technological innovation.
-Kresge Engineering Library
-Meta.
-Graduate standing or consent of instructor; COMPSCI 170 is recommended.
+proactive approach
+IBM’s T.J. Watson Research Center
+Transfer-To-Excellence (TTE)
+greatest contribution to technological innovation
+Tang Center
+Google
+COMPSCI 170
 letter
 CS 261N
-Two.
+2
 letter
-Smitha Milli.
-UNKNOWN
-Berkeley Citation.
+Smitha Milli
+David E. Culler
+Berkeley Citation
 IEEE Medal of Honor
-Queer Graduate Students in Computer Science and Electrical Engineering (QICSE).
-1982.
+QICSE
+1982
 2006
 metrics-based
-Students who have fulfilled the first half of the Physics requirement through Ph
-The Center for Augmented Cognition.
-Three to five students.
-Karla Thao.
-EE 147.
+Completion of Physics 5A and 7B will not fulfill the requirement
+Center for Augmented Cognition
+three to five
+Karla Thao
+EE 147
 NVIDIA CEO Jen-Hsun Huang
-December 1st.
-Yale University.
+December 1st
+Yale University
 STOC
-9 weeks.
-Five Year Master of Science (5th Yr M.S.)
-differentially private continual prefix sum
+9 weeks
+Accel Scholars
+continual prefix sum
 Physical Electronics (PHY)
 solar energy
-CS 61A.
+CS 61A
 IEEE Medal for Innovations in Healthcare Technology
-CS 61A.
-The spring of 2021.
+CS 61A
+spring of 2021
 letter
 IEEE SSCS
-Three to five students.
+three to five students
 cortical modem
-two
-Yes.
+2
+Yes
 2017-18 IBM PhD Fellowship
 Technical Report
 SIGGRAPH'17
-UC Extension Continuing education, online courses, and professional certificates
-Three.
+UC Extension
+3
 2012
-Yes.
+Yes
 1997
-2xyC, 2xyD, etc.
-Tampere University.
-Faculty Award for Outstanding Mentorship of GSIs.
+2xyC, 2xyD, etc
+Tampere University
+Faculty Award for Outstanding Mentorship of GSIs
 Human-Computer Interaction
 letter
-Non-Executive Chairman.
+No
 Matthew Anderson
-Apply through the UCB Online Application for Admission.
+Apply through the UCB Online Application for Admission
 University of Pennsylvania
 Sheila Humphreys
-Google.
-Yes.
+Google
+Yes
 ACM Karl V. Karlstrom Outstanding Educator Award
-Information, Data, Network, and Communication Sciences (IDNCS)
+IDNCS
 RISC-V International
-Computer Science.
-20 units.
-UNKNOWN
-Claire Tomlin
+Computer Science
+20
+Eric Brewer
+Jelani Nelson
 20 minutes
 2018 ONR Young Investigator Award
 Jitendra Malik
-Four (4)
-Biosystems & Computational Biology (BIO)
-FHL Vive Center for Enhanced Reality.
-Akamai Technologies.
-Students interested in only studying computer science should consider the Comput
-EECS major.
-EECS/MSE joint major.
-EL ENG 105.
-Yes.
+4
+Systems Biology
+FHL Vive Center for Enhanced Reality
+Akamai
+Students interested in the EEIS minor should consider the Computer Science Minor
+EECS
+EECS/NE
+EL ENG 105
+Yes
 1956
 3.0
-4 units.
-PhD program.
-Nokia Bell Labs
+4
+PhD-only degree
+No
 2008
-The Computer History Museum in Mountain View.
-25 students.
-UNKNOWN
-November 1-30.
+The Computer History Museum
+25
+Nika Haghtalab, Preeya Khanna, and Sophia Shao
+No
 2.0
