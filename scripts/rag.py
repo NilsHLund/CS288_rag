@@ -1,5 +1,18 @@
 """
 rag.py — RAG model for CS288 Assignment 3.
+
+Changes from v3:
+  - FIX: Dense embeddings now use retrieval_text (same as BM25), not raw text
+  - FIX: minmax_normalize replaced with stable_softmax for dense scores —
+         preserves absolute similarity signal instead of amplifying noise
+  - FIX: MAX_CHUNKS_PER_URL raised 2 → 5 for list-heavy pages
+  - FIX: max_tokens raised 24 → 48 to avoid truncating long answers
+  - FIX: Page summaries rebuilt from title + section headers + first sentences
+         instead of a raw word-truncation of the page text
+  - NEW: Query-time HyDE — LLM generates a hypothetical answer passage before
+         retrieval; its embedding is averaged with the real query embedding so
+         dense retrieval is pulled toward the answer space. One LLM call per
+         question at inference time (same budget as generation).
 """
 
 import json
@@ -30,16 +43,16 @@ CORPUS_PATH = "corpus/pages_all.json"
 # Exclude low-value path prefixes to trim corpus (empty = use full corpus)
 PATH_PREFIX_EXCLUDE = ["Pubs", "news"]  # [] for full corpus; ["Pubs","news"] ~7k pages removed
 
-# Separate cache per config: cache/ = full, cache/bge_base_filtered/ = reduced corpus + bge-base
+# Separate cache per config
 CACHE_DIR = "cache/bge_base_filtered" if PATH_PREFIX_EXCLUDE else "cache"
-CACHE_VERSION = "v3_hier_para_table"
+CACHE_VERSION = "v4_fixes"  # bumped — forces index rebuild with all fixes
 
 CHUNK_SIZE = 170
 CHUNK_OVERLAP = 60
 
 TOP_K_RETRIEVE = 10
 PAGE_TOP_K = 25
-MAX_CHUNKS_PER_URL = 2
+MAX_CHUNKS_PER_URL = 5          # FIX: was 2; raised for list-heavy pages
 
 BM25_WEIGHT = 0.7
 DENSE_WEIGHT = 1.0
@@ -47,8 +60,11 @@ PAGE_BM25_WEIGHT = 0.6
 PAGE_DENSE_WEIGHT = 1.0
 PAGE_PRIOR_WEIGHT = 0.25
 
-EMBED_MODEL = "BAAI/bge-base-en-v1.5"  # 109M params, 768d — better retrieval, fits with reduced corpus
-PAGE_SUMMARY_WORDS = 220
+EMBED_MODEL = "BAAI/bge-base-en-v1.5"
+
+# HyDE: weight of the hypothetical passage embedding blended with the real query embedding.
+# 0.0 = pure query embedding (HyDE disabled); 0.5 = equal blend; 1.0 = hypothetical only.
+HYDE_WEIGHT = 0.5
 
 SYSTEM_PROMPT = (
     "You are a helpful assistant answering questions about UC Berkeley EECS. "
@@ -194,13 +210,71 @@ def path_terms(url: str, max_terms: int = 10) -> list[str]:
     return tokens[:max_terms]
 
 
-def build_corpus_paraphrase(
+# ──────────────────────────────────────────────
+# FIX: Smarter page summary
+# ──────────────────────────────────────────────
+
+def build_page_summary(text: str, title: str, max_words: int = 220) -> str:
+    """
+    Build a page-level summary from title + section headings + first sentence
+    of each paragraph, rather than a raw word-truncation of the full text.
+    This gives the page-level ranker signal from across the whole page,
+    not just the first N words.
+    """
+    lines = text.splitlines()
+    parts = []
+    if title:
+        parts.append(title)
+
+    word_count = len(title.split()) if title else 0
+
+    for line in lines:
+        stripped = line.strip()
+        if not stripped:
+            continue
+
+        # Heuristic: heading if short, no period, possibly title-cased or ALL CAPS
+        is_heading = (
+            len(stripped.split()) <= 8
+            and not stripped.endswith(".")
+            and (stripped.istitle() or stripped.isupper() or stripped[0].isupper())
+        )
+
+        if is_heading:
+            candidate = stripped
+        else:
+            # Take just the first sentence of the paragraph
+            first_sentence = re.split(r"(?<=[.!?])\s", stripped)[0]
+            candidate = first_sentence
+
+        candidate_words = candidate.split()
+        if word_count + len(candidate_words) > max_words:
+            remaining = max_words - word_count
+            if remaining > 3:
+                parts.append(" ".join(candidate_words[:remaining]))
+            break
+
+        parts.append(candidate)
+        word_count += len(candidate_words)
+
+    return "\n".join(parts)
+
+
+# ──────────────────────────────────────────────
+# Keyword paraphrase signals (kept but no longer sole source)
+# ──────────────────────────────────────────────
+
+def build_keyword_signals(
     text: str,
     title: str,
     url: str,
     chunk_type: str,
     table_columns: list[str] | None = None,
 ) -> str:
+    """
+    Regex-derived keyword signals: acronyms, course codes, URL path tokens.
+    These complement the LLM-generated hypothetical questions.
+    """
     signals = []
 
     if title:
@@ -228,7 +302,6 @@ def build_corpus_paraphrase(
         if cols:
             signals.append("columns " + " ".join(cols))
 
-    # Keep paraphrase compact to avoid blowing up cache size.
     deduped = []
     seen = set()
     for s in signals:
@@ -242,6 +315,56 @@ def build_corpus_paraphrase(
     return " ; ".join(deduped)
 
 
+# ──────────────────────────────────────────────
+# NEW: Query-time HyDE
+# ──────────────────────────────────────────────
+
+def generate_hypothetical_passage(question: str) -> str:
+    """
+    HyDE (Hypothetical Document Embeddings): ask the LLM to draft a short passage
+    that would answer the question, without access to the real corpus.
+    Its embedding is blended with the real query embedding so dense retrieval is
+    pulled toward the answer space. One LLM call per question at inference time.
+    Returns empty string on any failure (non-fatal — falls back to query-only).
+    """
+    prompt = (
+        f"Write a short factual passage (2-3 sentences) that directly answers the "
+        f"following question about UC Berkeley EECS. Do not say you don't know — "
+        f"write a plausible answer as if you were an expert.\n\nQuestion: {question}"
+    )
+    try:
+        return call_llm(
+            query=prompt,
+            system_prompt="You are a knowledgeable assistant about UC Berkeley EECS.",
+            max_tokens=80,
+            temperature=0.0,
+        )
+    except Exception:
+        return ""
+
+
+def build_retrieval_text(
+    text: str,
+    title: str,
+    url: str,
+    chunk_type: str,
+    table_columns: list[str] | None = None,
+) -> str:
+    """
+    Compose the full retrieval_text used for BOTH BM25 and dense embedding.
+    Order: chunk text → keyword signals.
+    """
+    keyword_signals = build_keyword_signals(text, title, url, chunk_type, table_columns)
+    parts = [text]
+    if keyword_signals:
+        parts.append(keyword_signals)
+    return "\n".join(parts)
+
+
+# ──────────────────────────────────────────────
+# Page and chunk builders
+# ──────────────────────────────────────────────
+
 def build_page_records(pages: list[dict]) -> list[dict]:
     records = []
     for page_id, page in enumerate(pages):
@@ -251,7 +374,8 @@ def build_page_records(pages: list[dict]) -> list[dict]:
         meta_description = page.get("meta_description", "")
         prefix = get_path_prefix(url)
 
-        summary = truncate_words(text, PAGE_SUMMARY_WORDS)
+        # FIX: use structured summary instead of raw word-truncation
+        summary = build_page_summary(text, title="", max_words=220)
         terms = " ".join(path_terms(url))
         page_doc = "\n".join(
             part
@@ -279,10 +403,14 @@ def build_page_records(pages: list[dict]) -> list[dict]:
 
 
 def build_corpus_chunks(pages: list[dict]):
+    """
+    Build chunks from pages. retrieval_text = chunk text + keyword signals.
+    HyDE is applied at query time in _encode_query, not here.
+    """
+    # Collect raw chunks
     chunks = []
 
     for page_id, page in enumerate(pages):
-
         url = page.get("url", "")
         title = page.get("title", "")
         text = page.get("text", "")
@@ -307,10 +435,6 @@ def build_corpus_chunks(pages: list[dict]):
                             f"Table columns: {' | '.join(c for c in columns if c)}\n"
                             f"Table row: {row_text}"
                         ).strip()
-                        paraphrase = build_corpus_paraphrase(
-                            text_out, title, url, "table_row", table_columns=columns
-                        )
-                        retrieval_text = f"{text_out}\n{paraphrase}" if paraphrase else text_out
                         chunks.append(
                             {
                                 "url": url,
@@ -321,15 +445,12 @@ def build_corpus_chunks(pages: list[dict]):
                                 "chunk_type": "table_row",
                                 "table_columns": columns,
                                 "text": text_out,
-                                "retrieval_text": retrieval_text,
                             }
                         )
                         chunk_id += 1
                     continue
 
             for text_chunk in chunk_text(block):
-                paraphrase = build_corpus_paraphrase(text_chunk, title, url, "text")
-                retrieval_text = f"{text_chunk}\n{paraphrase}" if paraphrase else text_chunk
                 chunks.append(
                     {
                         "url": url,
@@ -339,13 +460,26 @@ def build_corpus_chunks(pages: list[dict]):
                         "chunk_id": chunk_id,
                         "chunk_type": "text",
                         "text": text_chunk,
-                        "retrieval_text": retrieval_text,
-                    }
+                        }
                 )
                 chunk_id += 1
 
+    # Finalize chunks with retrieval_text (keyword signals only; HyDE is query-time)
+    for chunk in chunks:
+        chunk["retrieval_text"] = build_retrieval_text(
+            text=chunk["text"],
+            title=chunk["title"],
+            url=chunk["url"],
+            chunk_type=chunk["chunk_type"],
+            table_columns=chunk.get("table_columns"),
+        )
+
     return chunks
 
+
+# ──────────────────────────────────────────────
+# FIX: Score normalization
+# ──────────────────────────────────────────────
 
 def max_normalize(arr: np.ndarray) -> np.ndarray:
     arr = arr.astype("float32")
@@ -355,26 +489,24 @@ def max_normalize(arr: np.ndarray) -> np.ndarray:
     return arr
 
 
-def minmax_normalize(arr: np.ndarray) -> np.ndarray:
+def stable_softmax(arr: np.ndarray, temperature: float = 0.1) -> np.ndarray:
+    """
+    FIX: Replace minmax_normalize for dense scores.
+
+    minmax_normalize makes the worst candidate score 0 and best score 1,
+    regardless of absolute similarity — it amplifies noise and flattens
+    meaningful score gaps. softmax over cosine similarities preserves the
+    relative ordering while keeping the score distribution meaningful.
+
+    temperature: lower = sharper (more winner-takes-all); 0.1 works well
+    for cosine sims in [0, 1].
+    """
     arr = arr.astype("float32")
     if not arr.size:
         return arr
-    min_val = float(arr.min())
-    max_val = float(arr.max())
-    if max_val > min_val:
-        return (arr - min_val) / (max_val - min_val)
-    return np.zeros_like(arr)
-
-
-def load_questions_from_jsonl(path):
-    questions = []
-
-    with open(path) as f:
-        for line in f:
-            item = json.loads(line)
-            questions.append(item["question"])
-
-    return questions
+    shifted = (arr - arr.max()) / temperature   # numerical stability
+    exp = np.exp(shifted)
+    return exp / exp.sum()
 
 
 # ──────────────────────────────────────────────
@@ -449,11 +581,12 @@ class RAGModel:
             self.bm25 = BM25Okapi(tokenized)
             self.page_bm25 = BM25Okapi(page_tokenized)
 
-            texts = [c["text"] for c in self.chunks]
+            # FIX: encode retrieval_text for dense embeddings too (was: c["text"])
+            retrieval_texts = [c["retrieval_text"] for c in self.chunks]
             page_texts = [p["page_doc"] for p in self.pages]
 
             self.embeddings = self.embedder.encode(
-                texts,
+                retrieval_texts,
                 batch_size=64,
                 show_progress_bar=True,
                 normalize_embeddings=True,
@@ -502,11 +635,36 @@ class RAGModel:
     # ──────────────────────────────────────────────
 
     def _encode_query(self, question: str) -> np.ndarray:
-        return self.embedder.encode(
+        """
+        HyDE at query time: generate a hypothetical answer passage, embed it,
+        and blend with the real query embedding. HYDE_WEIGHT controls the mix
+        (0.0 = query only, 0.5 = equal blend, 1.0 = hypothetical only).
+        Falls back to query-only if the LLM call fails.
+        """
+        query_emb = self.embedder.encode(
             ["Represent this sentence for searching relevant passages: " + question],
             normalize_embeddings=True,
             convert_to_numpy=True,
         ).astype("float32")
+
+        if HYDE_WEIGHT <= 0.0:
+            return query_emb
+
+        hyp_passage = generate_hypothetical_passage(question)
+        if not hyp_passage:
+            return query_emb
+
+        hyp_emb = self.embedder.encode(
+            [hyp_passage],
+            normalize_embeddings=True,
+            convert_to_numpy=True,
+        ).astype("float32")
+
+        blended = (1.0 - HYDE_WEIGHT) * query_emb + HYDE_WEIGHT * hyp_emb
+        # Re-normalize after blending so dot-product scores stay meaningful
+        norm = np.linalg.norm(blended, axis=1, keepdims=True)
+        norm = np.where(norm > 0, norm, 1.0)
+        return (blended / norm).astype("float32")
 
     def _retrieve(self, question, top_k=TOP_K_RETRIEVE):
 
@@ -528,7 +686,8 @@ class RAGModel:
         page_dense_scores = np.zeros(n_pages, dtype="float32")
         for idx, score in zip(page_dense_indices[0], page_dense_raw[0]):
             page_dense_scores[idx] = score
-        page_dense_scores = minmax_normalize(page_dense_scores)
+        # FIX: use stable_softmax instead of minmax_normalize for dense scores
+        page_dense_scores = stable_softmax(page_dense_scores)
 
         page_hybrid = (
             PAGE_BM25_WEIGHT * page_bm25_scores
@@ -548,7 +707,8 @@ class RAGModel:
 
         candidate_bm25 = max_normalize(chunk_bm25_scores[candidate_arr])
         candidate_dense = np.dot(self.embeddings[candidate_arr], q_vec)
-        candidate_dense = minmax_normalize(candidate_dense)
+        # FIX: use stable_softmax instead of minmax_normalize for chunk dense scores
+        candidate_dense = stable_softmax(candidate_dense)
 
         page_prior = np.array(
             [page_hybrid[int(self.chunks[idx].get("page_id", 0))] for idx in candidate_arr],
@@ -570,6 +730,7 @@ class RAGModel:
 
         for idx in ranked_chunk_ids:
             url = self.chunks[idx]["url"]
+            # FIX: MAX_CHUNKS_PER_URL is now 5 (was 2)
             if per_url_count[url] >= MAX_CHUNKS_PER_URL:
                 continue
             selected_ids.append(idx)
@@ -616,7 +777,7 @@ class RAGModel:
                 system_prompt=SYSTEM_PROMPT,
                 query=prompt,
                 model="meta-llama/llama-3.1-8b-instruct",
-                max_tokens=24,
+                max_tokens=48,      # FIX: was 24; raised to avoid truncating long answers
                 temperature=0.0,
                 timeout=120,
             )
@@ -658,6 +819,15 @@ class RAGModel:
 # ──────────────────────────────────────────────
 # Run on generated QA dataset
 # ──────────────────────────────────────────────
+
+def load_questions_from_jsonl(path: str) -> list[str]:
+    questions = []
+    with open(path) as f:
+        for line in f:
+            item = json.loads(line)
+            questions.append(item["question"])
+    return questions
+
 
 if __name__ == "__main__":
 

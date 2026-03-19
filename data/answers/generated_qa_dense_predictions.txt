@@ -1,21 +1,21 @@
-UNKNOWN
-Berkeley Citation.
+James O'Brien
+The Berkeley Citation.
 Berkeley Artificial Intelligence Research Lab (BAIR)
-Google.
-Master of Engineering (M.Eng.)
+Google
+Master of Engineering (MEng)
 Coursera MOOC platform.
 HKN honor society.
 Akamai Technologies.
-HKN
-Karla Thao.
-Consent of instructor.
+PiE
+Karla Thao
+Contact the professor to receive permission.
 American Academy of Arts and Sciences
-Michael V. Drake and Jennifer Chayes
-SUPERB
-Valerie Taylor
-Joseph Gier
+Unknown
+UC Berkeley SROP
+Josh Hug
+Joseph T. Gier
 AI-powered, contactless sensors.
-Association of Women in Electrical Engineering and Computer Science (AWE)
+Women in Computer Science and Engineering (WiCSE)
 National Academy of Engineering (NAE)
 UNIX Operating System.
 UC Davis
@@ -24,77 +24,77 @@ Professor Emeritus, Professor in the Graduate School
 The Chair of the CS Space Committee.
 cross-disciplinary, team-driven projects.
 computer architecture
-Queer Graduate Students in Computer Science and Electrical Engineering (QICSE)
+Queers in Computer Science and Engineering (QICSE)
 Human-Computer Interaction (HCI)
-surveys sent to department heads and directors.
-Coursera
+algorithmic lens
+OpenAI.
 Precision Medicine.
-Management, Entrepreneurship, & Technology Program
-UNKNOWN
+EECS major.
+Unknown
 Dan Garcia
-inclusive culture
-Ken Goldberg
+dedication to education and outreach, close ties to industry, and a supportive a
+S. Levine
 Reed College
 Operating Systems & Networking (OSNT)
-CS 10.
-The Future of Medicine.
+CS 10
+The Future of Medicine
 Physical Electronics (PHY)
 Massachusetts Institute of Technology
-EE 194.
+EE 194
 Berkeley Artificial Intelligence Research Lab (BAIR)
 Commencement
 Integrated Circuits (INC)
 Human-Computer Interaction (HCI)
 Cal Day.
-IPRO
-Center for Student Affairs.
+External Relations
+Center for Student Affairs (CSA)
 15
 over 70
 MEC ENG C231A
-HKN
+Eta Kappa Nu.
 NEMO.
-Robert Pilawa-Podgurski
-Math 54
-software engineers and industry leaders.
+UNKNOWN
+Math 54 or Physics 89.
+academia, government, industry, and entrepreneurial pursuits.
 Berkeley Artificial Intelligence (BAIR) Lab.
 EE 147.
 Lecturer.
-Bin Yu
-CS 297
-four
-AWE.
-eecs-visitor-coordinator@eecs.berkeley.edu
-Stanford University.
-Berkeley Wireless Research Center (BWRC)
+Tamara Broderick
+COMPSCI, EECS
+UNKNOWN
+CS Scholars
+ERSO HR
+Stanford University
+Berkeley Wireless Research Center
 Roshan Rao
 California community college students.
 letter
-Computer aided design system.
-COMPSCI 61C.
-CS Kickstart
-CS 10.
-Openwater.
+CellCAD
+COMPSCI 61C
+CS Kickstart Program
+CS 10
+Boston Dynamics.
 satisfactory
-Human Resources Staff
+Human Resources Staff.
 Three to five students.
 a research-level final project.
 CS KickStart Program
 EL ENG 120
 Journal article.
-Computer Science.
+Computer Science
 ASEs
-CS Kickstart
-Faculty, students, staff, and alumni.
-Summer Undergraduate Program in Engineering Research at Berkeley (SUPERB).
-Wednesdays 4:00-5:00 PM
-Symantec Graduate Fellowship Program.
+CS Scholars
+Our faculty, students, staff and alumni.
+UC Berkeley SROP.
+Wednesdays 4:00-5:00 PM.
+UNKNOWN
 EL ENG 105
 DB-100.
 EE 194.
 External Relations Group (XRG)
-around 20 minutes
+20 minutes
 UNKNOWN
-EECS 101 on Ed Stem.
-confidence
+CalCentral
+to think like humans
 COMPSCI 61B and COMPSCI 61C.
-instructor preference.
+the professor
