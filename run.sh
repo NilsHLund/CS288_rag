@@ -7,7 +7,7 @@ set -e
 # Ensure we run from submission root (paths are relative)
 cd "$(dirname "$0")"
 
-: "${RAG_ENABLE_RERANKER:=0}"
+: "${RAG_ENABLE_RERANKER:=1}"
 : "${RAG_LLM_RETRIES:=1}"
 : "${RAG_LLM_TIMEOUT:=25}"
 : "${RAG_LLM_RETRY_SLEEP:=0.5}"
