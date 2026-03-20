@@ -18,6 +18,7 @@ import os
 import pickle
 import re
 import string
+import time
 from pathlib import Path
 from collections import Counter
 from typing import List
@@ -46,8 +47,8 @@ PARENT_WINDOW = 350          # words — wider context window passed to LLM
 
 CHUNK_SIZE = CHILD_CHUNK_SIZE  # alias kept for ablation.py compatibility
 
-EMBED_MODEL = "BAAI/bge-small-en-v1.5"
-RERANKER_MODEL = "BAAI/bge-reranker-base"
+EMBED_MODEL = "./models/all-MiniLM-L6-v2"
+RERANKER_MODEL = "./models/ms-marco-TinyBERT-L-2-v2"
 GENERATION_MODEL = "meta-llama/llama-3.1-8b-instruct"
 
 _cache_suffix = f"sent_{CHILD_CHUNK_SIZE}_{CHILD_CHUNK_OVERLAP}"
@@ -63,9 +64,12 @@ BM25_WEIGHT = 1.0
 DENSE_WEIGHT = 1.0
 RRF_K = 60                   # RRF smoothing constant (standard: 60)
 
-ENABLE_RERANKER = True
+ENABLE_RERANKER = os.environ.get("RAG_ENABLE_RERANKER", "0").strip().lower() in {"1", "true", "yes", "y"}
 ENABLE_QUERY_EXPANSION = False  # Disabled: often times out, adds 2 extra LLM calls
 ENABLE_HYDE = False            # Disabled: often times out, adds latency
+LLM_RETRIES = max(1, int(os.environ.get("RAG_LLM_RETRIES", "1")))
+LLM_TIMEOUT_SECONDS = max(5, int(os.environ.get("RAG_LLM_TIMEOUT", "25")))
+LLM_RETRY_SLEEP_SECONDS = max(0.0, float(os.environ.get("RAG_LLM_RETRY_SLEEP", "0.5")))
 
 SYSTEM_PROMPT = (
     "You are a helpful assistant answering questions about UC Berkeley EECS. "
@@ -225,6 +229,7 @@ class RAGModel:
     def __init__(self):
         os.makedirs(CACHE_DIR, exist_ok=True)
         self.llm = call_llm
+        self._dense_enabled = True
 
         chunks_cache = Path(CACHE_DIR) / "chunks.pkl"
         bm25_cache = Path(CACHE_DIR) / "bm25.pkl"
@@ -238,15 +243,20 @@ class RAGModel:
 
         if all_cached:
             print("[RAGModel] Loading cached index...")
-            with open(chunks_cache, "rb") as f:
-                self.chunks = pickle.load(f)
-            with open(bm25_cache, "rb") as f:
-                self.bm25 = pickle.load(f)
-            with open(page_lists_cache, "rb") as f:
-                self.page_word_lists = pickle.load(f)
-            self.index = faiss.read_index(str(faiss_cache))
-            self.embeddings = np.load(str(embeddings_cache))
-        else:
+            try:
+                with open(chunks_cache, "rb") as f:
+                    self.chunks = pickle.load(f)
+                with open(bm25_cache, "rb") as f:
+                    self.bm25 = pickle.load(f)
+                with open(page_lists_cache, "rb") as f:
+                    self.page_word_lists = pickle.load(f)
+                self.index = faiss.read_index(str(faiss_cache))
+                self.embeddings = np.load(str(embeddings_cache))
+            except Exception as e:
+                print(f"[RAGModel] Warning: cache load failed, rebuilding index. Error: {e}")
+                all_cached = False
+
+        if not all_cached:
             print("[RAGModel] Building index...")
             with open(CORPUS_PATH) as f:
                 pages = json.load(f)
@@ -259,16 +269,22 @@ class RAGModel:
             tokenized = [normalize(c["text"]).split() for c in self.chunks]
             self.bm25 = BM25Okapi(tokenized)
 
-            embedder = SentenceTransformer(EMBED_MODEL)
-            texts = [c["text"] for c in self.chunks]
-            self.embeddings = embedder.encode(
-                texts, batch_size=64, show_progress_bar=True,
-                normalize_embeddings=True, convert_to_numpy=True,
-            ).astype("float32")
+            try:
+                embedder = SentenceTransformer(EMBED_MODEL)
+                texts = [c["text"] for c in self.chunks]
+                self.embeddings = embedder.encode(
+                    texts, batch_size=64, show_progress_bar=True,
+                    normalize_embeddings=True, convert_to_numpy=True,
+                ).astype("float32")
 
-            dim = self.embeddings.shape[1]
-            self.index = faiss.IndexFlatIP(dim)
-            self.index.add(self.embeddings)
+                dim = self.embeddings.shape[1]
+                self.index = faiss.IndexFlatIP(dim)
+                self.index.add(self.embeddings)
+            except Exception as e:
+                self._dense_enabled = False
+                self.embeddings = None
+                self.index = None
+                print(f"[RAGModel] Warning: dense index build failed; BM25-only mode. Error: {e}")
 
             with open(chunks_cache, "wb") as f:
                 pickle.dump(self.chunks, f)
@@ -276,12 +292,20 @@ class RAGModel:
                 pickle.dump(self.bm25, f)
             with open(page_lists_cache, "wb") as f:
                 pickle.dump(self.page_word_lists, f)
-            faiss.write_index(self.index, str(faiss_cache))
-            np.save(str(embeddings_cache), self.embeddings)
+            if self._dense_enabled and self.index is not None and self.embeddings is not None:
+                faiss.write_index(self.index, str(faiss_cache))
+                np.save(str(embeddings_cache), self.embeddings)
 
-        self.embedder = SentenceTransformer(EMBED_MODEL)
+        try:
+            self.embedder = SentenceTransformer(EMBED_MODEL) if self._dense_enabled else None
+        except Exception as e:
+            self.embedder = None
+            self._dense_enabled = False
+            self.index = None
+            self.embeddings = None
+            print(f"[RAGModel] Warning: embedder unavailable; BM25-only mode. Error: {e}")
 
-        if ENABLE_RERANKER:
+        if ENABLE_RERANKER and self._dense_enabled:
             self.reranker = CrossEncoder(RERANKER_MODEL)
         else:
             self.reranker = None
@@ -404,6 +428,10 @@ class RAGModel:
                 if rrf > bm25_rrf[idx]:
                     bm25_rrf[idx] = rrf
 
+        if not self._dense_enabled or self.embedder is None or self.index is None:
+            top_indices = np.argsort(bm25_rrf)[::-1][:top_k]
+            return [self.chunks[i] for i in top_indices]
+
         # Dense — RRF scores (take best rank across query + HyDE embeddings)
         embed_texts = [
             "Represent this sentence for searching relevant passages: " + q
@@ -481,19 +509,19 @@ class RAGModel:
             "Short answer:"
         )
 
-        SELF_CONSISTENCY_SAMPLES = 3
+        SELF_CONSISTENCY_SAMPLES = 1
 
         answers: list[str] = []
-        for attempt in range(3):
+        for attempt in range(LLM_RETRIES):
             try:
                 for _ in range(SELF_CONSISTENCY_SAMPLES):
                     response = self.llm(
                         system_prompt=SYSTEM_PROMPT,
                         query=prompt,
                         model=GENERATION_MODEL,
-                        max_tokens=45,
-                        temperature=0.3,
-                        timeout=120,
+                        max_tokens=24,
+                        temperature=0.0,
+                        timeout=LLM_TIMEOUT_SECONDS,
                     )
                     response = (response or "").strip()
                     ans = response.splitlines()[0].strip() if response else "UNKNOWN"
@@ -504,7 +532,9 @@ class RAGModel:
                     return Counter(answers).most_common(1)[0][0]
                 return "UNKNOWN"
             except Exception as e:
-                if attempt < 2:
+                if attempt < LLM_RETRIES - 1:
+                    print(f"[RAGModel] generation attempt {attempt + 1} failed: {e}")
+                    time.sleep(LLM_RETRY_SLEEP_SECONDS)
                     answers = []
                     continue
                 return Counter(answers).most_common(1)[0][0] if answers else "UNKNOWN"
