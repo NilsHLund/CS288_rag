@@ -26,7 +26,9 @@ import argparse
 import json
 import time
 from typing import List
-from rag import RAGModel
+
+# Repo root (so CORPUS_PATH in rag.py works no matter where you invoke this script from)
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 def read_questions(path: Path) -> List[str]:
     if not path.exists():
@@ -55,9 +57,15 @@ def main():
     parser.add_argument("input_path", type=str, help="Path to questions.txt")
     parser.add_argument("output_path", type=str, help="Path to save answers.txt")
     args = parser.parse_args()
+    os.chdir(_PROJECT_ROOT)
     input_path = Path(args.input_path)
     output_path = Path(args.output_path)
-    
+    if not input_path.is_file():
+        input_path = _PROJECT_ROOT / input_path
+    output_path = _PROJECT_ROOT / output_path if not output_path.is_absolute() else output_path
+
+    from rag import RAGModel
+
     # Step 1: Load QA model
     model = RAGModel()
     

@@ -1,6 +1,10 @@
 See **STRUCTURE.md** for layout.
 
-**Evaluate (dense):** Predictions go to `data/answers/` (created automatically).
+**Index cache:** `rag.py` stores a fingerprint of `corpus/pages_all.json` under `cache/…/corpus_fingerprint.txt`. If you change the corpus or chunk settings, the index rebuilds automatically. Old cache folders (e.g. `sent_100_20`, `sent_100_28`) can be deleted to save disk space.
+
+**Latency:** The RAG model uses 3 self-consistency samples per question (better accuracy, ~1.5× more LLM calls than 2 samples).
+
+**Evaluate (dense):** Predictions go to `data/answers/` (created automatically). Run from repo root (or any cwd — `evaluate_rag_model.py` switches to the project root).
 ```bash
 python3 scripts/evaluate_rag_model.py data/qa/generated_qa_dense.jsonl data/answers/generated_qa_dense_predictions.txt
 python3 scripts/evaluate.py data/qa/generated_qa_dense.jsonl data/answers/generated_qa_dense_predictions.txt
