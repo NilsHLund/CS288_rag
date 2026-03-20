@@ -42,4 +42,4 @@ export TRANSFORMERS_OFFLINE
 QUESTIONS_PATH="$1"
 PREDICTIONS_PATH="$2"
 
-python -u scripts/evaluate_rag_model.py "$QUESTIONS_PATH" "$PREDICTIONS_PATH"
+python3 -u scripts/evaluate_rag_model.py "$QUESTIONS_PATH" "$PREDICTIONS_PATH"
