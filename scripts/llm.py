@@ -69,7 +69,8 @@ def call_llm(
 
     if "choices" in data and data["choices"]:
         try:
-            return data["choices"][0]["message"]["content"].strip()
+            content = data["choices"][0]["message"].get("content")
+            return (content or "").strip()
         except (KeyError, IndexError, TypeError):
             raise RuntimeError(f"OpenRouter response missing expected content: {data}")
 
