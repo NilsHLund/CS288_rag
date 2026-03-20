@@ -1,4 +1,14 @@
 #!/usr/bin/env bash
+echo "=== GRADESCOPE DIAGNOSTICS ==="
+echo "1. Checking current directory structure:"
+ls -la
+echo "2. Checking models directory:"
+ls -la models/
+echo "3. Checking MiniLM directory:"
+ls -la models/all-MiniLM-L6-v2/
+echo "4. Checking Available RAM before Python execution:"
+free -m
+echo "=============================="
 # run.sh — Autograder entrypoint for CS288 Assignment 3
 # Usage: bash run.sh <questions_txt_path> <predictions_out_path>
 

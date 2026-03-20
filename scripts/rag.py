@@ -48,7 +48,7 @@ TOP_K_RETRIEVE = 15
 BM25_WEIGHT = 0.5
 DENSE_WEIGHT = 1.0
 
-EMBED_MODEL = "./models/bge-small-en-v1.5"
+EMBED_MODEL = "./models/all-MiniLM-L6-v2"
 RERANK_MODEL = "./models/ms-marco-TinyBERT-L-2-v2"
 
 ENABLE_RERANKER = os.environ.get("RAG_ENABLE_RERANKER", "0").strip().lower() in {"1", "true", "yes", "y"}

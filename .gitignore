@@ -2,4 +2,4 @@
 submission.zip
 .env
 *.pyc
-__pycache__/
+__pycache__/models/bge-small-en-v1.5/

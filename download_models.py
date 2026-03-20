@@ -20,8 +20,8 @@ def main() -> None:
     models_dir = project_root / "models"
     models_dir.mkdir(parents=True, exist_ok=True)
 
-    embed_src = "BAAI/bge-small-en-v1.5"
-    embed_dst = models_dir / "bge-small-en-v1.5"
+    embed_src = "sentence-transformers/all-MiniLM-L6-v2"
+    embed_dst = models_dir / "all-MiniLM-L6-v2"
 
     rerank_src = "cross-encoder/ms-marco-TinyBERT-L-2-v2"
     rerank_dst = models_dir / "ms-marco-TinyBERT-L-2-v2"
