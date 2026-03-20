@@ -19,6 +19,7 @@ cd "$(dirname "$0")"
 
 : "${RAG_ENABLE_RERANKER:=0}"
 : "${RAG_RERANKER_BACKEND:=safe}"
+: "${RAG_FORCE_BM25_ONLY:=1}"
 : "${RAG_PROGRESS_LOGS:=1}"
 : "${RAG_PROFILE_LLM:=1}"
 : "${RAG_LLM_RETRIES:=1}"
@@ -30,6 +31,7 @@ cd "$(dirname "$0")"
 
 export RAG_ENABLE_RERANKER
 export RAG_RERANKER_BACKEND
+export RAG_FORCE_BM25_ONLY
 export RAG_PROGRESS_LOGS
 export RAG_PROFILE_LLM
 export RAG_LLM_RETRIES

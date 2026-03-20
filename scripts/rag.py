@@ -54,6 +54,7 @@ RERANK_MODEL = "./models/ms-marco-TinyBERT-L-2-v2"
 ENABLE_RERANKER = os.environ.get("RAG_ENABLE_RERANKER", "0").strip().lower() in {"1", "true", "yes", "y"}
 ENABLE_PROGRESS_LOGS = os.environ.get("RAG_PROGRESS_LOGS", "0").strip().lower() in {"1", "true", "yes", "y"}
 RERANKER_BACKEND = os.environ.get("RAG_RERANKER_BACKEND", "safe").strip().lower()
+FORCE_BM25_ONLY = os.environ.get("RAG_FORCE_BM25_ONLY", "0").strip().lower() in {"1", "true", "yes", "y"}
 LLM_RETRIES = max(1, int(os.environ.get("RAG_LLM_RETRIES", "1")))
 LLM_TIMEOUT_SECONDS = max(5, int(os.environ.get("RAG_LLM_TIMEOUT", "25")))
 LLM_RETRY_SLEEP_SECONDS = max(0.0, float(os.environ.get("RAG_LLM_RETRY_SLEEP", "0.5")))
@@ -341,10 +342,13 @@ class RAGModel:
         self.llm = call_llm
         self._profile_llm = os.environ.get("RAG_PROFILE_LLM", "").strip().lower() in {"1", "true", "yes", "y"}
         self._progress_logs = ENABLE_PROGRESS_LOGS
-        self._dense_enabled = True
+        self._dense_enabled = not FORCE_BM25_ONLY
         if self._progress_logs:
-            print(f"[RAG_PROGRESS] init start | reranker_enabled={ENABLE_RERANKER}")
-        if ENABLE_RERANKER and RERANKER_BACKEND == "crossencoder":
+            print(
+                f"[RAG_PROGRESS] init start | reranker_enabled={ENABLE_RERANKER} "
+                f"force_bm25_only={FORCE_BM25_ONLY}"
+            )
+        if self._dense_enabled and ENABLE_RERANKER and RERANKER_BACKEND == "crossencoder":
             self.reranker = CrossEncoder(
                 RERANK_MODEL,
                 device="cpu",
@@ -384,11 +388,9 @@ class RAGModel:
             faiss_cache = legacy_faiss_cache
             embeddings_cache = legacy_embeddings_cache
 
-        cache_exists = (
-            chunks_cache.exists()
-            and bm25_cache.exists()
-            and faiss_cache.exists()
-            and embeddings_cache.exists()
+        cache_exists = chunks_cache.exists() and bm25_cache.exists() and (
+            (self._dense_enabled and faiss_cache.exists() and embeddings_cache.exists())
+            or (not self._dense_enabled)
         )
         cache_loaded = False
 
@@ -408,8 +410,12 @@ class RAGModel:
                 with open(bm25_cache, "rb") as f:
                     self.bm25 = pickle.load(f)
 
-                self.index = faiss.read_index(str(faiss_cache))
-                self.embeddings = np.load(str(embeddings_cache))
+                if self._dense_enabled:
+                    self.index = faiss.read_index(str(faiss_cache))
+                    self.embeddings = np.load(str(embeddings_cache))
+                else:
+                    self.index = None
+                    self.embeddings = None
                 cache_loaded = True
 
                 if self._progress_logs:
@@ -435,23 +441,29 @@ class RAGModel:
 
             self.bm25 = BM25Okapi(tokenized)
 
-            embedder = SentenceTransformer(EMBED_MODEL)
+            self.index = None
+            self.embeddings = None
+            if self._dense_enabled:
+                try:
+                    embedder = SentenceTransformer(EMBED_MODEL)
+                    texts = [c["retrieval_text"] for c in self.chunks]
+                    self.embeddings = embedder.encode(
+                        texts,
+                        batch_size=64,
+                        show_progress_bar=True,
+                        normalize_embeddings=True,
+                        convert_to_numpy=True,
+                    ).astype("float32")
 
-            texts = [c["retrieval_text"] for c in self.chunks]
-
-            self.embeddings = embedder.encode(
-                texts,
-                batch_size=64,
-                show_progress_bar=True,
-                normalize_embeddings=True,
-                convert_to_numpy=True,
-            ).astype("float32")
-
-            dim = self.embeddings.shape[1]
-
-            self.index = faiss.IndexFlatIP(dim)
-
-            self.index.add(self.embeddings)
+                    dim = self.embeddings.shape[1]
+                    self.index = faiss.IndexFlatIP(dim)
+                    self.index.add(self.embeddings)
+                except Exception as e:
+                    self._dense_enabled = False
+                    self.reranker = None
+                    self.index = None
+                    self.embeddings = None
+                    print(f"[RAGModel] Warning: dense index build failed, using BM25-only retrieval. Error: {e}")
 
             with open(chunks_cache, "wb") as f:
                 pickle.dump(self.chunks, f)
@@ -459,24 +471,30 @@ class RAGModel:
             with open(bm25_cache, "wb") as f:
                 pickle.dump(self.bm25, f)
 
-            faiss.write_index(self.index, str(faiss_cache))
-
-            np.save(str(embeddings_cache), self.embeddings)
+            if self._dense_enabled and self.index is not None and self.embeddings is not None:
+                faiss.write_index(self.index, str(faiss_cache))
+                np.save(str(embeddings_cache), self.embeddings)
             if self._progress_logs:
                 print(
                     f"[RAG_PROGRESS] index build complete | chunks={len(self.chunks)} "
-                    f"embeddings_shape={self.embeddings.shape}"
+                    f"embeddings_shape={getattr(self.embeddings, 'shape', None)}"
                 )
 
-        try:
-            self.embedder = SentenceTransformer(EMBED_MODEL)
-            if self._progress_logs:
-                print("[RAG_PROGRESS] embedder ready")
-        except Exception as e:
+        if not self._dense_enabled:
             self.embedder = None
-            self._dense_enabled = False
             self.reranker = None
-            print(f"[RAGModel] Warning: embedder unavailable, using BM25-only retrieval. Error: {e}")
+            if self._progress_logs:
+                print("[RAG_PROGRESS] dense retrieval disabled; BM25-only mode")
+        else:
+            try:
+                self.embedder = SentenceTransformer(EMBED_MODEL)
+                if self._progress_logs:
+                    print("[RAG_PROGRESS] embedder ready")
+            except Exception as e:
+                self.embedder = None
+                self._dense_enabled = False
+                self.reranker = None
+                print(f"[RAGModel] Warning: embedder unavailable, using BM25-only retrieval. Error: {e}")
 
     # ──────────────────────────────────────────────
     # Retrieval
