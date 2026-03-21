@@ -60,7 +60,7 @@ TOP_K_RERANK = 10
 MAX_CHUNKS_PER_URL = 3       # ↑ from 2
 
 BM25_WEIGHT = 1.0
-DENSE_WEIGHT = 1.0          
+DENSE_WEIGHT = 1.5          
 RRF_K = 60
 
 ENABLE_RERANKER = True
