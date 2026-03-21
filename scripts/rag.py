@@ -55,8 +55,8 @@ _embed_tag = EMBED_MODEL.split("/")[-1].replace(".", "_")
 _filter_tag = "_filtered" if PATH_PREFIX_EXCLUDE else ""
 CACHE_DIR = f"cache/{_embed_tag}{_filter_tag}_{_cache_suffix}"
 
-TOP_K_RETRIEVE = 80          # ↑ from 40
-TOP_K_RERANK = 15            # ↑ from 10
+TOP_K_RETRIEVE = 40          
+TOP_K_RERANK = 10            
 MAX_CHUNKS_PER_URL = 3       # ↑ from 2
 
 BM25_WEIGHT = 1.0
