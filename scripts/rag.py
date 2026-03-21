@@ -21,6 +21,7 @@ import os
 import pickle
 import re
 import string
+import time
 from pathlib import Path
 from collections import Counter
 from typing import List
@@ -46,6 +47,39 @@ RAG_FAST = (
     or _env_truthy("GRADESCOPE")
     or _env_truthy("RAG_LOW_RESOURCE")
 )
+
+# Gradescope ~2 vCPU: avoid oversubscription in BLAS / OpenMP (helps rerank + numpy).
+if RAG_FAST:
+    for _env_k, _env_v in (
+        ("OMP_NUM_THREADS", "2"),
+        ("MKL_NUM_THREADS", "2"),
+        ("OPENBLAS_NUM_THREADS", "2"),
+        ("NUMEXPR_NUM_THREADS", "2"),
+    ):
+        os.environ.setdefault(_env_k, _env_v)
+    try:
+        faiss.omp_set_num_threads(2)
+    except Exception:
+        pass
+
+# Wall-clock breakdown (stdout). Silence: CS288_RAG_NO_PROFILE=1. Per-question lines: CS288_RAG_PROFILE_PER_QUESTION=1
+RAG_PROFILE = not _env_truthy("CS288_RAG_NO_PROFILE")
+RAG_PROFILE_PER_QUESTION = _env_truthy("CS288_RAG_PROFILE_PER_QUESTION")
+
+
+def _top_k_desc_indices(scores: np.ndarray, k: int) -> np.ndarray:
+    """
+    Indices of the k largest scores, sorted by score descending.
+    Same top set as argsort[::-1][:k] for non-tied cutoffs; O(n + k log k) vs O(n log n).
+    """
+    n = int(scores.shape[0])
+    k = min(int(k), n)
+    if k <= 0:
+        return np.array([], dtype=np.int64)
+    if k >= n:
+        return np.argsort(scores)[::-1]
+    part = np.argpartition(scores, -k)[-k:]
+    return part[np.argsort(scores[part])[::-1]]
 
 
 # ──────────────────────────────────────────────
@@ -951,6 +985,9 @@ def load_questions_from_jsonl(path):
 
 class RAGModel:
     def __init__(self):
+        _t_init = time.perf_counter()
+        _ph: dict[str, float] = {}
+
         os.makedirs(CACHE_DIR, exist_ok=True)
         self.llm = call_llm
         if RAG_FAST:
@@ -977,6 +1014,7 @@ class RAGModel:
 
         if cache_ok:
             print("[RAGModel] Loading cached index...")
+            _t0 = time.perf_counter()
             with open(chunks_cache, "rb") as f:
                 self.chunks = pickle.load(f)
             with open(bm25_cache, "rb") as f:
@@ -985,44 +1023,58 @@ class RAGModel:
                 self.page_word_lists = pickle.load(f)
             self.index = faiss.read_index(str(faiss_cache))
             self.embeddings = np.load(str(embeddings_cache))
+            _ph["cache_io"] = time.perf_counter() - _t0
+            _t0 = time.perf_counter()
+            self.embedder = SentenceTransformer(EMBED_MODEL)
+            _ph["sentence_transformer_load"] = time.perf_counter() - _t0
         else:
             if all_cached and stored_fp != want_fp:
                 print("[RAGModel] Corpus or index config changed — rebuilding index...")
             else:
                 print("[RAGModel] Building index...")
+            _t0 = time.perf_counter()
             pages = load_corpus(CORPUS_PATH)
             pages = filter_pages_by_path(pages, PATH_PREFIX_EXCLUDE)
             before = len(pages)
             pages = filter_indexable_pages(pages)
+            _ph["corpus_load_filter"] = time.perf_counter() - _t0
             print(
                 f"[RAGModel] Using {len(pages)} pages with body text "
                 f"(dropped {before - len(pages)} empty/short; excluded paths: {PATH_PREFIX_EXCLUDE})"
             )
 
+            _t0 = time.perf_counter()
             self.chunks, self.page_word_lists = build_corpus_chunks(pages)
+            _ph["build_chunks"] = time.perf_counter() - _t0
             print(f"[RAGModel] Built {len(self.chunks)} child chunks")
 
             def _chunk_index_text(c: dict) -> str:
                 return (c.get("index_text") or c.get("text") or "").strip()
 
+            _t0 = time.perf_counter()
             tokenized = [normalize(_chunk_index_text(c)).split() for c in self.chunks]
             self.bm25 = BM25Okapi(tokenized)
+            _ph["bm25_build"] = time.perf_counter() - _t0
 
+            _t0 = time.perf_counter()
             embedder = SentenceTransformer(EMBED_MODEL)
+            _ph["sentence_transformer_load"] = time.perf_counter() - _t0
             # BGE asymmetric retrieval: document prefix (queries use the "sentence for searching" prefix in _retrieve)
             texts = [
                 "Represent this document for retrieval: " + _chunk_index_text(c)
                 for c in self.chunks
             ]
+            _t0 = time.perf_counter()
             self.embeddings = embedder.encode(
                 texts, batch_size=64, show_progress_bar=True,
                 normalize_embeddings=True, convert_to_numpy=True,
             ).astype("float32")
+            _ph["encode_all_chunks"] = time.perf_counter() - _t0
 
             dim = self.embeddings.shape[1]
             self.index = faiss.IndexFlatIP(dim)
+            _t0 = time.perf_counter()
             self.index.add(self.embeddings)
-
             with open(chunks_cache, "wb") as f:
                 pickle.dump(self.chunks, f)
             with open(bm25_cache, "wb") as f:
@@ -1032,13 +1084,35 @@ class RAGModel:
             faiss.write_index(self.index, str(faiss_cache))
             np.save(str(embeddings_cache), self.embeddings)
             fp_cache.write_text(want_fp, encoding="utf-8")
+            _ph["faiss_add_and_cache_write"] = time.perf_counter() - _t0
+            # Reuse the model already in memory (avoid a 2nd identical load on rebuild path).
+            self.embedder = embedder
 
-        self.embedder = SentenceTransformer(EMBED_MODEL)
+        if RAG_FAST:
+            try:
+                import torch
 
+                torch.set_num_threads(2)
+                torch.set_num_interop_threads(1)
+            except Exception:
+                pass
+
+        _t0 = time.perf_counter()
         if ENABLE_RERANKER:
             self.reranker = CrossEncoder(RERANKER_MODEL)
         else:
             self.reranker = None
+        if ENABLE_RERANKER:
+            _ph["cross_encoder_load"] = time.perf_counter() - _t0
+
+        if RAG_PROFILE:
+            _total = time.perf_counter() - _t_init
+            parts = [f"{k}={v:.2f}s" for k, v in sorted(_ph.items())]
+            print(
+                "[RAGModel timing] __init__ "
+                + (" | ".join(parts) if parts else "(no sub-steps)")
+                + f" | TOTAL={_total:.2f}s"
+            )
 
     # ──────────────────────────────────────────────
     # Query Expansion
@@ -1142,12 +1216,16 @@ class RAGModel:
         n = len(self.chunks)
         fetch_k = min(top_k * 28, n)
 
-        # Run query expansion and HyDE concurrently — both are independent LLM calls
-        with ThreadPoolExecutor(max_workers=2) as pool:
-            expand_future = pool.submit(self._expand_query, question)
-            hyde_future = pool.submit(self._generate_hypothetical_doc, question)
-            llm_queries = expand_future.result()
-            hyde_doc = hyde_future.result()
+        # Parallel LLM calls only when at least one path can block on the network
+        if ENABLE_QUERY_EXPANSION or ENABLE_HYDE:
+            with ThreadPoolExecutor(max_workers=2) as pool:
+                expand_future = pool.submit(self._expand_query, question)
+                hyde_future = pool.submit(self._generate_hypothetical_doc, question)
+                llm_queries = expand_future.result()
+                hyde_doc = hyde_future.result()
+        else:
+            llm_queries = self._expand_query(question)
+            hyde_doc = self._generate_hypothetical_doc(question)
 
         merged: dict[str, None] = {}
         for q in query_variants(question) + llm_queries:
@@ -1160,7 +1238,7 @@ class RAGModel:
         bm25_rrf = np.zeros(n)
         for q in queries:
             scores = np.array(self.bm25.get_scores(normalize(q).split()))
-            for rank, idx in enumerate(np.argsort(scores)[::-1][:fetch_k]):
+            for rank, idx in enumerate(_top_k_desc_indices(scores, fetch_k)):
                 rrf = 1.0 / (RRF_K + rank + 1)
                 if rrf > bm25_rrf[idx]:
                     bm25_rrf[idx] = rrf
@@ -1189,7 +1267,7 @@ class RAGModel:
                         dense_rrf[idx] = rrf
 
         hybrid = BM25_WEIGHT * bm25_rrf + DENSE_WEIGHT * dense_rrf
-        top_indices = np.argsort(hybrid)[::-1][:top_k]
+        top_indices = _top_k_desc_indices(hybrid, top_k)
         return [self.chunks[i] for i in top_indices]
 
     # ──────────────────────────────────────────────
@@ -1291,21 +1369,51 @@ class RAGModel:
 
     def predict(self, questions: list[str]) -> list[str]:
         answers = ["UNKNOWN"] * len(questions)
+        n_q = len(questions)
+        t_wall0 = time.perf_counter()
+        sum_retrieve = sum_rerank = sum_generate = 0.0
 
         def process(i, q):
             try:
+                t0 = time.perf_counter()
                 chunks = self._retrieve(q)
+                t1 = time.perf_counter()
                 chunks = self._rerank(q, chunks)
-                return i, self._generate(q, chunks)
+                t2 = time.perf_counter()
+                out = self._generate(q, chunks)
+                t3 = time.perf_counter()
+                tr, rr, gg = t1 - t0, t2 - t1, t3 - t2
+                if RAG_PROFILE and RAG_PROFILE_PER_QUESTION:
+                    print(
+                        f"[RAGModel timing] q[{i}/{n_q}] "
+                        f"retrieve={tr:.3f}s rerank={rr:.3f}s generate={gg:.3f}s "
+                        f"sum={tr + rr + gg:.3f}s"
+                    )
+                return i, out, tr, rr, gg
             except Exception as e:
                 print(f"Exception during inference: {e}")
-                return i, "UNKNOWN"
+                return i, "UNKNOWN", 0.0, 0.0, 0.0
 
         with ThreadPoolExecutor(max_workers=PREDICT_MAX_WORKERS) as executor:
             futures = {executor.submit(process, i, q): i for i, q in enumerate(questions)}
             for future in as_completed(futures):
-                i, answer = future.result()
+                i, answer, tr, rr, gg = future.result()
                 answers[i] = answer
+                sum_retrieve += tr
+                sum_rerank += rr
+                sum_generate += gg
+
+        if RAG_PROFILE and n_q > 0:
+            wall = time.perf_counter() - t_wall0
+            per = n_q
+            print(
+                "[RAGModel timing] predict "
+                f"N={n_q} wall={wall:.2f}s "
+                f"(avg retrieve={sum_retrieve / per:.3f}s, "
+                f"rerank={sum_rerank / per:.3f}s, "
+                f"generate={sum_generate / per:.3f}s; "
+                f"sum of avgs={(sum_retrieve + sum_rerank + sum_generate) / per:.3f}s)"
+            )
 
         return answers
 
