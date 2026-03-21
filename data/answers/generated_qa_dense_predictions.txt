@@ -1,22 +1,22 @@
 Jonathan Shewchuk
 Berkeley Citation
 Berkeley Artificial Intelligence Research Lab (BAIR)
-Siemens
-Master of Engineering (M.Eng.)
-Coursera
+Google
+Master of Engineering (MEng)
+Coursera MOOC platform
 HKN honor society
-Microsoft
-Eta Kappa Nu (HKN)
-Soda Hall
+Akamai Technologies
+EECS Course Archives
+Karla Thao
 Consent of instructor
-Sigma Xi
+the American Academy of Arts and Sciences
 Jennifer Chayes
 SUPERB
 Josh Hug
 Joseph Thomas Gier
-Wearable
+contactless sensors
 The Association of Women in EE & CS (AWE)
-National Inventors Hall of Fame
+National Academy of Engineering (NAE)
 UNIX Operating System
 UC Davis
 solar energy
@@ -27,37 +27,37 @@ computer architecture
 Queers in Computer Science and Engineering (QICSE)
 Human-Computer Interaction (HCI)
 entirely metrics-based
-Coursera
-Precision Medicine
+OpenAI
+Computational biology
 EECS major
 a “climate-first lens”
 Dan Garcia
 supportive and inclusive culture
 Sergey Levine
-University of California at Berkeley
+Reed College
 Operating Systems & Networking (OSNT)
-BJC
+CS 10
 The Future of Medicine
-Physical Electronics (PHY)
-University of California, Berkeley
+Integrated Circuits (INC)
+Massachusetts Institute of Technology
 EE 194. Special Topics (Tapeout course)
 Berkeley Artificial Intelligence Research Lab (BAIR)
-Commencement May 11
+Commencement
 Integrated Circuits (INC)
 Human-Computer Interaction (HCI)
 Cal Day
 External Relations
 Center for Student Affairs (CSA)
-1
+18
 over 70
-MEC ENG C231A
+MECENG C231A
 HKN honor society
-Global Workspace Model
-Robert Pilawa-Podgurski
+NEMO
+R. Pilawa-Podgurski
 Physics 89
 long-term technical leaders in industry
 Berkeley Artificial Intelligence (BAIR) Lab
-EE 206A
+EE 40
 Lecturer
 Aram John Thomasian
 EECS DeCal
@@ -68,18 +68,18 @@ Stanford University
 Berkeley Wireless Research Center (BWRC)
 Roshan Rao
 California community college students
-Letter
-cellular architecture
+letter
+computer aided design system
 COMPSCI 61C
 CS Kickstart
-BJC
-AWS Elemental
-Satisfactory
+CS 10
+insitro
+Student Option
 Human Resources Staff
 three to five students
-Research projects
+a research-level final project
 CS KickStart Program
-EE 120
+EECS 16A
 Report
 Computer Science
 Guide for Prospective ASEs
@@ -87,14 +87,14 @@ CS Kickstart
 EECS faculty, students, staff, and alumni
 Summer Undergraduate Program in Engineering Research
 Wednesdays 4:00-5:00 PM
-Mayo Clinic SURF
-EE 105. Microelectronic Devices and Circuits
+IBM Ph.D. fellowship
+EL ENG 105
 DB-100 Infrared Reflectometer
 EE 194
 External Relations Group (XRG)
-20 minutes
+around 20 minutes
 one exaFLOPS
-EdStem
-increasing robustness to adversarial attacks
+EECS 101 on Ed Stem
+emotional intelligence
 COMPSCI 61B and COMPSCI 61C
 instructor preference

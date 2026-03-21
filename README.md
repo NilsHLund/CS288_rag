@@ -1,8 +1,6 @@
 See **STRUCTURE.md** for layout.
 
-**Index cache:** `rag.py` stores a fingerprint of `corpus/pages_all.json` under `cache/…/corpus_fingerprint.txt`. If you change the corpus or chunk settings, the index rebuilds automatically. Old cache folders (e.g. `sent_100_20`, `sent_100_28`) can be deleted to save disk space.
-
-**Latency:** The RAG model uses 3 self-consistency samples per question (better accuracy, ~1.5× more LLM calls than 2 samples).
+**Latency / Gradescope:** The model uses **1** OpenRouter call per question by default (`CS288_RAG_SAMPLES` unset). `CS288_RAG_FAST=1` (default in `run.sh` / Docker) also uses **sequential** `predict` and smaller retrieve/rerank windows for **2 CPU / 4GB RAM** (no GPU). For heavier local runs: `CS288_RAG_FAST=0` (larger `top_k`) and optionally `CS288_RAG_SAMPLES=3` (3-sample vote, ~3× more LLM calls).
 
 **Evaluate (dense):** Predictions go to `data/answers/` (created automatically). Run from repo root (or any cwd — `evaluate_rag_model.py` switches to the project root).
 ```bash
@@ -10,10 +8,10 @@ python3 scripts/evaluate_rag_model.py data/qa/generated_qa_dense.jsonl data/answ
 python3 scripts/evaluate.py data/qa/generated_qa_dense.jsonl data/answers/generated_qa_dense_predictions.txt
 ```
 
-**Docker (3GB RAM, 2 CPU):** Only answer generation is time-constrained; scoring is local.
+**Docker (4GB RAM, 2 CPU, no GPU):** Only answer generation is time-constrained; scoring is local.
 ```bash
 docker build -t cs288-rag .
-docker run --rm --cpus="2" --memory="3g" -v .:/app -w /app cs288-rag python3 scripts/evaluate_rag_model.py data/qa/generated_qa_dense.jsonl data/answers/generated_qa_dense_predictions.txt
+docker run --rm --cpus="2" --memory="4g" -v .:/app -w /app cs288-rag python3 scripts/evaluate_rag_model.py data/qa/generated_qa_dense.jsonl data/answers/generated_qa_dense_predictions.txt
 # Check score (EM + F1):
 python3 scripts/evaluate.py data/qa/generated_qa_dense.jsonl data/answers/generated_qa_dense_predictions.txt
 ```
