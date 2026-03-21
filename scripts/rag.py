@@ -35,12 +35,12 @@ from llm import call_llm
 # Configuration
 # ──────────────────────────────────────────────
 
-CORPUS_PATH = "corpus/pages_all.json"
-CORPUS_FALLBACK = "corpus/pages.json"
+CORPUS_PATH = "corpus/eecs_text_bs_rewritten.jsonl"
+CORPUS_FALLBACK = "corpus/pages_all.json"  # old JSON fallback
 
 PATH_PREFIX_EXCLUDE = []
 
-CHILD_CHUNK_SIZE = 100
+CHILD_CHUNK_SIZE = 160
 CHILD_CHUNK_OVERLAP = 20
 PARENT_WINDOW = 500          # ↑ from 350 — more context for LLM
 
@@ -50,7 +50,7 @@ EMBED_MODEL = os.environ.get("RAG_EMBED_MODEL", "BAAI/bge-small-en-v1.5")
 RERANKER_MODEL = "BAAI/bge-reranker-base"
 GENERATION_MODEL = "meta-llama/llama-3.1-8b-instruct"
 
-_cache_suffix = f"sent_{CHILD_CHUNK_SIZE}_{CHILD_CHUNK_OVERLAP}"
+_cache_suffix = f"sect_{CHILD_CHUNK_SIZE}_{CHILD_CHUNK_OVERLAP}"
 _embed_tag = EMBED_MODEL.split("/")[-1].replace(".", "_")
 _filter_tag = "_filtered" if PATH_PREFIX_EXCLUDE else ""
 CACHE_DIR = f"cache/{_embed_tag}{_filter_tag}_{_cache_suffix}"
@@ -60,7 +60,7 @@ TOP_K_RERANK = 15            # ↑ from 10
 MAX_CHUNKS_PER_URL = 3       # ↑ from 2
 
 BM25_WEIGHT = 1.0
-DENSE_WEIGHT = 0.0           # slightly favour dense retrieval
+DENSE_WEIGHT = 1.2           # slightly favour dense retrieval
 RRF_K = 60
 
 ENABLE_RERANKER = True
@@ -328,11 +328,109 @@ def make_sentence_chunks(text: str, target_words: int, overlap_words: int) -> li
     return chunks
 
 
+def _markdown_to_plain(text: str) -> str:
+    """
+    Convert markdown to plain text while preserving heading labels inline.
+      ## Section Title  ->  "Section Title:"  (inline topic label)
+      # Page Title      ->  "Page Title"      (kept as-is)
+      **bold**          ->  bold
+      [link text](url)  ->  link text
+    Keeping headings as "Label:" prefixes means every chunk that starts under a
+    new section still carries that section label in its text, giving BM25 and
+    dense retrieval a strong topic signal without losing structural boundaries.
+    """
+    lines = []
+    for line in text.splitlines():
+        stripped = line.strip()
+        m = re.match(r"^(#{1,6})\s+(.*)", stripped)
+        if m:
+            level = len(m.group(1))
+            label = m.group(2).strip()
+            lines.append(label if level == 1 else f"{label}:")
+        else:
+            lines.append(stripped)
+    joined = "\n".join(lines)
+    joined = re.sub(r"\*{1,2}([^*\n]+)\*{1,2}", r"\1", joined)
+    joined = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", joined)
+    joined = re.sub(r"`([^`]+)`", r"\1", joined)
+    return joined
+
+
+def _load_corpus(path: Path) -> list[dict]:
+    """Load corpus from either JSONL (new format) or JSON array (old format)."""
+    suffix = path.suffix.lower()
+    if suffix == ".jsonl":
+        pages = []
+        with open(path, encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                obj = json.loads(line)
+                raw = obj.get("text") or ""
+                text = _markdown_to_plain(raw)
+                # Title = first non-empty line that isn't a section label (doesn't end with ":")
+                title = ""
+                for t_line in text.splitlines():
+                    t_line = t_line.strip()
+                    if t_line and not t_line.endswith(":"):
+                        title = t_line
+                        break
+                pages.append({"url": obj.get("url", ""), "title": title, "text": text})
+        return pages
+    else:
+        with open(path, encoding="utf-8") as f:
+            return json.load(f)
+
+
+def _split_into_sections(text: str) -> list[tuple]:
+    """
+    Split plain text (post-_markdown_to_plain) into (heading, body) pairs on
+    lines that look like section headings: end with ":", short, no sentence punct.
+    """
+    lines = text.splitlines()
+    sections = []
+    current_heading = ""
+    current_body: list[str] = []
+
+    for line in lines:
+        stripped = line.strip()
+        is_heading = (
+            stripped.endswith(":")
+            and len(stripped.split()) <= 10
+            and not re.search(r"[.!?]\s", stripped)
+            and len(stripped) > 1
+        )
+        if is_heading:
+            if current_body:
+                sections.append((current_heading, "\n".join(current_body).strip()))
+            current_heading = stripped.rstrip(":")
+            current_body = []
+        else:
+            current_body.append(line)
+
+    if current_body:
+        sections.append((current_heading, "\n".join(current_body).strip()))
+
+    return sections if sections else [("", text)]
+
+
 def build_corpus_chunks(
     pages: list,
     child_size: int = CHILD_CHUNK_SIZE,
     child_overlap: int = CHILD_CHUNK_OVERLAP,
 ) -> tuple[list[dict], list[dict]]:
+    """
+    Section-aware chunking for the new markdown corpus.
+
+    For each page:
+      1. Split on section headings (lines ending with ":").
+      2. Within each section, apply sentence-level word-count chunking.
+      3. Prepend "[Page title] | [Section heading]" to each chunk's index text
+         so BM25 and dense retrieval both see the topic signal on every chunk.
+      4. Store word offsets into the full page for parent-window expansion at
+         generation time (unchanged from before).
+    """
     chunks: list[dict] = []
     page_word_lists: list[dict] = []
 
@@ -344,19 +442,42 @@ def build_corpus_chunks(
         words = full_text.split()
         page_word_lists.append({"url": url, "title": title, "words": words})
 
-        child_texts = make_sentence_chunks(full_text, child_size, child_overlap)
+        if not full_text.strip():
+            continue
+
+        sections = _split_into_sections(full_text)
         word_cursor = 0
-        for chunk_text in child_texts:
-            chunk_words = chunk_text.split()
-            chunks.append({
-                "url": url,
-                "title": title,
-                "text": chunk_text,
-                "page_idx": page_idx,
-                "word_start": word_cursor,
-                "word_end": word_cursor + len(chunk_words),
-            })
-            word_cursor += max(1, len(chunk_words) - child_overlap)
+
+        for section_heading, section_body in sections:
+            if not section_body.strip():
+                word_cursor += len(section_heading.split())
+                continue
+
+            child_texts = make_sentence_chunks(section_body, child_size, child_overlap)
+
+            for chunk_raw in child_texts:
+                chunk_words = chunk_raw.split()
+                if not chunk_words:
+                    continue
+
+                # Prepend page title + section heading as a topic prefix on the
+                # indexed text. This ensures every chunk is self-describing for
+                # both BM25 keyword matching and dense semantic retrieval.
+                prefix_parts = [p for p in [title, section_heading] if p]
+                index_text = (" | ".join(prefix_parts) + "\n" + chunk_raw
+                              if prefix_parts else chunk_raw)
+
+                chunks.append({
+                    "url": url,
+                    "title": title,
+                    "section": section_heading,
+                    "text": index_text,    # used for BM25 tokenisation + embedding
+                    "raw_text": chunk_raw, # used for generation (no prefix repetition)
+                    "page_idx": page_idx,
+                    "word_start": word_cursor,
+                    "word_end": word_cursor + len(chunk_words),
+                })
+                word_cursor += max(1, len(chunk_words) - child_overlap)
 
     return chunks, page_word_lists
 
@@ -404,8 +525,7 @@ class RAGModel:
             corpus_path = Path(CORPUS_PATH) if Path(CORPUS_PATH).exists() else Path(CORPUS_FALLBACK)
             if not corpus_path.exists():
                 raise FileNotFoundError(f"Corpus not found at {CORPUS_PATH} or {CORPUS_FALLBACK}")
-            with open(corpus_path) as f:
-                pages = json.load(f)
+            pages = _load_corpus(corpus_path)
             pages = filter_pages_by_path(pages, PATH_PREFIX_EXCLUDE)
             print(f"[RAGModel] Using {len(pages)} pages (excluded: {PATH_PREFIX_EXCLUDE})")
 
@@ -575,7 +695,7 @@ class RAGModel:
         if not self.reranker or not chunks:
             return chunks[:top_k]
 
-        pairs = [[question, c["text"]] for c in chunks]
+        pairs = [[question, c.get("raw_text", c["text"])] for c in chunks]
         scores = self.reranker.predict(pairs)
         ranked = sorted(zip(chunks, scores), key=lambda x: x[1], reverse=True)
 
@@ -597,13 +717,13 @@ class RAGModel:
 
     def _generate(self, question: str, chunks: list[dict]) -> str:
         contexts = [
-            {"url": c["url"], "title": c.get("title", ""), "text": self._get_parent_text(c)}
+            {"url": c["url"], "title": c.get("title", ""), "section": c.get("section", ""), "text": self._get_parent_text(c)}
             for c in chunks
         ]
         contexts = self._reorder_lost_in_middle(contexts)
 
         context_str = "\n\n---\n\n".join(
-            f"[{c['title']}] ({c['url']})\n{c['text']}" for c in contexts
+            f"[{c['title']}]{(' > ' + c['section']) if c.get('section') else ''} ({c['url']})\n{c['text']}" for c in contexts
         )
 
         prompt = (
