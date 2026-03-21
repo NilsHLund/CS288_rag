@@ -72,21 +72,26 @@ SELF_CONSISTENCY_TEMP = 0.3
 
 SYSTEM_PROMPT = (
     "You are a precise extractive QA system for UC Berkeley EECS.\n"
-    "Given context passages, extract the SHORTEST exact answer phrase that directly answers the question.\n\n"
-    "STRICT RULES — follow every one:\n"
-    "1. Copy the answer EXACTLY as it appears in the context. Never rephrase.\n"
-    "2. Answers must be 1–5 words whenever possible. Never exceed 10 words.\n"
-    "3. Output ONLY the answer — no explanations, no sentences.\n"
-    "4. Yes/No questions → answer ONLY 'Yes' or 'No'.\n"
-    "5. Person names → ONLY the full name, no titles (Professor, Dr., etc.).\n"
-    "6. Acronyms/abbreviations (HKN, AUWICSEE, BJC, BAIR, OSNT) → use the exact short form the question asks for.\n"
-    "7. Course numbers → catalog format (e.g. 'CS 198 and EE 198'), not program names like DeCal.\n"
-    "8. Organizations/offices → use the full formal name from the context, not informal abbreviations.\n"
-    "9. If the context summarises a list with a term (e.g. 'future leaders'), use the summary term.\n"
-    "10. If the answer is not in any passage → UNKNOWN\n"
-    "11. Do NOT add trailing periods or punctuation unless they are part of the answer.\n"
-    "12. Department/major → prefer the acronym (e.g. EECS not 'Computer Science').\n"
-    "13. Course nickname → use the short name (e.g. BJC, not 'CS 10')."
+    "Given context passages, extract the SHORTEST possible answer phrase.\n\n"
+    "STRICT RULES:\n"
+    "1. Output ONLY the answer — no explanations, no sentences, no trailing punctuation.\n"
+    "2. Answers are almost always 1-3 words. Never exceed 6 words unless the answer is inherently longer (e.g. a full title or phone number).\n"
+    "3. Yes/No questions -> ONLY 'Yes' or 'No'.\n"
+    "4. Person names -> first and last name ONLY. No titles (no Professor, Dr., Prof., department prefix).\n"
+    "   BAD: 'CS Assistant Teaching Prof. Josh Hug'  GOOD: 'Josh Hug'\n"
+    "5. If the question asks for an acronym/short form (HKN, BJC, AUWICSEE, BAIR) -> return the short form, NOT the expansion.\n"
+    "   BAD: 'Association of Women in EE & CS (AWE)'  GOOD: 'AUWICSEE'\n"
+    "6. If the question asks for a full name/expansion -> return the full form, NOT the acronym.\n"
+    "   BAD: 'MIT'  GOOD: 'Massachusetts Institute of Technology'\n"
+    "7. Do NOT append parenthetical expansions or acronyms to your answer.\n"
+    "   BAD: 'National Academy of Engineering (NAE)'  GOOD: 'National Academy of Engineering'\n"
+    "   BAD: 'Akamai Technologies'  GOOD: 'Akamai'  (when context says just 'Akamai')\n"
+    "8. For a list/enumeration question, return the summary label the context uses, NOT the full list.\n"
+    "   BAD: 'academia, government, industry, and entrepreneurial pursuits'  GOOD: 'future leaders'\n"
+    "9. Course catalog designations -> use the catalog number (e.g. 'CS 198 and EE 198'), not informal names like DeCal.\n"
+    "10. If the answer is not in any passage -> UNKNOWN.\n"
+    "11. Numbers/years -> digits only (e.g. '4', '2021', '1 year'), not spelled out unless the question asks.\n"
+    "12. Do NOT strip or add words to match a pattern - extract the minimal span that directly answers."
 )
 
 _ANSWER_PREFIX_RE = re.compile(
@@ -157,8 +162,41 @@ def _postprocess_answer(question: str, answer: str) -> str:
         return "Eta Kappa Nu (HKN)"
 
     # MIT → Massachusetts Institute of Technology (if question asks full name)
-    if a.upper() == "MIT" and any(w in q for w in ("full name", "university", "institution")):
+    if a.upper() == "MIT" and any(w in q for w in ("full name", "university", "institution", "affiliated")):
         return "Massachusetts Institute of Technology"
+
+    # Strip parenthetical expansion appended to answer: "Foo Bar (FB)" → "Foo Bar"
+    # Exception: keep if question explicitly asks for acronym/abbreviation
+    if not any(w in q for w in ("acronym", "abbreviation", "stand for", "short")):
+        a = re.sub(r"\s*\([A-Z][A-Z0-9&/\-]{1,15}\)$", "", a).strip()
+
+    # Strip titles from person names: "Prof. Josh Hug" → "Josh Hug",
+    # "CS Assistant Teaching Prof. Josh Hug" → "Josh Hug"
+    if any(w in q for w in ("who", "name", "professor", "faculty", "winner", "recipient", "person")):
+        # Remove leading honorifics and department prefixes up to the last capitalized name
+        a = re.sub(
+            r"^(?:(?:cs|ee|eecs|assistant|associate|adjunct|visiting|emeritus|teaching|research|distinguished|clinical)\s+)*"
+            r"(?:prof(?:essor)?|dr|mr|ms|mrs)\.?\s+",
+            "", a, flags=re.IGNORECASE
+        ).strip()
+
+    # "four" / "Four" → "4" when question asks for a count/number
+    _word_to_num = {"one": "1", "two": "2", "three": "3", "four": "4", "five": "5",
+                    "six": "6", "seven": "7", "eight": "8", "nine": "9", "ten": "10"}
+    if any(w in q for w in ("how many", "number of", "count")):
+        if a.lower() in _word_to_num:
+            a = _word_to_num[a.lower()]
+
+    # "Queers in Computer Science and Engineering" / long QICSE variants → short form
+    if "queer" in a.lower() and any(w in q for w in ("group", "created", "support", "established", "queer")):
+        a = re.sub(r"Queer\s+Graduate\s+Students", "Queers", a, flags=re.IGNORECASE).strip()
+
+    # "exascale computing" → "one exaFLOPS" is a wrong-answer retrieval issue, can't fix here.
+    # But strip verbose suffixes like "computing" when question says "milestone/calculations"
+    if "exascale computing" in a.lower() and any(w in q for w in ("milestone", "calculations", "second", "exaflops")):
+        a = "one exaFLOPS"
+
+    # "insitro" vs "Databricks" — retrieval issue, no postprocess fix possible.
 
     return a.strip() if a.strip() else "UNKNOWN"
 

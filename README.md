@@ -2,8 +2,8 @@ See **STRUCTURE.md** for layout.
 
 **Evaluate (dense):** Predictions go to `data/answers/` (created automatically).
 ```bash
-python3 scripts/evaluate_rag_model.py data/qa/generated_qa_dense.jsonl data/answers/generated_qa_dense_predictions.txt
-python3 scripts/evaluate.py data/qa/generated_qa_dense.jsonl data/answers/generated_qa_dense_predictions.txt
+python scripts/evaluate_rag_model.py data/qa/generated_qa_dense.jsonl data/answers/generated_qa_dense_predictions.txt
+python scripts/evaluate.py data/qa/generated_qa_dense.jsonl data/answers/generated_qa_dense_predictions.txt
 ```
 
 **Docker (3GB RAM, 2 CPU):** Only answer generation is time-constrained; scoring is local.
