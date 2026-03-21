@@ -1,5 +1,12 @@
 """
 rag.py — RAG model for CS288 Assignment 3.
+
+Retrieval pipeline:
+  1. Small child chunks (100 words) for precise hybrid BM25+dense retrieval
+  2. Cross-encoder re-ranking (ms-marco-MiniLM-L-12-v2)
+  3. URL deduplication (max 2 chunks per source URL)
+  4. Parent-document expansion (300-word window) passed to LLM
+  5. Lost-in-the-middle reordering (best chunks at context edges)
 """
 
 import json
@@ -26,11 +33,13 @@ from llm import call_llm
 CORPUS_PATH = "corpus/pages_all.json"
 CACHE_DIR = "cache"
 
-CHUNK_SIZE = 150
-CHUNK_OVERLAP = 40
+CHUNK_SIZE = 100            # child chunk words (small for retrieval precision)
+CHUNK_OVERLAP = 20          # overlap between child chunks
+PARENT_WINDOW = 300         # wider context window expanded for LLM generation
 
-TOP_K_RETRIEVE = 15         # final chunks passed to LLM after re-ranking
+TOP_K_RETRIEVE = 8          # final chunks after re-ranking + dedup
 RERANK_FETCH_K = 60         # candidates fetched before re-ranking
+MAX_CHUNKS_PER_URL = 2      # URL dedup cap after re-ranking
 
 BM25_WEIGHT = 0.6
 DENSE_WEIGHT = 0.4
@@ -57,8 +66,6 @@ SYSTEM_PROMPT = (
 # ──────────────────────────────────────────────
 
 def normalize(text: str) -> str:
-    import re
-
     def remove_articles(t):
         return re.sub(r"\b(a|an|the)\b", " ", t)
 
@@ -78,10 +85,10 @@ _PREAMBLE_RE = re.compile(
 )
 _TRAILING_PUNC_RE = re.compile(r'[.\s]+$')
 
+
 def _clean_answer(text: str) -> str:
     """Strip common LLM preambles and trailing punctuation from answers."""
     text = _PREAMBLE_RE.sub('', text.strip())
-    # Re-handle yes/no that got partially stripped
     lower = text.lower()
     if lower.startswith('yes'):
         return 'Yes'
@@ -90,55 +97,55 @@ def _clean_answer(text: str) -> str:
     return _TRAILING_PUNC_RE.sub('', text)
 
 
-def chunk_text(text: str, chunk_size=CHUNK_SIZE, overlap=CHUNK_OVERLAP):
-    words = text.split()
+def build_corpus_chunks(pages, chunk_size=None, overlap=None):
+    """
+    Build child chunks (small) from pages, tracking word positions for
+    parent-document expansion at generation time.
+
+    Returns (chunks, page_word_lists).
+    """
+    cs = chunk_size if chunk_size is not None else CHUNK_SIZE
+    co = overlap if overlap is not None else CHUNK_OVERLAP
+
     chunks = []
+    page_word_lists = []
 
-    start = 0
-    while start < len(words):
-        end = min(start + chunk_size, len(words))
-        chunks.append(" ".join(words[start:end]))
-
-        if end == len(words):
-            break
-
-        start += chunk_size - overlap
-
-    return chunks
-
-
-def build_corpus_chunks(pages):
-    chunks = []
-
-    for page in pages:
-
+    for page_idx, page in enumerate(pages):
         url = page.get("url", "")
         title = page.get("title", "")
         text = page.get("text", "")
-
         full_text = f"{title}\n{text}" if title else text
+        words = full_text.split()
 
-        for i, chunk in enumerate(chunk_text(full_text)):
-            chunks.append(
-                {
-                    "url": url,
-                    "title": title,
-                    "chunk_id": i,
-                    "text": chunk,
-                }
-            )
+        page_word_lists.append({"url": url, "words": words})
 
-    return chunks
+        start = 0
+        chunk_id = 0
+        while start < len(words):
+            end = min(start + cs, len(words))
+            chunks.append({
+                "url": url,
+                "title": title,
+                "chunk_id": chunk_id,
+                "text": " ".join(words[start:end]),
+                "page_idx": page_idx,
+                "word_start": start,
+                "word_end": end,
+            })
+            chunk_id += 1
+            if end == len(words):
+                break
+            start += cs - co
+
+    return chunks, page_word_lists
 
 
 def load_questions_from_jsonl(path):
     questions = []
-
     with open(path) as f:
         for line in f:
             item = json.loads(line)
             questions.append(item["question"])
-
     return questions
 
 
@@ -154,46 +161,45 @@ class RAGModel:
         self.llm = call_llm
 
         chunks_cache = Path(CACHE_DIR) / "chunks.pkl"
+        pages_cache = Path(CACHE_DIR) / "pages.pkl"
         bm25_cache = Path(CACHE_DIR) / "bm25.pkl"
         faiss_cache = Path(CACHE_DIR) / "faiss.index"
         embeddings_cache = Path(CACHE_DIR) / "embeddings.npy"
 
         if (
             chunks_cache.exists()
+            and pages_cache.exists()
             and bm25_cache.exists()
             and faiss_cache.exists()
             and embeddings_cache.exists()
         ):
-
             print("[RAGModel] Loading cached index...")
 
             with open(chunks_cache, "rb") as f:
                 self.chunks = pickle.load(f)
 
+            with open(pages_cache, "rb") as f:
+                self.page_word_lists = pickle.load(f)
+
             with open(bm25_cache, "rb") as f:
                 self.bm25 = pickle.load(f)
 
             self.index = faiss.read_index(str(faiss_cache))
-
             self.embeddings = np.load(str(embeddings_cache))
 
         else:
-
             print("[RAGModel] Building index...")
 
             with open(CORPUS_PATH) as f:
                 pages = json.load(f)
 
-            self.chunks = build_corpus_chunks(pages)
+            self.chunks, self.page_word_lists = build_corpus_chunks(pages)
 
             tokenized = [normalize(c["text"]).split() for c in self.chunks]
-
             self.bm25 = BM25Okapi(tokenized)
 
             embedder = SentenceTransformer(EMBED_MODEL)
-
             texts = [c["text"] for c in self.chunks]
-
             self.embeddings = embedder.encode(
                 texts,
                 batch_size=64,
@@ -203,23 +209,57 @@ class RAGModel:
             ).astype("float32")
 
             dim = self.embeddings.shape[1]
-
             self.index = faiss.IndexFlatIP(dim)
-
             self.index.add(self.embeddings)
 
             with open(chunks_cache, "wb") as f:
                 pickle.dump(self.chunks, f)
-
+            with open(pages_cache, "wb") as f:
+                pickle.dump(self.page_word_lists, f)
             with open(bm25_cache, "wb") as f:
                 pickle.dump(self.bm25, f)
-
             faiss.write_index(self.index, str(faiss_cache))
-
             np.save(str(embeddings_cache), self.embeddings)
 
         self.embedder = SentenceTransformer(EMBED_MODEL)
         self.reranker = CrossEncoder(RERANK_MODEL, max_length=512)
+
+    # ──────────────────────────────────────────────
+    # Parent-document expansion
+    # ──────────────────────────────────────────────
+
+    def _get_parent_text(self, chunk: dict) -> str:
+        """Expand a child chunk to a larger parent context window."""
+        page = self.page_word_lists[chunk["page_idx"]]
+        words = page["words"]
+        center = (chunk["word_start"] + chunk["word_end"]) // 2
+        half = PARENT_WINDOW // 2
+        start = max(0, center - half)
+        end = min(len(words), start + PARENT_WINDOW)
+        return " ".join(words[start:end])
+
+    # ──────────────────────────────────────────────
+    # Lost-in-the-middle mitigation
+    # ──────────────────────────────────────────────
+
+    @staticmethod
+    def _reorder_lost_in_middle(items: list) -> list:
+        """
+        Place highest-ranked chunks at the edges of the context window,
+        where LLMs attend most reliably (counteracts lost-in-the-middle).
+        """
+        if len(items) <= 2:
+            return items
+        result: list = [None] * len(items)
+        left, right = 0, len(items) - 1
+        for i, item in enumerate(items):
+            if i % 2 == 0:
+                result[left] = item
+                left += 1
+            else:
+                result[right] = item
+                right -= 1
+        return result
 
     # ──────────────────────────────────────────────
     # Retrieval
@@ -234,7 +274,6 @@ class RAGModel:
         bm25_scores = np.array(
             self.bm25.get_scores(normalize(question).split())
         )
-
         if bm25_scores.max() > 0:
             bm25_scores /= bm25_scores.max()
 
@@ -245,9 +284,7 @@ class RAGModel:
         ).astype("float32")
 
         dense_scores_raw, dense_indices = self.index.search(q_emb, fetch_k)
-
         dense_scores = np.zeros(n)
-
         for idx, score in zip(dense_indices[0], dense_scores_raw[0]):
             dense_scores[idx] = score
 
@@ -256,11 +293,26 @@ class RAGModel:
         candidates = [self.chunks[i] for i in candidate_indices]
 
         # Stage 2: Cross-encoder re-ranking
-        pairs = [[question, c["text"]] for c in candidates]
-        rerank_scores = self.reranker.predict(pairs)
-        ranked = sorted(zip(rerank_scores, candidates), key=lambda x: x[0], reverse=True)
+        try:
+            pairs = [[question, c["text"]] for c in candidates]
+            rerank_scores = self.reranker.predict(pairs)
+            ranked = sorted(zip(rerank_scores, candidates), key=lambda x: x[0], reverse=True)
+        except Exception as e:
+            print(f"[reranker fallback] {type(e).__name__}: {e}")
+            ranked = [(0, c) for c in candidates]
 
-        return [c for _, c in ranked[:top_k]]
+        # Stage 3: URL deduplication — cap chunks per source
+        url_counts: dict = {}
+        deduped = []
+        for _, chunk in ranked:
+            url = chunk["url"]
+            if url_counts.get(url, 0) < MAX_CHUNKS_PER_URL:
+                deduped.append(chunk)
+                url_counts[url] = url_counts.get(url, 0) + 1
+            if len(deduped) >= top_k:
+                break
+
+        return deduped
 
     # ──────────────────────────────────────────────
     # Generation
@@ -268,8 +320,17 @@ class RAGModel:
 
     def _generate(self, question, chunks):
 
+        # Expand each child chunk to its wider parent context window
+        expanded = [
+            {"url": c["url"], "text": self._get_parent_text(c)}
+            for c in chunks
+        ]
+
+        # Reorder so best chunks appear at edges (counteracts lost-in-the-middle)
+        expanded = self._reorder_lost_in_middle(expanded)
+
         context = "\n\n---\n\n".join(
-            f"[Source: {c['url']}]\n{c['text']}" for c in chunks
+            f"[Source: {c['url']}]\n{c['text']}" for c in expanded
         )
 
         prompt = (
@@ -279,7 +340,6 @@ class RAGModel:
         )
 
         try:
-
             response = self.llm(
                 system_prompt=SYSTEM_PROMPT,
                 query=prompt,
@@ -288,16 +348,12 @@ class RAGModel:
                 temperature=0.0,
                 timeout=120,
             )
-
             answer = response.strip().splitlines()[0].strip()
             answer = _clean_answer(answer)
-
             return answer[:80]
 
         except Exception as e:
-
             print(e)
-
             return "UNKNOWN"
 
     # ──────────────────────────────────────────────
@@ -337,7 +393,6 @@ if __name__ == "__main__":
     answers = model.predict(questions[:20])
 
     for q, a in zip(questions, answers):
-
         print("Q:", q)
         print("A:", a)
         print()
