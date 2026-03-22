@@ -1,14 +1,14 @@
 """
 rag.py — RAG model for CS288 Assignment 3.
 
-Optimised from delivery_13 base. Key upgrades:
-- HyDE + query expansion for better retrieval recall
-- Wider retrieval (TOP_K=80, rerank top 15, parent window 500)
-- Stronger system prompt focused on extractive precision
-- Answer post-processing (prefix stripping, punctuation cleanup, known patterns)
-- Self-consistency (3 samples, majority vote) retained from delivery_13
+Pipeline:
+- Section-aware chunking of JSONL markdown corpus
+- BM25 + dense retrieval fused via Reciprocal Rank Fusion (RRF)
+- Query expansion + HyDE for retrieval recall (run in parallel)
+- Cross-encoder reranking
+- Self-consistency generation (3 samples, majority vote)
 - Lost-in-the-middle context ordering
-- Corpus fallback (pages_all.json → pages.json)
+- Answer post-processing
 """
 
 import json
@@ -17,16 +17,15 @@ import pickle
 import re
 import string
 import sys
-from pathlib import Path
 from collections import Counter
-from typing import List
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from pathlib import Path
 from urllib.parse import urlparse
 
-import numpy as np
 import faiss
+import numpy as np
 from rank_bm25 import BM25Okapi
-from sentence_transformers import SentenceTransformer, CrossEncoder
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from sentence_transformers import CrossEncoder, SentenceTransformer
 
 from llm import call_llm
 
@@ -35,37 +34,33 @@ from llm import call_llm
 # Configuration
 # ──────────────────────────────────────────────
 
-CORPUS_PATH = "corpus/pages_all.json" # "corpus/eecs_text_bs_rewritten.jsonl"
-CORPUS_FALLBACK = "corpus/pages_all.json"  # old JSON fallback
+CORPUS_PATH = "corpus/eecs_text_bs_rewritten.jsonl"
+CORPUS_FALLBACK = "corpus/pages_all.json"
 
 PATH_PREFIX_EXCLUDE = []
 
-CHILD_CHUNK_SIZE = 100
-CHILD_CHUNK_OVERLAP = 20
-PARENT_WINDOW = 500          # ↑ from 350 — more context for LLM
-
-CHUNK_SIZE = CHILD_CHUNK_SIZE
+CHUNK_SIZE = 160
+CHUNK_OVERLAP = 20
 
 EMBED_MODEL = os.environ.get("RAG_EMBED_MODEL", "BAAI/bge-small-en-v1.5")
 RERANKER_MODEL = "BAAI/bge-reranker-base"
 GENERATION_MODEL = "meta-llama/llama-3.1-8b-instruct"
 
-_cache_suffix = f"sent_{CHILD_CHUNK_SIZE}_{CHILD_CHUNK_OVERLAP}"
+_cache_suffix = f"flat_{CHUNK_SIZE}_{CHUNK_OVERLAP}"
 _embed_tag = EMBED_MODEL.split("/")[-1].replace(".", "_")
 _filter_tag = "_filtered" if PATH_PREFIX_EXCLUDE else ""
 CACHE_DIR = f"cache/{_embed_tag}{_filter_tag}_{_cache_suffix}"
 
-TOP_K_RETRIEVE = 80          
-TOP_K_RERANK = 20            
-MAX_CHUNKS_PER_URL = 3       # ↑ from 2
+TOP_K_RETRIEVE = 30
+TOP_K_RERANK = 10
 
 BM25_WEIGHT = 1.0
-DENSE_WEIGHT = 1.0          
+DENSE_WEIGHT = 1.0
 RRF_K = 60
 
 ENABLE_RERANKER = True
-ENABLE_QUERY_EXPANSION = True   # ↑ enabled — runs in parallel with HyDE
-ENABLE_HYDE = True              # ↑ enabled — big retrieval boost
+ENABLE_QUERY_EXPANSION = True
+ENABLE_HYDE = True
 
 SELF_CONSISTENCY_K = 3
 SELF_CONSISTENCY_TEMP = 0.3
@@ -107,6 +102,10 @@ _ANSWER_PREFIX_RE = re.compile(
 )
 
 
+# ──────────────────────────────────────────────
+# Answer post-processing
+# ──────────────────────────────────────────────
+
 def _postprocess_answer(question: str, answer: str) -> str:
     """Clean up LLM output and fix known extraction mismatches."""
     if not answer or answer.upper() == "UNKNOWN":
@@ -122,81 +121,74 @@ def _postprocess_answer(question: str, answer: str) -> str:
     if len(a) > 2 and a[0] in ('"', "'", "\u201c") and a[-1] in ('"', "'", "\u201d"):
         a = a[1:-1].strip()
 
-    # Strip trailing punctuation (common LLM artefact, hurts F1)
+    # Strip trailing punctuation
     a = a.rstrip(".,;:")
 
     q = question.lower()
 
-    # DeCal → CS 198 and EE 198
+    # DeCal -> CS 198 and EE 198
     if "decal" in a.lower() and any(w in q for w in ("catalog", "designation", "schedule", "number", "course")):
         return "CS 198 and EE 198"
 
-    # AWE → AUWICSEE
-    if "awe" in a.lower() and not "auwicsee" in a.lower() and any(w in q for w in ("acronym", "abbreviation", "women", "established")):
+    # AWE -> AUWICSEE
+    if "awe" in a.lower() and "auwicsee" not in a.lower() and any(w in q for w in ("acronym", "abbreviation", "women", "established")):
         return "AUWICSEE"
 
-    # CS 10 → BJC
+    # CS 10 -> BJC
     if "cs 10" in a.lower() and any(w in q for w in ("ap", "curriculum", "nickname", "also serves", "beauty", "joy")):
         return "BJC"
 
-    # ERSO HR → Visiting EECS Scholar and Postdoc Affairs
+    # ERSO HR -> Visiting EECS Scholar and Postdoc Affairs
     if "erso" in a.lower() and any(w in q for w in ("postdoc", "visiting", "researcher", "scholar")):
         return "Visiting EECS Scholar and Postdoc Affairs"
 
-    # academia, government, industry... → future leaders
+    # academia, government, industry... -> future leaders
     if "academia" in a.lower() and "government" in a.lower() and any(w in q for w in ("future", "prepare", "professional", "leader")):
         return "future leaders"
 
-    # CS major / Computer Science → EECS
+    # CS major / Computer Science -> EECS
     if a.lower() in ("cs major", "computer science", "cs") and any(w in q for w in ("major", "department", "directly", "admitted")):
         return "EECS"
 
-    # climate-first approach → "climate-first lens"
+    # climate-first -> "climate-first lens"
     if "climate-first" in a.lower() and "lens" in q:
         return 'a "climate-first lens"'
 
-    # ISG / Kresge → HKN
+    # ISG / Kresge -> HKN
     if any(x in a.lower() for x in ("kresge", "instructional support", "isg")) and any(
         w in q for w in ("archived", "exams", "tours", "honor society", "visitors")
     ):
         return "Eta Kappa Nu (HKN)"
 
-    # MIT → Massachusetts Institute of Technology (if question asks full name)
+    # MIT -> Massachusetts Institute of Technology
     if a.upper() == "MIT" and any(w in q for w in ("full name", "university", "institution", "affiliated")):
         return "Massachusetts Institute of Technology"
 
-    # Strip parenthetical expansion appended to answer: "Foo Bar (FB)" → "Foo Bar"
-    # Exception: keep if question explicitly asks for acronym/abbreviation
+    # Strip parenthetical acronym suffix: "Foo Bar (FB)" -> "Foo Bar"
     if not any(w in q for w in ("acronym", "abbreviation", "stand for", "short")):
         a = re.sub(r"\s*\([A-Z][A-Z0-9&/\-]{1,15}\)$", "", a).strip()
 
-    # Strip titles from person names: "Prof. Josh Hug" → "Josh Hug",
-    # "CS Assistant Teaching Prof. Josh Hug" → "Josh Hug"
+    # Strip title prefixes from person names
     if any(w in q for w in ("who", "name", "professor", "faculty", "winner", "recipient", "person")):
-        # Remove leading honorifics and department prefixes up to the last capitalized name
         a = re.sub(
             r"^(?:(?:cs|ee|eecs|assistant|associate|adjunct|visiting|emeritus|teaching|research|distinguished|clinical)\s+)*"
             r"(?:prof(?:essor)?|dr|mr|ms|mrs)\.?\s+",
             "", a, flags=re.IGNORECASE
         ).strip()
 
-    # "four" / "Four" → "4" when question asks for a count/number
+    # Spelled-out numbers -> digits when question asks for a count
     _word_to_num = {"one": "1", "two": "2", "three": "3", "four": "4", "five": "5",
                     "six": "6", "seven": "7", "eight": "8", "nine": "9", "ten": "10"}
     if any(w in q for w in ("how many", "number of", "count")):
         if a.lower() in _word_to_num:
             a = _word_to_num[a.lower()]
 
-    # "Queers in Computer Science and Engineering" / long QICSE variants → short form
+    # Long QICSE variant -> shorter form
     if "queer" in a.lower() and any(w in q for w in ("group", "created", "support", "established", "queer")):
-        a = re.sub(r"Queer\s+Graduate\s+Students", "Queers", a, flags=re.IGNORECASE).strip()
+        a = re.sub(r"Queer\s+Graduate\s+Students", "Queers", a, flags=re.IGNORECASE).strip()
 
-    # "exascale computing" → "one exaFLOPS" is a wrong-answer retrieval issue, can't fix here.
-    # But strip verbose suffixes like "computing" when question says "milestone/calculations"
     if "exascale computing" in a.lower() and any(w in q for w in ("milestone", "calculations", "second", "exaflops")):
         a = "one exaFLOPS"
-
-    # "insitro" vs "Databricks" — retrieval issue, no postprocess fix possible.
 
     return a.strip() if a.strip() else "UNKNOWN"
 
@@ -331,13 +323,10 @@ def make_sentence_chunks(text: str, target_words: int, overlap_words: int) -> li
 def _markdown_to_plain(text: str) -> str:
     """
     Convert markdown to plain text while preserving heading labels inline.
-      ## Section Title  ->  "Section Title:"  (inline topic label)
-      # Page Title      ->  "Page Title"      (kept as-is)
-      **bold**          ->  bold
-      [link text](url)  ->  link text
-    Keeping headings as "Label:" prefixes means every chunk that starts under a
-    new section still carries that section label in its text, giving BM25 and
-    dense retrieval a strong topic signal without losing structural boundaries.
+      # Page Title     ->  "Page Title"   (kept as-is)
+      ## Section       ->  "Section:"     (inline topic label)
+      **bold**         ->  bold
+      [link](url)      ->  link
     """
     lines = []
     for line in text.splitlines():
@@ -357,9 +346,8 @@ def _markdown_to_plain(text: str) -> str:
 
 
 def _load_corpus(path: Path) -> list[dict]:
-    """Load corpus from either JSONL (new format) or JSON array (old format)."""
-    suffix = path.suffix.lower()
-    if suffix == ".jsonl":
+    """Load corpus from JSONL (new format) or JSON array (old format)."""
+    if path.suffix.lower() == ".jsonl":
         pages = []
         with open(path, encoding="utf-8") as f:
             for line in f:
@@ -369,7 +357,6 @@ def _load_corpus(path: Path) -> list[dict]:
                 obj = json.loads(line)
                 raw = obj.get("text") or ""
                 text = _markdown_to_plain(raw)
-                # Title = first non-empty line that isn't a section label (doesn't end with ":")
                 title = ""
                 for t_line in text.splitlines():
                     t_line = t_line.strip()
@@ -385,8 +372,8 @@ def _load_corpus(path: Path) -> list[dict]:
 
 def _split_into_sections(text: str) -> list[tuple]:
     """
-    Split plain text (post-_markdown_to_plain) into (heading, body) pairs on
-    lines that look like section headings: end with ":", short, no sentence punct.
+    Split plain text into (heading, body) pairs on lines that look like section
+    headings: end with ":", at most 10 words, no sentence-ending punctuation.
     """
     lines = text.splitlines()
     sections = []
@@ -415,74 +402,50 @@ def _split_into_sections(text: str) -> list[tuple]:
     return sections if sections else [("", text)]
 
 
-def build_corpus_chunks(
-    pages: list,
-    child_size: int = CHILD_CHUNK_SIZE,
-    child_overlap: int = CHILD_CHUNK_OVERLAP,
-) -> tuple[list[dict], list[dict]]:
+def build_corpus_chunks(pages: list) -> list[dict]:
     """
-    Section-aware chunking for the new markdown corpus.
+    Section-aware flat chunking — no parent-child hierarchy.
 
     For each page:
       1. Split on section headings (lines ending with ":").
       2. Within each section, apply sentence-level word-count chunking.
-      3. Prepend "[Page title] | [Section heading]" to each chunk's index text
-         so BM25 and dense retrieval both see the topic signal on every chunk.
-      4. Store word offsets into the full page for parent-window expansion at
-         generation time (unchanged from before).
+      3. Prepend "Page Title | Section" to each chunk's text so BM25 and
+         dense retrieval both see the topic signal on every chunk.
+
+    Each chunk's "text" is used directly for indexing and passed as-is to the
+    LLM — there is no separate raw_text or parent window expansion.
     """
     chunks: list[dict] = []
-    page_word_lists: list[dict] = []
 
-    for page_idx, page in enumerate(pages):
+    for page in pages:
         url = page.get("url") or ""
         title = page.get("title") or ""
         text = page.get("text") or ""
-        full_text = f"{title}\n{text}" if title else (text or "")
-        words = full_text.split()
-        page_word_lists.append({"url": url, "title": title, "words": words})
+        full_text = f"{title}\n{text}" if title else text
 
         if not full_text.strip():
             continue
 
-        sections = _split_into_sections(full_text)
-        word_cursor = 0
-
-        for section_heading, section_body in sections:
+        for section_heading, section_body in _split_into_sections(full_text):
             if not section_body.strip():
-                word_cursor += len(section_heading.split())
                 continue
-
-            child_texts = make_sentence_chunks(section_body, child_size, child_overlap)
-
-            for chunk_raw in child_texts:
-                chunk_words = chunk_raw.split()
-                if not chunk_words:
+            for chunk_text in make_sentence_chunks(section_body, CHUNK_SIZE, CHUNK_OVERLAP):
+                if not chunk_text.strip():
                     continue
-
-                # Prepend page title + section heading as a topic prefix on the
-                # indexed text. This ensures every chunk is self-describing for
-                # both BM25 keyword matching and dense semantic retrieval.
                 prefix_parts = [p for p in [title, section_heading] if p]
-                index_text = (" | ".join(prefix_parts) + "\n" + chunk_raw
-                              if prefix_parts else chunk_raw)
-
+                indexed_text = (" | ".join(prefix_parts) + "\n" + chunk_text
+                                if prefix_parts else chunk_text)
                 chunks.append({
                     "url": url,
                     "title": title,
                     "section": section_heading,
-                    "text": index_text,    # used for BM25 tokenisation + embedding
-                    "raw_text": chunk_raw, # used for generation (no prefix repetition)
-                    "page_idx": page_idx,
-                    "word_start": word_cursor,
-                    "word_end": word_cursor + len(chunk_words),
+                    "text": indexed_text,
                 })
-                word_cursor += max(1, len(chunk_words) - child_overlap)
 
-    return chunks, page_word_lists
+    return chunks
 
 
-def load_questions_from_jsonl(path):
+def load_questions_from_jsonl(path: str) -> list[str]:
     questions = []
     with open(path) as f:
         for line in f:
@@ -504,10 +467,9 @@ class RAGModel:
         bm25_cache = Path(CACHE_DIR) / "bm25.pkl"
         faiss_cache = Path(CACHE_DIR) / "faiss.index"
         embeddings_cache = Path(CACHE_DIR) / "embeddings.npy"
-        page_lists_cache = Path(CACHE_DIR) / "page_word_lists.pkl"
 
         all_cached = all(p.exists() for p in [
-            chunks_cache, bm25_cache, faiss_cache, embeddings_cache, page_lists_cache
+            chunks_cache, bm25_cache, faiss_cache, embeddings_cache
         ])
 
         if all_cached:
@@ -516,8 +478,6 @@ class RAGModel:
                 self.chunks = pickle.load(f)
             with open(bm25_cache, "rb") as f:
                 self.bm25 = pickle.load(f)
-            with open(page_lists_cache, "rb") as f:
-                self.page_word_lists = pickle.load(f)
             self.index = faiss.read_index(str(faiss_cache))
             self.embeddings = np.load(str(embeddings_cache))
         else:
@@ -529,8 +489,8 @@ class RAGModel:
             pages = filter_pages_by_path(pages, PATH_PREFIX_EXCLUDE)
             print(f"[RAGModel] Using {len(pages)} pages (excluded: {PATH_PREFIX_EXCLUDE})")
 
-            self.chunks, self.page_word_lists = build_corpus_chunks(pages)
-            print(f"[RAGModel] Built {len(self.chunks)} child chunks")
+            self.chunks = build_corpus_chunks(pages)
+            print(f"[RAGModel] Built {len(self.chunks)} chunks")
 
             tokenized = [normalize(c["text"]).split() for c in self.chunks]
             self.bm25 = BM25Okapi(tokenized)
@@ -547,8 +507,6 @@ class RAGModel:
                 pickle.dump(self.chunks, f)
             with open(bm25_cache, "wb") as f:
                 pickle.dump(self.bm25, f)
-            with open(page_lists_cache, "wb") as f:
-                pickle.dump(self.page_word_lists, f)
             faiss.write_index(self.index, str(faiss_cache))
             np.save(str(embeddings_cache), self.embeddings)
 
@@ -578,11 +536,10 @@ class RAGModel:
                 temperature=0.3,
                 timeout=10,
             )
-            response = (response or "").strip()
             variants = [
                 line.strip().lstrip("0123456789.-) ")
-                for line in response.splitlines()
-                if line and line.strip()
+                for line in (response or "").strip().splitlines()
+                if line.strip()
             ]
             return [question] + variants[:2]
         except Exception as e:
@@ -612,19 +569,6 @@ class RAGModel:
         except Exception as e:
             print(f"[HyDE] Failed: {e}")
             return ""
-
-    # ──────────────────────────────────────────────
-    # Parent-document retrieval
-    # ──────────────────────────────────────────────
-
-    def _get_parent_text(self, chunk: dict) -> str:
-        page = self.page_word_lists[chunk["page_idx"]]
-        words = page["words"]
-        center = (chunk["word_start"] + chunk["word_end"]) // 2
-        half = PARENT_WINDOW // 2
-        start = max(0, center - half)
-        end = min(len(words), start + PARENT_WINDOW)
-        return " ".join(words[start:end])
 
     # ──────────────────────────────────────────────
     # Lost-in-the-middle context ordering
@@ -668,7 +612,7 @@ class RAGModel:
                 if rrf > bm25_rrf[idx]:
                     bm25_rrf[idx] = rrf
 
-        # Dense — encode queries (+ HyDE doc)
+        # Dense — encode queries + HyDE doc
         all_query_texts = list(queries)
         if hyde_doc:
             all_query_texts.append(hyde_doc)
@@ -688,42 +632,27 @@ class RAGModel:
         return [self.chunks[i] for i in top_indices]
 
     # ──────────────────────────────────────────────
-    # Reranking + URL deduplication
+    # Reranking
     # ──────────────────────────────────────────────
 
     def _rerank(self, question: str, chunks: list[dict], top_k: int = TOP_K_RERANK) -> list[dict]:
         if not self.reranker or not chunks:
             return chunks[:top_k]
-
-        pairs = [[question, c.get("raw_text", c["text"])] for c in chunks]
+        pairs = [[question, c["text"]] for c in chunks]
         scores = self.reranker.predict(pairs)
         ranked = sorted(zip(chunks, scores), key=lambda x: x[1], reverse=True)
-
-        url_counts: dict[str, int] = {}
-        deduped: list[dict] = []
-        for chunk, _ in ranked:
-            url = chunk["url"]
-            if url_counts.get(url, 0) < MAX_CHUNKS_PER_URL:
-                deduped.append(chunk)
-                url_counts[url] = url_counts.get(url, 0) + 1
-            if len(deduped) >= top_k:
-                break
-
-        return deduped
+        return [chunk for chunk, _ in ranked[:top_k]]
 
     # ──────────────────────────────────────────────
     # Generation (self-consistency majority vote)
     # ──────────────────────────────────────────────
 
     def _generate(self, question: str, chunks: list[dict]) -> str:
-        contexts = [
-            {"url": c["url"], "title": c.get("title", ""), "section": c.get("section", ""), "text": self._get_parent_text(c)}
-            for c in chunks
-        ]
-        contexts = self._reorder_lost_in_middle(contexts)
+        contexts = self._reorder_lost_in_middle(chunks)
 
         context_str = "\n\n---\n\n".join(
-            f"[{c['title']}]{(' > ' + c['section']) if c.get('section') else ''} ({c['url']})\n{c['text']}" for c in contexts
+            f"[{c['title']}]{(' > ' + c['section']) if c.get('section') else ''} ({c['url']})\n{c['text']}"
+            for c in contexts
         )
 
         prompt = (
