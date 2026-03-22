@@ -35,7 +35,7 @@ from llm import call_llm
 # Configuration
 # ──────────────────────────────────────────────
 
-CORPUS_PATH = "corpus/eecs_text_bs_rewritten.jsonl"
+CORPUS_PATH = "corpus/pages_all.json" # "corpus/eecs_text_bs_rewritten.jsonl"
 CORPUS_FALLBACK = "corpus/pages_all.json"  # old JSON fallback
 
 PATH_PREFIX_EXCLUDE = []
@@ -50,17 +50,17 @@ EMBED_MODEL = os.environ.get("RAG_EMBED_MODEL", "BAAI/bge-small-en-v1.5")
 RERANKER_MODEL = "BAAI/bge-reranker-base"
 GENERATION_MODEL = "meta-llama/llama-3.1-8b-instruct"
 
-_cache_suffix = f"sect_{CHILD_CHUNK_SIZE}_{CHILD_CHUNK_OVERLAP}"
+_cache_suffix = f"sent_{CHILD_CHUNK_SIZE}_{CHILD_CHUNK_OVERLAP}"
 _embed_tag = EMBED_MODEL.split("/")[-1].replace(".", "_")
 _filter_tag = "_filtered" if PATH_PREFIX_EXCLUDE else ""
 CACHE_DIR = f"cache/{_embed_tag}{_filter_tag}_{_cache_suffix}"
 
-TOP_K_RETRIEVE = 60          
-TOP_K_RERANK = 15            
+TOP_K_RETRIEVE = 40          
+TOP_K_RERANK = 10            
 MAX_CHUNKS_PER_URL = 3       # ↑ from 2
 
 BM25_WEIGHT = 1.0
-DENSE_WEIGHT = 2.0          
+DENSE_WEIGHT = 1.0          
 RRF_K = 60
 
 ENABLE_RERANKER = True
