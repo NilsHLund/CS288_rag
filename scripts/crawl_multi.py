@@ -22,6 +22,7 @@ SKIP_EXTENSIONS = {".pdf", ".jpg", ".jpeg", ".png", ".gif", ".zip", ".mp4", ".sv
 HEADERS = {"User-Agent": "CS288 Assignment 3 Crawler"}
 BACKOFF_SECONDS = 5
 UNWANTED_TAGS = ["script", "style", "noscript", "nav", "footer", "aside"]
+FAILED_URLS_PATH = "corpus/failed_urls.txt"
 
 
 def is_allowed_url(url: str):
@@ -39,7 +40,7 @@ def process_link(link: str):
         return link
     return None
 
-def fetch_page(url: str):
+def fetch_page(url: str, is_retry: bool = False, failed_urls_path: str = FAILED_URLS_PATH):
     backoff = BACKOFF_SECONDS
 
     url = process_link(url)
@@ -79,14 +80,65 @@ def fetch_page(url: str):
 
         # filter data
         title, text, meta_description = extract_text_from_soup(soup)
-        # TODO: come back after extract text is implemented
+
+        raw_len = len(html)
+        if raw_len > 0:
+            ratio = len(text) / raw_len
+            if ratio < 0.005:
+                logging.warning("Low text ratio " + (ratio * 100) + "% for " + url)
+        
+        return {
+            "url": url,
+            "title": title,
+            "text": text,
+            "meta_description": meta_description,
+            "links": links,
+        }
+    
+    logging.warning("Failed after 3 retries for " + url)
+    if not is_retry:
+        with threading.Lock():
+            with open(failed_urls_path, "a") as f:
+                f.write(url + "\n")
+    return None
 
 def extract_text_from_soup(soup):
     title = soup.title.text.strip() if soup.title and soup.title.text else ""
-    meta_description = soup.find("meta", attrs={"name": "description"}).get("content", "").strip()
+    meta_tag = soup.find("meta", attrs={"name": "description"})
+    meta_description = meta_tag["content"].strip() if meta_tag and meta_tag.get("content") else ""
     
     for tag in soup(UNWANTED_TAGS):
         tag.decompose()
+
+    # handle tables
+    for table in soup.find_all("table"):
+        lines = []
+        grid = []
+        rows = table.find_all("tr")
+        if not rows:
+            table.decompose()
+            continue
+        for row in rows:
+            cells = row.find_all(["th", "td"])
+            grid.append([c.get_text(separator=" ").strip() for c in cells])
+
+        if not grid:
+            table.decompose()
+            continue
+
+        # add padding in case of uneven number of columns
+        num_cols = max(len(r) for r in grid)
+        for r in grid: 
+            r.extend([""] * (num_cols - len(r)))
+
+        for i, row in enumerate(grid):
+            lines.append("| " + " | ".join(row) + " |")
+            if i == 0:
+                lines.append("| " + " | ".join("---" for _ in row) + " |")
+
+
+
+        table.replace_with(NavigableString("\n\n" + "\n".join(lines) + "\n\n"))
 
     # get main text
     raw_text = (soup.find("main") or soup.find("article") or soup.find("div", {"id": "content"}) or soup.body or soup).get_text(separator="\n").strip()
