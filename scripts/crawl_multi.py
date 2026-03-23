@@ -160,6 +160,94 @@ def extract_text_from_soup(soup):
     text = re.sub(r" {2,}", " ", text)
     return title, text, meta_description
 
+def crawl(
+    seed_url: str,
+    output_path: str,
+    max_pages: Optional[int],
+    num_threads: int,
+    delay: float,
+    save_every: int,
+):
+    visited = set()
+    visited_lock = threading.Lock()
+
+    corpus = []
+    corpus_lock = threading.Lock()
+
+    frontier = deque([seed_url])
+    frontier_lock = threading.Lock()
+
+    session = requests.Session()
+    session.headers.update({"User-Agent": "Mozilla/5.0 (CS288 RAG Assignment)"})
+
+    pbar = tqdm(desc="Crawling", unit="pages")
+    stop_event = threading.Event()
+
+    def worker():
+        while not stop_event.is_set():
+            # Pull a URL off the frontier
+            with frontier_lock:
+                if not frontier:
+                    return
+                url = frontier.popleft()
+
+            result = fetch_page(url, session, delay)
+
+            if result is None:
+                continue
+
+            # Enqueue newly discovered links
+            with visited_lock:
+                new_links = result["links"] - visited
+                visited.update(new_links)
+            with frontier_lock:
+                frontier.extend(new_links)
+
+            # Save page — no minimum text length check, keep everything
+            page = {"url": result["url"], "title": result["title"], "text": result["text"]}
+            with corpus_lock:
+                corpus.append(page)
+                count = len(corpus)
+
+            pbar.update(1)
+            pbar.set_postfix(frontier=len(frontier), visited=len(visited))
+
+            # Periodic save so progress survives a crash
+            if count % save_every == 0:
+                _save(corpus, output_path, corpus_lock)
+
+            # Honour optional page cap
+            if max_pages is not None and count >= max_pages:
+                stop_event.set()
+                return
+
+    # Mark seed as visited before spawning workers
+    seed_clean = seed_url.split("#")[0].split("?")[0]
+    visited.add(seed_clean)
+
+    # Keep the pool saturated: submit a new worker whenever one finishes,
+    # as long as there is still frontier work and we haven't hit the cap.
+    with ThreadPoolExecutor(max_workers=num_threads) as executor:
+        futures = {executor.submit(worker) for _ in range(num_threads)}
+
+        while futures:
+            still_running = set()
+            for f in list(futures):
+                if f.done():
+                    # Re-submit if there's still work to do
+                    with frontier_lock:
+                        has_work = bool(frontier)
+                    if has_work and not stop_event.is_set():
+                        still_running.add(executor.submit(worker))
+                else:
+                    still_running.add(f)
+            futures = still_running
+            time.sleep(0.05)
+
+    pbar.close()
+    _save(corpus, output_path, corpus_lock)
+    print(f"\nFinished. Crawled {len(corpus)} pages → {output_path}")
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Multi-threaded EECS website crawler")
     parser.add_argument("--seed",
