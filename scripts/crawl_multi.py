@@ -168,14 +168,16 @@ def crawl(
     num_threads: int,
     delay: float,
     save_every: int,
+    resume: bool = False,
 ):
-    visited = set()
+    corpus, frontier, visited = _load_checkpoint(output_path, resume)
+
+    if not frontier:
+        frontier = deque(seed_urls)   
+        visited = set(seed_urls)
+
     visited_lock = threading.Lock()
-
-    corpus = []
     corpus_lock = threading.Lock()
-
-    frontier = deque([seed_url])
     frontier_lock = threading.Lock()
 
     pbar = tqdm(desc="Crawling", unit="pages")
@@ -188,6 +190,8 @@ def crawl(
                 if not frontier:
                     return
                 url = frontier.popleft()
+
+            time.sleep(delay)
 
             result = fetch_page(url)
 
@@ -212,7 +216,11 @@ def crawl(
 
             # Periodic save so progress survives a crash
             if count % save_every == 0:
-                _save(corpus, output_path, corpus_lock)
+                with visited_lock:
+                    visited_snap = list(visited)
+                with frontier_lock:
+                    frontier_snap = list(frontier)
+                _save(corpus, output_path, corpus_lock, frontier=frontier_snap, visited=visited_snap)
 
             # Honour optional page cap
             if max_pages is not None and count >= max_pages:
@@ -273,8 +281,10 @@ def _load_checkpoint(output_path, resume):
             data = json.load(f)
             frontier = deque(data.get("frontier", []))
             visited = set(data.get("visited", []))
-        return frontier, visited
-    return deque(), set()
+        with open(output_path, "r", encoding="utf-8") as f:
+            corpus = json.load(f)
+        return corpus, frontier, visited
+    return [], deque(), set()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Multi-threaded EECS website crawler")
