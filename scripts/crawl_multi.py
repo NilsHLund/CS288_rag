@@ -246,13 +246,35 @@ def crawl(
     _save(corpus, output_path, corpus_lock)
     print(f"\nFinished. Crawled {len(corpus)} pages → {output_path}")
 
-def _save(corpus, output_path, lock):
+def _save(corpus, output_path, lock, frontier=None, visited=None):
     """Atomically write corpus to disk."""
     with lock:
         tmp = output_path + ".tmp"
+        
         with open(tmp, "w", encoding="utf-8") as f:
             json.dump(corpus, f, ensure_ascii=False, indent=2)
+        
+        checkpoint_data = {
+            "frontier": list(frontier) if frontier is not None else [],
+            "visited": list(visited) if visited is not None else []
+        }
+        with open(_checkpoint_path(output_path), "w", encoding="utf-8") as f:
+            json.dump(checkpoint_data, f, ensure_ascii=False)
         os.replace(tmp, output_path)
+
+def _checkpoint_path(output_path):
+    base, ext = os.path.splitext(output_path)
+    return base + ".checkpoint" + ext
+
+def _load_checkpoint(output_path, resume):
+    check_path = _checkpoint_path(output_path)
+    if resume and os.path.exists(check_path):
+        with open(check_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            frontier = deque(data.get("frontier", []))
+            visited = set(data.get("visited", []))
+        return frontier, visited
+    return deque(), set()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Multi-threaded EECS website crawler")
