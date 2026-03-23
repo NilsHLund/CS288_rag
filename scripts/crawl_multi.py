@@ -248,6 +248,14 @@ def crawl(
     _save(corpus, output_path, corpus_lock)
     print(f"\nFinished. Crawled {len(corpus)} pages → {output_path}")
 
+def _save(corpus, output_path, lock):
+    """Atomically write corpus to disk."""
+    with lock:
+        tmp = output_path + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump(corpus, f, ensure_ascii=False, indent=2)
+        os.replace(tmp, output_path)
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Multi-threaded EECS website crawler")
     parser.add_argument("--seed",
