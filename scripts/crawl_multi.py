@@ -41,8 +41,7 @@ def process_link(link: str):
         return link
     return None
 
-def fetch_page(url: str, is_retry: bool = False, failed_urls_path: str = FAILED_URLS_PATH):
-    backoff = BACKOFF_SECONDS
+def fetch_page(url: str, is_retry: bool = False, failed_urls_path: str = FAILED_URLS_PATH, backoff: float = BACKOFF_SECONDS):
 
     url = process_link(url)
     if url is None:
@@ -227,10 +226,6 @@ def crawl(
                 stop_event.set()
                 return
 
-    # Mark seed as visited before spawning workers
-    seed_clean = seed_url.split("#")[0].split("?")[0]
-    visited.add(seed_clean)
-
     # Keep the pool saturated: submit a new worker whenever one finishes,
     # as long as there is still frontier work and we haven't hit the cap.
     with ThreadPoolExecutor(max_workers=num_threads) as executor:
@@ -253,6 +248,23 @@ def crawl(
     pbar.close()
     _save(corpus, output_path, corpus_lock)
     print(f"\nFinished. Crawled {len(corpus)} pages → {output_path}")
+
+    if not os.path.exists(FAILED_URLS_PATH):
+        return
+
+    with open(FAILED_URLS_PATH, "r", encoding="utf-8") as f:
+        failed = list(dict.fromkeys(line.strip() for line in f if line.strip()))
+        for url in failed:
+            result = fetch_page(url, is_retry=True, backoff=BACKOFF_SECONDS * 4)
+            if result:
+                corpus.append({
+                    "url": result["url"], 
+                    "title": result["title"], 
+                    "text": result["text"]
+                })
+        _save(corpus, output_path, corpus_lock, frontier=list(frontier), visited=visited)
+        if os.path.exists(FAILED_URLS_PATH):
+            os.remove(FAILED_URLS_PATH)
 
 def _save(corpus, output_path, lock, frontier=None, visited=None):
     """Atomically write corpus to disk."""
@@ -311,10 +323,11 @@ if __name__ == "__main__":
 
     os.makedirs(os.path.dirname(args.output) or ".", exist_ok=True)
     crawl(
-        seed_url=args.seed.split(","),
+        seed_urls=args.seed.split(","),
         output_path=args.output,
         max_pages=max_pages,
         num_threads=args.threads,
         delay=args.delay,
-        save_every=args.save_every
+        save_every=args.save_every,
+        resume=args.resume
     )
