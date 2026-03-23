@@ -205,7 +205,10 @@ def crawl(
                 frontier.extend(new_links)
 
             # Save page — no minimum text length check, keep everything
-            page = {"url": result["url"], "title": result["title"], "text": result["text"]}
+            page = {"url": result["url"], 
+            "title": result["title"], 
+            "text": result["text"], 
+            "meta_description": result["meta_description"]}
             with corpus_lock:
                 corpus.append(page)
                 count = len(corpus)
@@ -322,6 +325,12 @@ if __name__ == "__main__":
     max_pages = args.max_pages if args.max_pages and args.max_pages > 0 else None
 
     os.makedirs(os.path.dirname(args.output) or ".", exist_ok=True)
+
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s %(levelname)s %(message)s",
+        handlers=[logging.StreamHandler()]
+    )
     crawl(
         seed_urls=args.seed.split(","),
         output_path=args.output,
