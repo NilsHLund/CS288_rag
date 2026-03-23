@@ -19,6 +19,26 @@ seeds = [
 ]
 ALLOWED_DOMAIN_RE = re.compile(r"https?:\/\/(?:www\d*\.)?eecs\.berkeley\.edu(?:\/[^\s]*)?")
 SKIP_EXTENSIONS = {".pdf", ".jpg", ".jpeg", ".png", ".gif", ".zip", ".mp4", ".svg", ".ico"}
+HEADERS = {"User-Agent": "CS288 Assignment 3 Crawler"}
+BACKOFF_SECONDS = 5
+
+
+def fetch_page(url: str):
+    backoff = BACKOFF_SECONDS
+
+    for attempt in range(3):
+        try: 
+            req = Request(url, headers=HEADERS)
+            with urlopen(req, timeout=10) as resp:
+                status = resp.getcode()
+                
+                continue
+        except Exception as e:
+            logging.warning("Exception occured. " + url + ", " + str(e) + ", " + str(attempt+1) + "/3")
+            time.sleep(backoff)
+            backoff *= 2
+            continue
+
 
 
 if __name__ == "__main__":
@@ -43,4 +63,3 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     max_pages = args.max_pages if args.max_pages and args.max_pages > 0 else None
-    
