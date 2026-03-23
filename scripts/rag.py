@@ -39,25 +39,28 @@ PARENT_WINDOW = 300         # wider context window expanded for LLM generation
 
 TOP_K_RETRIEVE = 8          # final chunks after re-ranking + dedup
 RERANK_FETCH_K = 60         # candidates fetched before re-ranking
-MAX_CHUNKS_PER_URL = 2      # URL dedup cap after re-ranking
+MAX_CHUNKS_PER_URL = 3      # URL dedup cap after re-ranking
 
-BM25_WEIGHT = 0.6
-DENSE_WEIGHT = 0.4
+BM25_WEIGHT = 0.5
+DENSE_WEIGHT = 0.5
 
 EMBED_MODEL = "Snowflake/snowflake-arctic-embed-s"  # 384d, under ~400MB; rebuild cache after model change
 RERANK_MODEL = "cross-encoder/ms-marco-MiniLM-L-12-v2"  # 33M params, stronger cross-encoder
 
 SYSTEM_PROMPT = (
     "You are a precise answer extractor for UC Berkeley EECS questions. "
-    "Rules (follow strictly):\n"
-    "1. Extract the EXACT answer phrase from the context — copy it verbatim, do not paraphrase.\n"
-    "2. Answer must be UNDER 10 words. Never give full sentences.\n"
-    "3. For Yes/No questions: reply only 'Yes' or 'No'.\n"
-    "4. For numbers: always use digits ('3' not 'three', '4' not 'four').\n"
-    "5. For acronyms or abbreviations: use the short form (e.g. 'HKN', 'BAIR', 'NSF').\n"
-    "6. For names, courses, organizations: extract the exact identifier, nothing more.\n"
-    "7. Never start with 'The answer is', 'According to', or any preamble — give only the answer.\n"
-    "8. Reply UNKNOWN only if the answer is completely absent from the context."
+    "Output ONLY the answer value — nothing else.\n"
+    "Rules:\n"
+    "1. Copy the EXACT phrase from the context verbatim. Do not paraphrase.\n"
+    "2. Answer must be UNDER 10 words. Never output a full sentence.\n"
+    "3. Yes/No questions (only when question asks 'Is/Are/Can/Does/Will/Do...'): output only 'Yes' or 'No'. NEVER output Yes/No for Who/What/Which/When/Where/How questions.\n"
+    "4. Numbers: always use digits ('3' not 'three'). Keep original formatting for counts.\n"
+    "5. Phone numbers / dates / dollar amounts: copy exactly as written in the context (e.g. '1(510) 642-3214', '$1', '2/18/26').\n"
+    "6. Acronyms/abbreviations: use the short form (e.g. 'HKN', 'BAIR', 'NSF').\n"
+    "7. Names, courses, organizations: extract the exact identifier only.\n"
+    "8. NEVER repeat any instruction, rule, or meta-text. NEVER output phrases like 'answer found in the context' or 'the answer is'.\n"
+    "9. NEVER start with a preamble. Your entire response is the answer only.\n"
+    "10. Reply UNKNOWN only if the answer is completely absent from the context."
 )
 
 
@@ -85,10 +88,24 @@ _PREAMBLE_RE = re.compile(
 )
 _TRAILING_PUNC_RE = re.compile(r'[.\s]+$')
 
+# LLM sometimes outputs meta-phrases instead of an actual answer
+_GARBAGE_RE = re.compile(
+    r'^(?:answer found in the context|found in the context|not found in the context'
+    r'|the context (?:does not|doesn\'t) (?:provide|contain|mention)'
+    r'|i (?:cannot|can\'t|could not) (?:find|determine)'
+    r'|based on (?:the )?(?:provided )?context'
+    r'|context does not'
+    r'|no (?:relevant )?(?:information|answer))',
+    re.IGNORECASE,
+)
+
 
 def _clean_answer(text: str) -> str:
-    """Strip common LLM preambles and trailing punctuation from answers."""
-    text = _PREAMBLE_RE.sub('', text.strip())
+    """Strip common LLM preambles, garbage meta-phrases and trailing punctuation."""
+    text = text.strip()
+    if _GARBAGE_RE.match(text):
+        return 'UNKNOWN'
+    text = _PREAMBLE_RE.sub('', text)
     lower = text.lower()
     if lower.startswith('yes'):
         return 'Yes'

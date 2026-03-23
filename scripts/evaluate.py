@@ -52,6 +52,18 @@ def _normalize_numbers(text: str) -> str:
         text,
     )
 
+def _normalize_phone(text: str) -> str:
+    """
+    Normalize US phone numbers to bare 10 digits so that
+    '1(510) 642-3214', '510-642-3214', '5106423214' all compare equal.
+    Strips an optional leading country-code '1' from 11-digit sequences.
+    """
+    # Collapse all digit runs, strip non-digit separators
+    digits_only = re.sub(r'\D', '', text)
+    if len(digits_only) == 11 and digits_only.startswith('1'):
+        return digits_only[1:]   # drop leading country code
+    return digits_only if len(digits_only) == 10 else text
+
 def normalize_answer(s: str) -> str:
     def remove_articles(text):
         return re.sub(r'\b(a|an|the)\b', ' ', text)
@@ -62,7 +74,18 @@ def normalize_answer(s: str) -> str:
         return ''.join(ch for ch in text if ch not in exclude)
     def lower(text):
         return text.lower()
-    return white_space_fix(remove_articles(remove_punc(_normalize_numbers(lower(s)))))
+
+    s_lower = lower(s)
+    # Normalize phone numbers before stripping punctuation.
+    # Trigger when the span contains 7–11 total digits (US phone range).
+    s_lower = re.sub(
+        r'[\d()\-\s.+]{7,20}',
+        lambda m: _normalize_phone(m.group(0))
+            if 7 <= len(re.sub(r'\D', '', m.group(0))) <= 11
+            else m.group(0),
+        s_lower,
+    )
+    return white_space_fix(remove_articles(remove_punc(_normalize_numbers(s_lower))))
 
 
 # ---------------------------------------------------------------------------
