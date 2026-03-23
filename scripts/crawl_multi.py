@@ -23,6 +23,7 @@ HEADERS = {"User-Agent": "CS288 Assignment 3 Crawler"}
 BACKOFF_SECONDS = 5
 UNWANTED_TAGS = ["script", "style", "noscript", "nav", "footer", "aside"]
 FAILED_URLS_PATH = "corpus/failed_urls.txt"
+FAILED_LOCK = threading.Lock()
 
 
 def is_allowed_url(url: str):
@@ -85,7 +86,7 @@ def fetch_page(url: str, is_retry: bool = False, failed_urls_path: str = FAILED_
         if raw_len > 0:
             ratio = len(text) / raw_len
             if ratio < 0.005:
-                logging.warning("Low text ratio " + (ratio * 100) + "% for " + url)
+                logging.warning("Low text ratio " + str(ratio * 100) + "% for " + url)
         
         return {
             "url": url,
@@ -97,7 +98,7 @@ def fetch_page(url: str, is_retry: bool = False, failed_urls_path: str = FAILED_
     
     logging.warning("Failed after 3 retries for " + url)
     if not is_retry:
-        with threading.Lock():
+        with FAILED_LOCK:
             with open(failed_urls_path, "a") as f:
                 f.write(url + "\n")
     return None
@@ -161,7 +162,7 @@ def extract_text_from_soup(soup):
     return title, text, meta_description
 
 def crawl(
-    seed_url: str,
+    seed_urls: list[str],
     output_path: str,
     max_pages: Optional[int],
     num_threads: int,
@@ -177,9 +178,6 @@ def crawl(
     frontier = deque([seed_url])
     frontier_lock = threading.Lock()
 
-    session = requests.Session()
-    session.headers.update({"User-Agent": "Mozilla/5.0 (CS288 RAG Assignment)"})
-
     pbar = tqdm(desc="Crawling", unit="pages")
     stop_event = threading.Event()
 
@@ -191,7 +189,7 @@ def crawl(
                     return
                 url = frontier.popleft()
 
-            result = fetch_page(url, session, delay)
+            result = fetch_page(url)
 
             if result is None:
                 continue
@@ -278,3 +276,13 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     max_pages = args.max_pages if args.max_pages and args.max_pages > 0 else None
+
+    os.makedirs(os.path.dirname(args.output) or ".", exist_ok=True)
+    crawl(
+        seed_url=args.seed.split(","),
+        output_path=args.output,
+        max_pages=max_pages,
+        num_threads=args.threads,
+        delay=args.delay,
+        save_every=args.save_every
+    )
