@@ -21,6 +21,7 @@ ALLOWED_DOMAIN_RE = re.compile(r"https?:\/\/(?:www\d*\.)?eecs\.berkeley\.edu(?:\
 SKIP_EXTENSIONS = {".pdf", ".jpg", ".jpeg", ".png", ".gif", ".zip", ".mp4", ".svg", ".ico"}
 HEADERS = {"User-Agent": "CS288 Assignment 3 Crawler"}
 BACKOFF_SECONDS = 5
+UNWANTED_TAGS = ["script", "style", "noscript", "nav", "footer", "aside"]
 
 
 def is_allowed_url(url: str):
@@ -77,9 +78,35 @@ def fetch_page(url: str):
                 links.add(link)
 
         # filter data
-        title, text, meta_description = extract_text(soup)
+        title, text, meta_description = extract_text_from_soup(soup)
         # TODO: come back after extract text is implemented
 
+def extract_text_from_soup(soup):
+    title = soup.title.text.strip() if soup.title and soup.title.text else ""
+    meta_description = soup.find("meta", attrs={"name": "description"}).get("content", "").strip()
+    
+    for tag in soup(UNWANTED_TAGS):
+        tag.decompose()
+
+    # get main text
+    raw_text = (soup.find("main") or soup.find("article") or soup.find("div", {"id": "content"}) or soup.body or soup).get_text(separator="\n").strip()
+    
+    # clean text
+    lines = [line.strip() for line in raw_text.splitlines()]
+    cleaned_lines = []
+    prev_blank = False
+    for line in lines:
+        if not line: 
+            if not prev_blank:
+                cleaned_lines.append("")
+            prev_blank = True
+        else:
+            cleaned_lines.append(line)
+            prev_blank = False
+
+    text = "\n".join(cleaned_lines).strip()
+    text = re.sub(r" {2,}", " ", text)
+    return title, text, meta_description
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Multi-threaded EECS website crawler")
