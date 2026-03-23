@@ -6,7 +6,7 @@ Optimised from delivery_13 base. Key upgrades:
 - Parent window 500, lost-in-the-middle context ordering
 - Stronger system prompt + answer post-processing
 - Self-consistency K configurable (K=1 for fastest: one LLM call per question)
-- Optional CrossEncoder reranker (off for speed / lower RAM)
+- CrossEncoder reranker on (HyDE/query expansion still off to limit LLM calls)
 - Corpus fallback (pages_all.json → pages.json)
 """
 
@@ -62,8 +62,8 @@ BM25_WEIGHT = 1.0
 DENSE_WEIGHT = 1.0
 RRF_K = 60
 
-# Speed / resource tradeoffs (Gradescope: fewer LLM calls + no cross-encoder rerank)
-ENABLE_RERANKER = False
+# Speed / resource tradeoffs (Gradescope): HyDE + query expansion off; reranker on for precision
+ENABLE_RERANKER = True
 ENABLE_QUERY_EXPANSION = False
 ENABLE_HYDE = False
 
